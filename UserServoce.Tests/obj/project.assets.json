@@ -5523,11 +5523,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserServoce.Tests\\UserServoce.Tests.csproj",
+      "projectUniqueName": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserServoce.Tests\\UserServoce.Tests.csproj",
       "projectName": "UserServoce.Tests",
-      "projectPath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserServoce.Tests\\UserServoce.Tests.csproj",
+      "projectPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserServoce.Tests\\UserServoce.Tests.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserServoce.Tests\\obj\\",
+      "outputPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserServoce.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",

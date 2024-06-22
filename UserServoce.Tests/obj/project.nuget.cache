@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "R9c82gNHjM9lw7pNqPBuTV8Vph8nAMqvyiQ+u1jWtUsxt78C0K9F/xD6MXsNeW8gXH3uoGsRSGvLwHnkoLukAA==",
+  "dgSpecHash": "maTbv8v0y4gVQQXlQcmLkfnkksZ0icCMik1dgqqHtHGj+88aeLxuGUTuQaoOEfU1U30F5qcA2HHJsyCezA6Zdw==",
   "success": true,
-  "projectFilePath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserServoce.Tests\\UserServoce.Tests.csproj",
+  "projectFilePath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserServoce.Tests\\UserServoce.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\coverlet.collector\\6.0.0\\coverlet.collector.6.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.codecoverage\\17.6.0\\microsoft.codecoverage.17.6.0.nupkg.sha512",

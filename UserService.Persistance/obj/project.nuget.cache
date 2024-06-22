@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/nwtZR1HTSYIyc6obyWpaNorMOV+vD42SAwnYtVW7tArCa0WUHpzXfqYXoBJoW91JRPDaM5TAahuUEo6uJHeng==",
+  "dgSpecHash": "KjmNgwP8M1XGNoSmrdSQDIX/YwUmdIRDYIR671KQMrntY7DHEw1OjFJDpcKqMLto+jKUgqc3ZCQfjaR2gW6WSw==",
   "success": true,
-  "projectFilePath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Persistance\\UserService.Persistance.csproj",
+  "projectFilePath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Persistance\\UserService.Persistance.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.2\\fluentvalidation.dependencyinjectionextensions.11.9.2.nupkg.sha512",

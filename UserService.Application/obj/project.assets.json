@@ -2782,11 +2782,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Application\\UserService.Application.csproj",
+      "projectUniqueName": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Application\\UserService.Application.csproj",
       "projectName": "UserService.Application",
-      "projectPath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Application\\UserService.Application.csproj",
+      "projectPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Application\\UserService.Application.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Application\\obj\\",
+      "outputPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Application\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",

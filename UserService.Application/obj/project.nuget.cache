@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "varjXG9Yn+rf/kUrK6IJlID78h5LCEFvSo1V1vcDr5Qr4MD/mdFqzHWEEZLEmwKvk06Vfs+I36Jjf/D/h08kiQ==",
+  "dgSpecHash": "ar7FuY/PkzeQxMck+Rttu42KVWKljUJb8FCp02bammNUYpNUX8c8Iur7cGd3DM9dQSSMlzc2yw0UL0gKKZlL8Q==",
   "success": true,
-  "projectFilePath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Application\\UserService.Application.csproj",
+  "projectFilePath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Application\\UserService.Application.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.2\\fluentvalidation.dependencyinjectionextensions.11.9.2.nupkg.sha512",

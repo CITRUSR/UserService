@@ -2914,11 +2914,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.API\\UserService.API.csproj",
+      "projectUniqueName": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.API\\UserService.API.csproj",
       "projectName": "UserService.API",
-      "projectPath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.API\\UserService.API.csproj",
+      "projectPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.API\\UserService.API.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.API\\obj\\",
+      "outputPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -2935,11 +2935,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Application\\UserService.Application.csproj": {
-              "projectPath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Application\\UserService.Application.csproj"
+            "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Application\\UserService.Application.csproj": {
+              "projectPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Application\\UserService.Application.csproj"
             },
-            "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Persistance\\UserService.Persistance.csproj": {
-              "projectPath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Persistance\\UserService.Persistance.csproj"
+            "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Persistance\\UserService.Persistance.csproj": {
+              "projectPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Persistance\\UserService.Persistance.csproj"
             }
           }
         }

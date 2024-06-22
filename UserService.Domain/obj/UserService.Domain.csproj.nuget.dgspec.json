@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Domain\\UserService.Domain.csproj": {}
+    "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Domain\\UserService.Domain.csproj": {}
   },
   "projects": {
-    "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Domain\\UserService.Domain.csproj": {
+    "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Domain\\UserService.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Domain\\UserService.Domain.csproj",
+        "projectUniqueName": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Domain\\UserService.Domain.csproj",
         "projectName": "UserService.Domain",
-        "projectPath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Domain\\UserService.Domain.csproj",
+        "projectPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Domain\\UserService.Domain.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\DocumentProg\\Projects\\Test\\UserService\\UserService.Domain\\obj\\",
+        "outputPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",

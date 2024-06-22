@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = UserService.Domain
-build_property.ProjectDir = C:\DocumentProg\Projects\Test\UserService\UserService.Domain\
+build_property.ProjectDir = C:\DocumentProg\Projects\dos\services\UserService\UserService.Domain\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
