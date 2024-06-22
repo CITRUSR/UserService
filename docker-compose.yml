@@ -1,18 +1,41 @@
 ﻿services:
   userservice.api:
     image: userservice.api
+    container_name: userServiceApi
     build:
       context: .
       dockerfile: UserService.API/Dockerfile
     networks:
       - global_network
+      - local
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTPS_PORTS=5050
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=youtube
     volumes:
-      - ~/.aspnet/https
+      - ~/.aspnet/https:/https
+  db:
+    image: postgres:16.2-alpine3.19
+    container_name: usersApiDb
+    environment:
+      - POSTGRES_DB=UsersDb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - local
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'ps_isready -U postgres -d UsersDb'" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 networks:
   global_network:
     external: true
+  local:
+    driver: bridge
+volumes:
+  postgres_data:
+    driver: local
