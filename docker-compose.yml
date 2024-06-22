@@ -1,0 +1,11 @@
+﻿services:
+  userservice.api:
+    image: userservice.api
+    build:
+      context: .
+      dockerfile: UserService.API/Dockerfile
+    networks:
+      - global_network
+networks:
+  global_network:
+    external: true
