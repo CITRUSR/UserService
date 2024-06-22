@@ -1,0 +1,13 @@
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\bin\Debug\net8.0\UserService.Domain.deps.json
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\bin\Debug\net8.0\UserService.Domain.runtimeconfig.json
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\bin\Debug\net8.0\UserService.Domain.dll
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\bin\Debug\net8.0\UserService.Domain.pdb
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\obj\Debug\net8.0\UserService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\obj\Debug\net8.0\UserService.Domain.AssemblyInfoInputs.cache
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\obj\Debug\net8.0\UserService.Domain.AssemblyInfo.cs
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\obj\Debug\net8.0\UserService.Domain.csproj.CoreCompileInputs.cache
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\obj\Debug\net8.0\UserService.Domain.dll
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\obj\Debug\net8.0\refint\UserService.Domain.dll
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\obj\Debug\net8.0\UserService.Domain.pdb
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\obj\Debug\net8.0\UserService.Domain.genruntimeconfig.cache
+C:\DocumentProg\Projects\Test\UserService\UserService.Domain\obj\Debug\net8.0\ref\UserService.Domain.dll
