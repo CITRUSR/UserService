@@ -6,6 +6,13 @@
       dockerfile: UserService.API/Dockerfile
     networks:
       - global_network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=5050
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=youtube
+    volumes:
+      - ~/.aspnet/https
 networks:
   global_network:
     external: true
