@@ -479,7 +479,7 @@
           "Microsoft.Extensions.Logging": "8.0.0"
         },
         "compile": {
-          "lib/net8.0/_._": {
+          "lib/net8.0/Microsoft.EntityFrameworkCore.dll": {
             "related": ".xml"
           }
         },
@@ -495,7 +495,7 @@
       "Microsoft.EntityFrameworkCore.Abstractions/8.0.6": {
         "type": "package",
         "compile": {
-          "lib/net8.0/_._": {
+          "lib/net8.0/Microsoft.EntityFrameworkCore.Abstractions.dll": {
             "related": ".xml"
           }
         },
@@ -572,7 +572,7 @@
           "Microsoft.Extensions.Primitives": "8.0.0"
         },
         "compile": {
-          "lib/net8.0/_._": {
+          "lib/net8.0/Microsoft.Extensions.Caching.Abstractions.dll": {
             "related": ".xml"
           }
         },
@@ -595,7 +595,7 @@
           "Microsoft.Extensions.Primitives": "8.0.0"
         },
         "compile": {
-          "lib/net8.0/_._": {
+          "lib/net8.0/Microsoft.Extensions.Caching.Memory.dll": {
             "related": ".xml"
           }
         },
@@ -1054,6 +1054,16 @@
         },
         "build": {
           "buildTransitive/netcoreapp3.1/_._": {}
+        }
+      },
+      "UserService.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/UserService.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/UserService.Domain.dll": {}
         }
       }
     }
@@ -2764,6 +2774,11 @@
         "system.threading.channels.nuspec",
         "useSharedDesignerContext.txt"
       ]
+    },
+    "UserService.Domain/1.0.0": {
+      "type": "project",
+      "path": "../UserService.Domain/UserService.Domain.csproj",
+      "msbuildProject": "../UserService.Domain/UserService.Domain.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -2772,8 +2787,10 @@
       "FluentValidation.DependencyInjectionExtensions >= 11.9.2",
       "Grpc.AspNetCore >= 2.63.0",
       "MediatR >= 12.3.0",
+      "Microsoft.EntityFrameworkCore >= 8.0.6",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.6",
-      "Microsoft.Extensions.DependencyInjection >= 8.0.0"
+      "Microsoft.Extensions.DependencyInjection >= 8.0.0",
+      "UserService.Domain >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -2802,7 +2819,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Domain\\UserService.Domain.csproj": {
+              "projectPath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Domain\\UserService.Domain.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -2830,6 +2851,10 @@
           "MediatR": {
             "target": "Package",
             "version": "[12.3.0, )"
+          },
+          "Microsoft.EntityFrameworkCore": {
+            "target": "Package",
+            "version": "[8.0.6, )"
           },
           "Microsoft.EntityFrameworkCore.Tools": {
             "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",

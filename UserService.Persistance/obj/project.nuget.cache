@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "KjmNgwP8M1XGNoSmrdSQDIX/YwUmdIRDYIR671KQMrntY7DHEw1OjFJDpcKqMLto+jKUgqc3ZCQfjaR2gW6WSw==",
+  "dgSpecHash": "SVNvJesVpX4Vj9MlICNMD1pLskzcpBiFYbPXSzmWNUzMYOoy/zy97GebxUK1//R+/Iv08v+9SoqGjjO/8pmEMQ==",
   "success": true,
   "projectFilePath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Persistance\\UserService.Persistance.csproj",
   "expectedPackageFiles": [
