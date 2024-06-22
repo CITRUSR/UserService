@@ -11,4 +11,5 @@ public class Speciality
     [MaxLength(10)] [Required] public string Abbreavation { get; set; }
     [DefaultValue(0)] public Decimal Cost { get; set; }
     [Required] [Range(1, byte.MaxValue)] public byte DurationMonths { get; set; }
+    public bool IsDeleted { get; set; } = false;
 }
