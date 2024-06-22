@@ -631,7 +631,9 @@
           "FluentValidation.DependencyInjectionExtensions": "11.9.2",
           "Grpc.AspNetCore": "2.63.0",
           "MediatR": "12.3.0",
-          "Microsoft.Extensions.DependencyInjection": "8.0.0"
+          "Microsoft.EntityFrameworkCore": "8.0.6",
+          "Microsoft.Extensions.DependencyInjection": "8.0.0",
+          "UserService.Domain": "1.0.0"
         },
         "runtime": {
           "UserService.Application.dll": {}
