@@ -9,9 +9,9 @@ public class Group
     [Required] public Speciality Speciality { get; set; }
     [Required] public long CuratorId { get; set; }
     [Required] public Teacher Curator { get; set; }
-    [Required] [Range(1, short.MaxValue)] public byte CurrentCourse { get; set; }
-    [Required] [Range(1, int.MaxValue)] public byte CurrentSemester { get; set; }
-    [Required] [Range(1, int.MaxValue)] public byte SubGroup { get; set; }
+    [Required] [Range(1, byte.MaxValue)] public byte CurrentCourse { get; set; }
+    [Required] [Range(1, byte.MaxValue)] public byte CurrentSemester { get; set; }
+    [Required] [Range(1, byte.MaxValue)] public byte SubGroup { get; set; }
     [Required] public DateTime StartedAt { get; set; }
     public ICollection<Student> Students { get; } = new List<Student>();
     public DateTime? GraduatedAt { get; set; }

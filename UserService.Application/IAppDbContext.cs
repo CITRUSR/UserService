@@ -5,7 +5,7 @@ namespace UserService.Application;
 
 public interface IAppDbContext
 {
-    public DbSet<Student> Students { get; set; }
+    public DbSet<Domain.Entities.Student> Students { get; set; }
     public DbSet<Teacher> Teachers { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Speciality> Specialities { get; set; }

@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "UserService";
+
+package Student;
+
+import "google/protobuf/wrappers.proto";
+
+service Student{
+  rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
+}
+
+message CreateStudentRequest{
+  sint64 Id = 1;
+  string FirstName = 2;
+  string LastName = 3;
+  google.protobuf.StringValue PatronymicName = 4;
+  sint32 GroupId = 5;
+}
+
+message CreateStudentResponse{
+  sint64 Id = 1;
+}

@@ -30,7 +30,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         if (failures.Any())
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument,
-                JsonSerializer.Serialize(failures.Select(x => new ValidationError
+                JsonSerializer.Serialize(failures.Select(x => new Error
                 {
                     Erorrs = failures.Select(x => x.ErrorMessage)
                 }))));
