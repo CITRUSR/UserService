@@ -1,0 +1,8 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=069ceb0f_002De92d_002D4968_002Dba2c_002D1decb0450d6d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CreateStudent_ShouldBe_Success" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::0E5D1F49-A6C5-4F83-B00F-DC535C2F7C02::net8.0::UserService.Tests.Student.Commands.CreateStudent.CreateStudent_ShouldBe_Success&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::0E5D1F49-A6C5-4F83-B00F-DC535C2F7C02::net8.0::UserService.Tests.Student.Commands.CreateStudent.CreateStudent_ShouldBe_ThrowRPCExceptionNotFoundGroup&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::0E5D1F49-A6C5-4F83-B00F-DC535C2F7C02::net8.0::UserService.Tests.Student.Commands.CreateStudent.CreateStudent_ShouldBe_ValidationError&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
