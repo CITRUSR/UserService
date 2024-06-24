@@ -49,6 +49,10 @@ namespace UserService {
     static readonly grpc::Marshaller<global::UserService.CreateStudentRequest> __Marshaller_Student_CreateStudentRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.CreateStudentRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::UserService.CreateStudentResponse> __Marshaller_Student_CreateStudentResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.CreateStudentResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::UserService.DropOutStudentRequest> __Marshaller_Student_DropOutStudentRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.DropOutStudentRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::UserService.DropOutStudentResponse> __Marshaller_Student_DropOutStudentResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.DropOutStudentResponse.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::UserService.CreateStudentRequest, global::UserService.CreateStudentResponse> __Method_CreateStudent = new grpc::Method<global::UserService.CreateStudentRequest, global::UserService.CreateStudentResponse>(
@@ -57,6 +61,14 @@ namespace UserService {
         "CreateStudent",
         __Marshaller_Student_CreateStudentRequest,
         __Marshaller_Student_CreateStudentResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::UserService.DropOutStudentRequest, global::UserService.DropOutStudentResponse> __Method_DropOutStudent = new grpc::Method<global::UserService.DropOutStudentRequest, global::UserService.DropOutStudentResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "DropOutStudent",
+        __Marshaller_Student_DropOutStudentRequest,
+        __Marshaller_Student_DropOutStudentResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -70,6 +82,12 @@ namespace UserService {
     {
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::System.Threading.Tasks.Task<global::UserService.CreateStudentResponse> CreateStudent(global::UserService.CreateStudentRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::UserService.DropOutStudentResponse> DropOutStudent(global::UserService.DropOutStudentRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -123,6 +141,26 @@ namespace UserService {
       {
         return CallInvoker.AsyncUnaryCall(__Method_CreateStudent, null, options, request);
       }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::UserService.DropOutStudentResponse DropOutStudent(global::UserService.DropOutStudentRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return DropOutStudent(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::UserService.DropOutStudentResponse DropOutStudent(global::UserService.DropOutStudentRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_DropOutStudent, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::UserService.DropOutStudentResponse> DropOutStudentAsync(global::UserService.DropOutStudentRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return DropOutStudentAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::UserService.DropOutStudentResponse> DropOutStudentAsync(global::UserService.DropOutStudentRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_DropOutStudent, null, options, request);
+      }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       protected override StudentClient NewInstance(ClientBaseConfiguration configuration)
@@ -137,7 +175,8 @@ namespace UserService {
     public static grpc::ServerServiceDefinition BindService(StudentBase serviceImpl)
     {
       return grpc::ServerServiceDefinition.CreateBuilder()
-          .AddMethod(__Method_CreateStudent, serviceImpl.CreateStudent).Build();
+          .AddMethod(__Method_CreateStudent, serviceImpl.CreateStudent)
+          .AddMethod(__Method_DropOutStudent, serviceImpl.DropOutStudent).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the service binding logic.
@@ -148,6 +187,7 @@ namespace UserService {
     public static void BindService(grpc::ServiceBinderBase serviceBinder, StudentBase serviceImpl)
     {
       serviceBinder.AddMethod(__Method_CreateStudent, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.CreateStudentRequest, global::UserService.CreateStudentResponse>(serviceImpl.CreateStudent));
+      serviceBinder.AddMethod(__Method_DropOutStudent, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.DropOutStudentRequest, global::UserService.DropOutStudentResponse>(serviceImpl.DropOutStudent));
     }
 
   }

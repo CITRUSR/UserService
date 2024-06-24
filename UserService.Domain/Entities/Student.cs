@@ -10,5 +10,5 @@ public class Student
     [MaxLength(32)] public string? PatronymicName { get; set; }
     [Required] public Group Group { get; set; }
     [Required] public int GroupId { get; set; }
-    public DateTime? DroppedOutAt { get; set; }
+    public DateTime? DroppedOutAt { get; set; } = null;
 }

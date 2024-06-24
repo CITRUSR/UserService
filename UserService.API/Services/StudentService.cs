@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using MediatR;
+using UserService.Application.CQRS.Student.Commands.DropOutStudent;
 using UserService.Application.Student.Commands.CreateStudent;
 
 namespace UserService.API.Services;
@@ -19,6 +20,19 @@ public class StudentService(IMediator mediator) : UserService.Student.StudentBas
         return new CreateStudentResponse
         {
             Id = id
+        };
+    }
+
+    public override async Task<DropOutStudentResponse> DropOutStudent(DropOutStudentRequest request,
+        ServerCallContext context)
+    {
+        var command = new DropOutStudentCommand(request.Id, request.DroppedTime.ToDateTime());
+
+        var id = await _mediator.Send(command);
+
+        return new DropOutStudentResponse
+        {
+            Id = id,
         };
     }
 }

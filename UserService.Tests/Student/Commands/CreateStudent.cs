@@ -14,7 +14,7 @@ public class CreateStudent : CommonTest
         var group = Fixture.Create<Group>();
 
         await Context.AddAsync(group);
-
+        
         var command = Fixture.Build<CreateStudentCommand>().With(x => x.GroupId, group.Id).Create();
 
         CreateStudentCommandHandler handler = new CreateStudentCommandHandler(Context);
@@ -25,7 +25,7 @@ public class CreateStudent : CommonTest
     }
 
     [Fact]
-    public async void CreateStudent_ShouldBe_ThrowRPCExceptionNotFoundGroup()
+    public async void CreateStudent_ShouldBe_NotFoundException()
     {
         var command = Fixture.Create<CreateStudentCommand>();
 
