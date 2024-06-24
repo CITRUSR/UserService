@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "SVNvJesVpX4Vj9MlICNMD1pLskzcpBiFYbPXSzmWNUzMYOoy/zy97GebxUK1//R+/Iv08v+9SoqGjjO/8pmEMQ==",
+  "dgSpecHash": "uQzcGHemvu4PyaEygs4lEP2ZIBocstWMnYyIMq9i8gmB6ManJhqFIMNO0V6T4BA2Odjg/5wGJdDLI22vOfIQUg==",
   "success": true,
   "projectFilePath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Persistance\\UserService.Persistance.csproj",
   "expectedPackageFiles": [
@@ -42,8 +42,10 @@
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.extensions.options\\8.0.0\\microsoft.extensions.options.8.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\npgsql\\8.0.3\\npgsql.8.0.3.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.4\\npgsql.entityframeworkcore.postgresql.8.0.4.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\serilog\\4.0.0\\serilog.4.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.codedom\\4.4.0\\system.codedom.4.4.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.collections.immutable\\6.0.0\\system.collections.immutable.6.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.composition\\6.0.0\\system.composition.6.0.0.nupkg.sha512",

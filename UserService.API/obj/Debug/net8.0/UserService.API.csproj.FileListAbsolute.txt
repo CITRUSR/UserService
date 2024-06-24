@@ -231,3 +231,13 @@ C:\DocumentProg\Projects\dos\services\UserService\UserService.API\obj\Debug\net8
 C:\DocumentProg\Projects\dos\services\UserService\UserService.API\obj\Debug\net8.0\UserService.API.pdb
 C:\DocumentProg\Projects\dos\services\UserService\UserService.API\obj\Debug\net8.0\UserService.API.genruntimeconfig.cache
 C:\DocumentProg\Projects\dos\services\UserService\UserService.API\obj\Debug\net8.0\ref\UserService.API.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.AspNetCore.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.Extensions.Hosting.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.Extensions.Logging.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.Formatting.Compact.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.Settings.Configuration.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.Sinks.Console.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.Sinks.Debug.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.Sinks.File.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Newtonsoft.Json.dll

@@ -129,3 +129,4 @@ C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\obj\Debug\ne
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\obj\Debug\net8.0\UserService.Tests.pdb
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\obj\Debug\net8.0\UserService.Tests.genruntimeconfig.cache
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\obj\Debug\net8.0\ref\UserService.Tests.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Serilog.dll

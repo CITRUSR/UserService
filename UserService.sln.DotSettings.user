@@ -4,5 +4,6 @@
     &lt;TestId&gt;xUnit::0E5D1F49-A6C5-4F83-B00F-DC535C2F7C02::net8.0::UserService.Tests.Student.Commands.CreateStudent.CreateStudent_ShouldBe_Success&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::0E5D1F49-A6C5-4F83-B00F-DC535C2F7C02::net8.0::UserService.Tests.Student.Commands.CreateStudent.CreateStudent_ShouldBe_ThrowRPCExceptionNotFoundGroup&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::0E5D1F49-A6C5-4F83-B00F-DC535C2F7C02::net8.0::UserService.Tests.Student.Commands.CreateStudent.CreateStudent_ShouldBe_ValidationError&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::0E5D1F49-A6C5-4F83-B00F-DC535C2F7C02::net8.0::UserService.Tests.Student.Commands.CreateStudent.CreateStudent_ShouldBe_ThrowValidationException&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

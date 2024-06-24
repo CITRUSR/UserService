@@ -4,7 +4,7 @@ using UserService.Application.Student.Commands.CreateStudent;
 
 namespace UserService.API.Services;
 
-public class Student(IMediator mediator) : UserService.Student.StudentBase
+public class StudentService(IMediator mediator) : UserService.Student.StudentBase
 {
     private readonly IMediator _mediator = mediator;
 
