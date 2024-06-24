@@ -14,8 +14,13 @@ public class DeleteStudentCommandHandler(IAppDbContext dbContext)
 
         if (student == null)
         {
-            throw new NotFoundException($"The student with Id:{request.Id} is not found");
+            throw new StudentNotFoundException(request.Id);
         }
+
+        var group = await DbContext.Groups.FindAsync(new object?[] { student.GroupId, cancellationToken },
+            cancellationToken: cancellationToken);
+
+        group?.Students.Remove(student);
 
         DbContext.Students.Remove(student);
         await DbContext.SaveChangesAsync(cancellationToken);

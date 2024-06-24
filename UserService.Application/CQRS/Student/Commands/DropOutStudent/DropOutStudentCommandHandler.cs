@@ -14,13 +14,13 @@ public class DropOutStudentCommandHandler(IAppDbContext dbContext)
 
         if (student == null)
         {
-            throw new NotFoundException($"The user with Id:{request.Id} is not found");
+            throw new StudentNotFoundException(request.Id);
         }
 
         student.DroppedOutAt = request.DroppedOutTime;
         await DbContext.SaveChangesAsync(cancellationToken);
 
-        Log.Information($"The user with Id:{request.Id} is dropped out");
+        Log.Information($"The student with Id:{request.Id} is dropped out");
 
         return request.Id;
     }
