@@ -1,8 +1,9 @@
-﻿using System.Text.Json;
-using FluentValidation;
+﻿using FluentValidation;
 using Grpc.Core;
 using MediatR;
+using Newtonsoft.Json;
 using UserService.Application.Common.Errors;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace UserService.Application.Common.Behaviors;
 
@@ -30,10 +31,10 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         if (failures.Any())
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument,
-                JsonSerializer.Serialize(failures.Select(x => new Error
+                JsonConvert.SerializeObject(new Error
                 {
                     Erorrs = failures.Select(x => x.ErrorMessage)
-                }))));
+                })));
         }
 
         return next();
