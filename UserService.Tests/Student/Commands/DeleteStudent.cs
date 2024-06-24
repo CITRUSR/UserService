@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.Student.Commands.DeleteStudent;
+using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
 namespace UserService.Tests.Student.Commands;
@@ -10,9 +11,14 @@ public class DeleteStudent : CommonTest
     [Fact]
     public async void DeleteStudent_ShouldBe_Success()
     {
-        var student = Fixture.Create<Domain.Entities.Student>();
+        var group = Fixture.Create<Group>();
+
+        var student = Fixture.Build<Domain.Entities.Student>().With(x => x.GroupId, group.Id).Create();
+
+        group.Students.Add(student);
 
         await Context.AddAsync(student);
+        await Context.AddAsync(group);
 
         var command = new DeleteStudentCommand(student.Id);
         var handler = new DeleteStudentCommandHandler(Context);
@@ -20,6 +26,7 @@ public class DeleteStudent : CommonTest
         await handler.Handle(command, CancellationToken.None);
 
         Context.Students.FirstOrDefault(x => x.Id == command.Id).Should().BeNull();
+        Context.Groups.FirstOrDefault(x => x.Id == group.Id).Students.Should().NotContain(student);
     }
 
     [Fact]
@@ -34,6 +41,6 @@ public class DeleteStudent : CommonTest
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<NotFoundException>();
+        await act.Should().ThrowAsync<StudentNotFoundException>();
     }
 }

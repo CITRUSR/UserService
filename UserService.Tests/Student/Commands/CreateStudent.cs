@@ -33,6 +33,6 @@ public class CreateStudent : CommonTest
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<NotFoundException>();
+        await act.Should().ThrowAsync<GroupNotFoundException>();
     }
 }

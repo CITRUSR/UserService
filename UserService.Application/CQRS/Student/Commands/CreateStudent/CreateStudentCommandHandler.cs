@@ -15,7 +15,7 @@ public class CreateStudentCommandHandler(IAppDbContext dbContext)
 
         if (group == null)
         {
-            throw new NotFoundException($"The group with Id:{request.GroupId} is not found");
+            throw new GroupNotFoundException(request.GroupId);
         }
 
         var student = new Domain.Entities.Student
