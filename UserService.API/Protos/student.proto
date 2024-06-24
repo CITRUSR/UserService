@@ -11,6 +11,7 @@ service Student{
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
   rpc DropOutStudent(DropOutStudentRequest) returns (DropOutStudentResponse);
   rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
+  rpc EditStudent(EditStudentRequest) returns (EditStudentResponse);
 }
 
 message CreateStudentRequest{
@@ -39,5 +40,17 @@ message DeleteStudentRequest{
 }
 
 message DeleteStudentResponse{
+  int64 Id = 1;
+}
+
+message EditStudentRequest{
+  int64 Id = 1;
+  string FirstName = 2;
+  string LastName = 3;
+  google.protobuf.StringValue PatronymicName = 4;
+  int32 GroupId = 5;
+}
+
+message EditStudentResponse{
   int64 Id = 1;
 }
