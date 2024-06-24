@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Serilog;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS;
 
@@ -29,6 +30,8 @@ public class CreateStudentCommandHandler(IAppDbContext dbContext)
 
         await DbContext.Students.AddAsync(student, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
+
+        Log.Information($"The student with Id:{student.Id} is created");
 
         return student.Id;
     }

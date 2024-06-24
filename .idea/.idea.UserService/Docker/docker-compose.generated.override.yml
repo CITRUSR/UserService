@@ -1,0 +1,35 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  userservice.api:
+    build:
+      context: "C:\\DocumentProg\\Projects\\dos\\services\\UserService"
+      dockerfile: "UserService.API/Dockerfile"
+      target: "base"
+      args:
+        BUILD_CONFIGURATION: "Debug"
+    command: []
+    entrypoint:
+    - "/opt/rider-debugger/linux-x64/dotnet/dotnet"
+    - "/opt/rider-debugger/JetBrains.Debugger.Worker.exe"
+    - "--mode=server"
+    - "--frontend-port=57100"
+    - "--backend-port=57300"
+    - "--timeout=60"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      RIDER_DEBUGGER_LOG_DIR: "/var/opt/rider-debugger"
+      RESHARPER_LOG_CONF: "/etc/opt/rider-debugger/backend-log.xml"
+    image: "userservice.api:dev"
+    ports:
+    - "127.0.0.1:57004:57100"
+    - "127.0.0.1:57204:57300"
+    volumes:
+    - "C:\\Users\\Admin\\.nuget\\packages:/home/app/.nuget/packages"
+    - "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.API:/app:rw"
+    - "C:\\DocumentProg\\Projects\\dos\\services\\UserService:/src:rw"
+    - "C:\\Users\\Admin\\AppData\\Local\\JetBrains\\RiderRemoteDebugger\\2023.3.6\\\
+      Linux64:/opt/rider-debugger"
+    - "C:\\Program Files\\JetBrains\\JetBrains Rider 2023.2.3\\bin:/etc/opt/rider-debugger/backend-log.xml"
+    - "C:\\Users\\Admin\\AppData\\Local\\JetBrains\\Rider2023.3\\log\\DebuggerWorker\\\
+      JetBrains.Debugger.Worker.2024_6_24_00_26_09:/var/opt/rider-debugger:rw"
+    working_dir: "/app"
