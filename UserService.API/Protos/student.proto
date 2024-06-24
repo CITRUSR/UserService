@@ -10,6 +10,7 @@ import "google/protobuf/timestamp.proto";
 service Student{
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
   rpc DropOutStudent(DropOutStudentRequest) returns (DropOutStudentResponse);
+  rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
 }
 
 message CreateStudentRequest{
@@ -30,5 +31,13 @@ message DropOutStudentRequest{
 }
 
 message DropOutStudentResponse{
+  int64 Id = 1;
+}
+
+message DeleteStudentRequest{
+  int64 Id = 1;
+}
+
+message DeleteStudentResponse{
   int64 Id = 1;
 }

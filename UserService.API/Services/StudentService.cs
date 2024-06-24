@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using MediatR;
+using UserService.Application.CQRS.Student.Commands.DeleteStudent;
 using UserService.Application.CQRS.Student.Commands.DropOutStudent;
 using UserService.Application.Student.Commands.CreateStudent;
 
@@ -31,6 +32,19 @@ public class StudentService(IMediator mediator) : UserService.Student.StudentBas
         var id = await _mediator.Send(command);
 
         return new DropOutStudentResponse
+        {
+            Id = id,
+        };
+    }
+
+    public override async Task<DeleteStudentResponse> DeleteStudent(DeleteStudentRequest request,
+        ServerCallContext context)
+    {
+        var command = new DeleteStudentCommand(request.Id);
+
+        var id = await _mediator.Send(command);
+
+        return new DeleteStudentResponse
         {
             Id = id,
         };
