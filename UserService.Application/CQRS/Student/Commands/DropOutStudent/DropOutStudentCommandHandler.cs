@@ -5,9 +5,9 @@ using UserService.Application.Common.Exceptions;
 namespace UserService.Application.CQRS.Student.Commands.DropOutStudent;
 
 public class DropOutStudentCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<DropOutStudentCommand, long>
+    : HandlerBase(dbContext), IRequestHandler<DropOutStudentCommand, Guid>
 {
-    public async Task<long> Handle(DropOutStudentCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(DropOutStudentCommand request, CancellationToken cancellationToken)
     {
         var student = await DbContext.Students.FindAsync(new object?[] { request.Id, cancellationToken },
             cancellationToken: cancellationToken);

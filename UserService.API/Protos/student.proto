@@ -15,7 +15,7 @@ service Student{
 }
 
 message CreateStudentRequest{
-  sint64 Id = 1;
+  string Id = 1;
   string FirstName = 2;
   string LastName = 3;
   google.protobuf.StringValue PatronymicName = 4;
@@ -23,28 +23,28 @@ message CreateStudentRequest{
 }
 
 message CreateStudentResponse{
-  sint64 Id = 1;
+  string Id = 1;
 }
 
 message DropOutStudentRequest{
-  int64 Id = 1;
+  string Id = 1;
   google.protobuf.Timestamp DroppedTime = 3;
 }
 
 message DropOutStudentResponse{
-  int64 Id = 1;
+  string Id = 1;
 }
 
 message DeleteStudentRequest{
-  int64 Id = 1;
+  string Id = 1;
 }
 
 message DeleteStudentResponse{
-  int64 Id = 1;
+  string Id = 1;
 }
 
 message EditStudentRequest{
-  int64 Id = 1;
+  string Id = 1;
   string FirstName = 2;
   string LastName = 3;
   google.protobuf.StringValue PatronymicName = 4;
@@ -52,5 +52,5 @@ message EditStudentRequest{
 }
 
 message EditStudentResponse{
-  int64 Id = 1;
+  string Id = 1;
 }

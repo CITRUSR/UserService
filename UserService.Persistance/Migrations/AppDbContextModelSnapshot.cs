@@ -30,8 +30,8 @@ namespace UserService.Persistance.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("CuratorId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("CuratorId")
+                        .HasColumnType("uuid");
 
                     b.Property<byte>("CurrentCourse")
                         .HasColumnType("smallint");
@@ -94,11 +94,9 @@ namespace UserService.Persistance.Migrations
 
             modelBuilder.Entity("UserService.Domain.Entities.Student", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("DroppedOutAt")
                         .HasColumnType("timestamp with time zone");
@@ -120,20 +118,23 @@ namespace UserService.Persistance.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
+                    b.Property<Guid>("SsoId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("SsoId");
 
                     b.ToTable("Students");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.Teacher", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("FiredAt")
                         .HasColumnType("timestamp with time zone");
@@ -155,7 +156,12 @@ namespace UserService.Persistance.Migrations
                     b.Property<short>("RoomId")
                         .HasColumnType("smallint");
 
+                    b.Property<Guid>("SsoId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SsoId");
 
                     b.ToTable("Teachers");
                 });

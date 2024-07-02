@@ -130,3 +130,9 @@ C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\obj\Debug\ne
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\obj\Debug\net8.0\UserService.Tests.genruntimeconfig.cache
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\obj\Debug\net8.0\ref\UserService.Tests.dll
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Serilog.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Microsoft.Extensions.Caching.StackExchangeRedis.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\StackExchange.Redis.dll

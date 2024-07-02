@@ -36,7 +36,7 @@ public class DeleteStudent : CommonTest
 
         await Context.AddAsync(student);
 
-        var command = new DeleteStudentCommand(12123125);
+        var command = new DeleteStudentCommand(Guid.NewGuid());
         var handler = new DeleteStudentCommandHandler(Context);
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);

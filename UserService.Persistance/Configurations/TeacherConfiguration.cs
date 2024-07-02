@@ -12,5 +12,8 @@ public class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
             .WithOne(e => e.Curator)
             .HasForeignKey(e => e.CuratorId)
             .IsRequired();
+
+        builder.HasKey(x => x.Id);
+        builder.HasIndex(x => x.SsoId);
     }
 }

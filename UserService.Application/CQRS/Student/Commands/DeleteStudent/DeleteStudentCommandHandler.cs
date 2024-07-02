@@ -5,9 +5,9 @@ using UserService.Application.Common.Exceptions;
 namespace UserService.Application.CQRS.Student.Commands.DeleteStudent;
 
 public class DeleteStudentCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<DeleteStudentCommand, long>
+    : HandlerBase(dbContext), IRequestHandler<DeleteStudentCommand, Guid>
 {
-    public async Task<long> Handle(DeleteStudentCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(DeleteStudentCommand request, CancellationToken cancellationToken)
     {
         var student = await DbContext.Students.FindAsync(new object?[] { request.Id, cancellationToken },
             cancellationToken: cancellationToken);

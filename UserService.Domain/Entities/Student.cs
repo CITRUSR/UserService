@@ -4,7 +4,8 @@ namespace UserService.Domain.Entities;
 
 public class Student
 {
-    public long Id { get; set; }
+    public Guid Id { get; set; }
+    public Guid SsoId { get; set; }
     [MaxLength(32)] [Required] public string FirstName { get; set; }
     [MaxLength(32)] [Required] public string LastName { get; set; }
     [MaxLength(32)] public string? PatronymicName { get; set; }

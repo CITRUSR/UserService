@@ -25,3 +25,4 @@ C:\DocumentProg\Projects\dos\services\UserService\UserService.Domain\obj\Debug\n
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Domain\obj\Debug\net8.0\UserService.Domain.pdb
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Domain\obj\Debug\net8.0\UserService.Domain.genruntimeconfig.cache
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Domain\obj\Debug\net8.0\ref\UserService.Domain.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Domain\obj\Debug\net8.0\UserService.Domain.csproj.AssemblyReference.cache

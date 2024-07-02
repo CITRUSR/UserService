@@ -14,53 +14,55 @@ public class StudentService(IMediator mediator) : UserService.Student.StudentBas
     public override async Task<CreateStudentResponse> CreateStudent(CreateStudentRequest request,
         ServerCallContext context)
     {
-        var command = new CreateStudentCommand(request.Id, request.FirstName, request.LastName, request.PatronymicName,
+        var command = new CreateStudentCommand(Guid.Parse(request.Id), request.FirstName, request.LastName,
+            request.PatronymicName,
             request.GroupId);
 
         var id = await _mediator.Send(command);
 
         return new CreateStudentResponse
         {
-            Id = id
+            Id = id.ToString()
         };
     }
 
     public override async Task<DropOutStudentResponse> DropOutStudent(DropOutStudentRequest request,
         ServerCallContext context)
     {
-        var command = new DropOutStudentCommand(request.Id, request.DroppedTime.ToDateTime());
+        var command = new DropOutStudentCommand(Guid.Parse(request.Id), request.DroppedTime.ToDateTime());
 
         var id = await _mediator.Send(command);
 
         return new DropOutStudentResponse
         {
-            Id = id,
+            Id = id.ToString(),
         };
     }
 
     public override async Task<DeleteStudentResponse> DeleteStudent(DeleteStudentRequest request,
         ServerCallContext context)
     {
-        var command = new DeleteStudentCommand(request.Id);
+        var command = new DeleteStudentCommand(Guid.Parse(request.Id));
 
         var id = await _mediator.Send(command);
 
         return new DeleteStudentResponse
         {
-            Id = id,
+            Id = id.ToString(),
         };
     }
 
     public override async Task<EditStudentResponse> EditStudent(EditStudentRequest request, ServerCallContext context)
     {
-        var command = new EditStudentCommand(request.Id, request.FirstName, request.LastName, request.PatronymicName,
+        var command = new EditStudentCommand(Guid.Parse(request.Id), request.FirstName, request.LastName,
+            request.PatronymicName,
             request.GroupId);
 
         var id = await _mediator.Send(command);
 
         return new EditStudentResponse
         {
-            Id = id,
+            Id = id.ToString(),
         };
     }
 }

@@ -6,9 +6,9 @@ using UserService.Application.CQRS;
 namespace UserService.Application.Student.Commands.CreateStudent;
 
 public class CreateStudentCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<CreateStudentCommand, long>
+    : HandlerBase(dbContext), IRequestHandler<CreateStudentCommand, Guid>
 {
-    public async Task<long> Handle(CreateStudentCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateStudentCommand request, CancellationToken cancellationToken)
     {
         var group = await DbContext.Groups.FindAsync(new object?[] { request.GroupId, cancellationToken },
             cancellationToken: cancellationToken);

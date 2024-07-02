@@ -2,4 +2,4 @@
 
 namespace UserService.Application.CQRS.Student.Commands.DropOutStudent;
 
-public record DropOutStudentCommand(long Id,DateTime DroppedOutTime) : IRequest<long>;
+public record DropOutStudentCommand(Guid Id,DateTime DroppedOutTime) : IRequest<Guid>;

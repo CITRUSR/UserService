@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bpIEvlybR59wMIE8M+7qHah3pNOLiWQwQIhmxyKFzFmddh+gKADYt0iA0aAlIMYeRvheYObk7XM0S3XWSdKzcg==",
+  "dgSpecHash": "bv+cR5xaVmPDK3DjdSIc2/B/REBjhuHZWlqD2wkOOr+XRmVqrJq00x2CEq2cEHJYuLauZ8dgEGIDdIRWgA97rw==",
   "success": true,
   "projectFilePath": "C:\\DocumentProg\\Projects\\dos\\services\\UserService\\UserService.Application\\UserService.Application.csproj",
   "expectedPackageFiles": [

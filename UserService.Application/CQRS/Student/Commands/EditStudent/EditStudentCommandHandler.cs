@@ -5,9 +5,9 @@ using UserService.Application.Common.Exceptions;
 namespace UserService.Application.CQRS.Student.Commands.EditStudent;
 
 public class EditStudentCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<EditStudentCommand, long>
+    : HandlerBase(dbContext), IRequestHandler<EditStudentCommand, Guid>
 {
-    public async Task<long> Handle(EditStudentCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(EditStudentCommand request, CancellationToken cancellationToken)
     {
         var student = await DbContext.Students.FindAsync(new object?[] { request.Id, cancellationToken },
             cancellationToken: cancellationToken);

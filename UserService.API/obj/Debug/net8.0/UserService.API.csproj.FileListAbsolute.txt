@@ -241,3 +241,9 @@ C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8
 C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.Sinks.Debug.dll
 C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Serilog.Sinks.File.dll
 C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Microsoft.Extensions.Caching.StackExchangeRedis.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.API\bin\Debug\net8.0\StackExchange.Redis.dll

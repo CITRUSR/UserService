@@ -12,5 +12,8 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
             .WithMany(e => e.Students)
             .HasForeignKey(e => e.GroupId)
             .IsRequired();
+
+        builder.HasKey(x => x.Id);
+        builder.HasIndex(x => x.SsoId);
     }
 }

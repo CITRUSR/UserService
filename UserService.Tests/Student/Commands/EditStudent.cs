@@ -21,7 +21,7 @@ public class EditStudent : CommonTest
         var newGroup = Fixture.Create<Group>();
 
         var newStudent = Fixture.Build<Domain.Entities.Student>().With(x => x.GroupId, newGroup.Id)
-            .With(x => x.Id, oldStudent.Id).With(x => x.Group, newGroup)
+            .With(x => x.Id, oldStudent.Id).With(x => x.SsoId, oldStudent.SsoId).With(x => x.Group, newGroup)
             .With(x => x.DroppedOutAt, oldStudent.DroppedOutAt).Create();
 
         await Context.AddAsync(oldStudent);
