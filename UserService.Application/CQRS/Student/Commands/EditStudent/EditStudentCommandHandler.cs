@@ -28,6 +28,7 @@ public class EditStudentCommandHandler(IAppDbContext dbContext)
         var oldStudent = new Domain.Entities.Student
         {
             Id = student.Id,
+            SsoId = student.SsoId,
             FirstName = student.FirstName,
             LastName = student.LastName,
             PatronymicName = student.PatronymicName,
