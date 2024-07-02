@@ -20,7 +20,8 @@ public class CreateStudentCommandHandler(IAppDbContext dbContext)
 
         var student = new Domain.Entities.Student
         {
-            Id = request.Id,
+            Id = Guid.NewGuid(),
+            SsoId = request.Id,
             FirstName = request.FirstName,
             LastName = request.LastName,
             PatronymicName = request.PatronymicName,
