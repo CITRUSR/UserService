@@ -34,6 +34,11 @@
       interval: 10s
       timeout: 3s
       retries: 3
+  redis:
+    image: redis
+    container_name: usersApiRedis
+    networks: 
+      - local
 networks:
   global_network:
     external: true

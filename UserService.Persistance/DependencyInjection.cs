@@ -16,6 +16,11 @@ public static class DependencyInjection
 
         services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
 
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("Redis");
+        });
+
         return services;
     }
 }
