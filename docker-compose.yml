@@ -37,8 +37,10 @@
   redis:
     image: redis
     container_name: usersApiRedis
-    networks: 
+    networks:
       - local
+    volumes:
+      - redis_data:/data
 networks:
   global_network:
     external: true
@@ -46,4 +48,6 @@ networks:
     driver: bridge
 volumes:
   postgres_data:
+    driver: local
+  redis_data:
     driver: local

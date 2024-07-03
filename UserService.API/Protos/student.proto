@@ -12,6 +12,7 @@ service Student{
   rpc DropOutStudent(DropOutStudentRequest) returns (DropOutStudentResponse);
   rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
   rpc EditStudent(EditStudentRequest) returns (EditStudentResponse);
+  rpc GetStudentById(GetStudentByIdRequest) returns (GetStudentByIdResponse);
 }
 
 message CreateStudentRequest{
@@ -53,4 +54,20 @@ message EditStudentRequest{
 
 message EditStudentResponse{
   string Id = 1;
+}
+
+message GetStudentByIdRequest{
+  string Id = 1;
+}
+
+//If isDropped true then student has DroppedTime else doesn't have DroppedTime(equals null)
+message GetStudentByIdResponse{
+  string Id = 1;
+  string SsoId = 2;
+  string FistName = 3;
+  string LastName = 4;
+  google.protobuf.StringValue PatronymicName = 5;
+  int32  GroupId = 6;
+  google.protobuf.Timestamp DroppedTime = 7;
+  bool IsDropped = 8;
 }
