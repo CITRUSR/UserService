@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
+﻿using Grpc.Core;
 using MediatR;
 using UserService.Application.CQRS.Student.Commands.DeleteStudent;
 using UserService.Application.CQRS.Student.Commands.DropOutStudent;
@@ -8,12 +7,15 @@ using UserService.Application.CQRS.Student.Quereis;
 using UserService.Application.CQRS.Student.Queries.GetStudentBySsoId;
 using UserService.Application.CQRS.Student.Queries.GetStudents;
 using UserService.Application.Student.Commands.CreateStudent;
+using UserService.Persistance.Mappers;
 
 namespace UserService.API.Services;
 
-public class StudentService(IMediator mediator) : Student.StudentBase
+public class StudentService(IMediator mediator, IMapper<Domain.Entities.Student, StudentModel> mapper)
+    : Student.StudentBase
 {
     private readonly IMediator _mediator = mediator;
+    private readonly IMapper<Domain.Entities.Student, StudentModel> _mapper = mapper;
 
     public override async Task<CreateStudentResponse> CreateStudent(CreateStudentRequest request,
         ServerCallContext context)
@@ -77,17 +79,7 @@ public class StudentService(IMediator mediator) : Student.StudentBase
 
         var student = await _mediator.Send(query);
 
-        return new StudentModel
-        {
-            Id = student.Id.ToString(),
-            SsoId = student.SsoId.ToString(),
-            FistName = student.FirstName,
-            LastName = student.LastName,
-            PatronymicName = student.PatronymicName,
-            GroupId = student.GroupId,
-            IsDropped = student.DroppedOutAt is not null,
-            DroppedTime = Timestamp.FromDateTime(student.DroppedOutAt.Value)
-        };
+        return _mapper.Map(student);
     }
 
     public override async Task<StudentModel> GetStudentBySsoId(GetStudentBySsoIdRequest request,
@@ -97,17 +89,7 @@ public class StudentService(IMediator mediator) : Student.StudentBase
 
         var student = await _mediator.Send(query);
 
-        return new StudentModel
-        {
-            Id = student.Id.ToString(),
-            SsoId = student.SsoId.ToString(),
-            FistName = student.FirstName,
-            LastName = student.LastName,
-            PatronymicName = student.PatronymicName,
-            GroupId = student.GroupId,
-            IsDropped = student.DroppedOutAt is not null,
-            DroppedTime = Timestamp.FromDateTime(student.DroppedOutAt.Value)
-        };
+        return _mapper.Map(student);
     }
 
     public override async Task<GetStudentsResponse> GetStudents(GetStudentsRequest request, ServerCallContext context)
@@ -126,17 +108,7 @@ public class StudentService(IMediator mediator) : Student.StudentBase
         {
             Students =
             {
-                students.Select(x => new StudentModel
-                {
-                    Id = x.Id.ToString(),
-                    SsoId = x.SsoId.ToString(),
-                    FistName = x.FirstName,
-                    LastName = x.LastName,
-                    PatronymicName = x.PatronymicName,
-                    GroupId = x.GroupId,
-                    IsDropped = x.DroppedOutAt is not null,
-                    DroppedTime = Timestamp.FromDateTime(x.DroppedOutAt.Value)
-                })
+                students.Select(x => _mapper.Map(x))
             }
         };
     }

@@ -4,6 +4,7 @@ using UserService.API.Services;
 using UserService.Application;
 using UserService.Persistance;
 using UserService.Persistance.Extensions;
+using UserService.Persistance.Mappers;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console().CreateLogger();
@@ -14,6 +15,7 @@ builder.Services.AddGrpc(options => { options.Interceptors.Add<ServerExceptionsI
 
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddMappers();
 
 var app = builder.Build();
 
