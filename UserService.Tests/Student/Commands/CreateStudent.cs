@@ -11,7 +11,7 @@ public class CreateStudent : CommonTest
     [Fact]
     public async void CreateStudent_ShouldBe_Success()
     {
-        var group = Fixture.Create<Group>();
+        var group = Fixture.Create<Domain.Entities.Group>();
 
         await Context.AddAsync(group);
         
