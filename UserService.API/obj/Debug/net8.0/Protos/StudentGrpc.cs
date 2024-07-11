@@ -66,6 +66,8 @@ namespace UserService {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::UserService.StudentModel> __Marshaller_Student_StudentModel = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.StudentModel.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::UserService.GetStudentBySsoIdRequest> __Marshaller_Student_GetStudentBySsoIdRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.GetStudentBySsoIdRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::UserService.GetStudentsRequest> __Marshaller_Student_GetStudentsRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.GetStudentsRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::UserService.GetStudentsResponse> __Marshaller_Student_GetStudentsResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.GetStudentsResponse.Parser));
@@ -108,6 +110,14 @@ namespace UserService {
         __ServiceName,
         "GetStudentById",
         __Marshaller_Student_GetStudentByIdRequest,
+        __Marshaller_Student_StudentModel);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::UserService.GetStudentBySsoIdRequest, global::UserService.StudentModel> __Method_GetStudentBySsoId = new grpc::Method<global::UserService.GetStudentBySsoIdRequest, global::UserService.StudentModel>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "GetStudentBySsoId",
+        __Marshaller_Student_GetStudentBySsoIdRequest,
         __Marshaller_Student_StudentModel);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
@@ -154,6 +164,12 @@ namespace UserService {
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::System.Threading.Tasks.Task<global::UserService.StudentModel> GetStudentById(global::UserService.GetStudentByIdRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::UserService.StudentModel> GetStudentBySsoId(global::UserService.GetStudentBySsoIdRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -294,6 +310,26 @@ namespace UserService {
         return CallInvoker.AsyncUnaryCall(__Method_GetStudentById, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::UserService.StudentModel GetStudentBySsoId(global::UserService.GetStudentBySsoIdRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return GetStudentBySsoId(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::UserService.StudentModel GetStudentBySsoId(global::UserService.GetStudentBySsoIdRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_GetStudentBySsoId, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::UserService.StudentModel> GetStudentBySsoIdAsync(global::UserService.GetStudentBySsoIdRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return GetStudentBySsoIdAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::UserService.StudentModel> GetStudentBySsoIdAsync(global::UserService.GetStudentBySsoIdRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_GetStudentBySsoId, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::UserService.GetStudentsResponse GetStudents(global::UserService.GetStudentsRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetStudents(request, new grpc::CallOptions(headers, deadline, cancellationToken));
@@ -332,6 +368,7 @@ namespace UserService {
           .AddMethod(__Method_DeleteStudent, serviceImpl.DeleteStudent)
           .AddMethod(__Method_EditStudent, serviceImpl.EditStudent)
           .AddMethod(__Method_GetStudentById, serviceImpl.GetStudentById)
+          .AddMethod(__Method_GetStudentBySsoId, serviceImpl.GetStudentBySsoId)
           .AddMethod(__Method_GetStudents, serviceImpl.GetStudents).Build();
     }
 
@@ -347,6 +384,7 @@ namespace UserService {
       serviceBinder.AddMethod(__Method_DeleteStudent, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.DeleteStudentRequest, global::UserService.DeleteStudentResponse>(serviceImpl.DeleteStudent));
       serviceBinder.AddMethod(__Method_EditStudent, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.EditStudentRequest, global::UserService.EditStudentResponse>(serviceImpl.EditStudent));
       serviceBinder.AddMethod(__Method_GetStudentById, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.GetStudentByIdRequest, global::UserService.StudentModel>(serviceImpl.GetStudentById));
+      serviceBinder.AddMethod(__Method_GetStudentBySsoId, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.GetStudentBySsoIdRequest, global::UserService.StudentModel>(serviceImpl.GetStudentBySsoId));
       serviceBinder.AddMethod(__Method_GetStudents, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.GetStudentsRequest, global::UserService.GetStudentsResponse>(serviceImpl.GetStudents));
     }
 

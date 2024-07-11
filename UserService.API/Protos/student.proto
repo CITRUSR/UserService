@@ -13,6 +13,7 @@ service Student{
   rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
   rpc EditStudent(EditStudentRequest) returns (EditStudentResponse);
   rpc GetStudentById(GetStudentByIdRequest) returns (StudentModel);
+  rpc GetStudentBySsoId (GetStudentBySsoIdRequest) returns (StudentModel);
   rpc GetStudents(GetStudentsRequest) returns (GetStudentsResponse);
 }
 
@@ -91,4 +92,8 @@ message StudentModel{
   int32  GroupId = 6;
   google.protobuf.Timestamp DroppedTime = 7;
   bool IsDropped = 8;
+}
+
+message GetStudentBySsoIdRequest{
+  string SsoId = 1;
 }
