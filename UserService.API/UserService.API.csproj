@@ -7,9 +7,10 @@
         <InvariantGlobalization>true</InvariantGlobalization>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <Protobuf Include="Protos/student.proto" GrpcServices="Server, Client"/>
+        <Protobuf Include="Protos/group.proto" GrpcServices="Server, Client"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -23,7 +24,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+        <PackageReference Include="Serilog.AspNetCore" Version="8.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -38,7 +39,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="logs\" />
+        <Folder Include="logs\"/>
     </ItemGroup>
 
 </Project>

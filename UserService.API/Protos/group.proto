@@ -1,0 +1,24 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "UserService";
+
+package Group;
+
+import "google/protobuf/timestamp.proto";
+
+service Group{
+  rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
+}
+
+message CreateGroupRequest{
+  int32 SpecialityId = 1;
+  string CuratorId = 2;
+  uint32 CurrentCourse = 3;
+  uint32 CurrentSemester = 4;
+  uint32 SubGroup = 5;
+  google.protobuf.Timestamp StartedAt = 6;
+}
+
+message CreateGroupResponse{
+  int32 Id = 1;
+}
