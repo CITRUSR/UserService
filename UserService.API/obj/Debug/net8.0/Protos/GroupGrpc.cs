@@ -49,6 +49,10 @@ namespace UserService {
     static readonly grpc::Marshaller<global::UserService.CreateGroupRequest> __Marshaller_Group_CreateGroupRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.CreateGroupRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::UserService.CreateGroupResponse> __Marshaller_Group_CreateGroupResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.CreateGroupResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::UserService.GraduateGroupRequest> __Marshaller_Group_GraduateGroupRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.GraduateGroupRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::UserService.GraduateGroupResponse> __Marshaller_Group_GraduateGroupResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.GraduateGroupResponse.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::UserService.CreateGroupRequest, global::UserService.CreateGroupResponse> __Method_CreateGroup = new grpc::Method<global::UserService.CreateGroupRequest, global::UserService.CreateGroupResponse>(
@@ -57,6 +61,14 @@ namespace UserService {
         "CreateGroup",
         __Marshaller_Group_CreateGroupRequest,
         __Marshaller_Group_CreateGroupResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::UserService.GraduateGroupRequest, global::UserService.GraduateGroupResponse> __Method_GraduateGroup = new grpc::Method<global::UserService.GraduateGroupRequest, global::UserService.GraduateGroupResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "GraduateGroup",
+        __Marshaller_Group_GraduateGroupRequest,
+        __Marshaller_Group_GraduateGroupResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -70,6 +82,12 @@ namespace UserService {
     {
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::System.Threading.Tasks.Task<global::UserService.CreateGroupResponse> CreateGroup(global::UserService.CreateGroupRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::UserService.GraduateGroupResponse> GraduateGroup(global::UserService.GraduateGroupRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -123,6 +141,26 @@ namespace UserService {
       {
         return CallInvoker.AsyncUnaryCall(__Method_CreateGroup, null, options, request);
       }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::UserService.GraduateGroupResponse GraduateGroup(global::UserService.GraduateGroupRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return GraduateGroup(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::UserService.GraduateGroupResponse GraduateGroup(global::UserService.GraduateGroupRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_GraduateGroup, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::UserService.GraduateGroupResponse> GraduateGroupAsync(global::UserService.GraduateGroupRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return GraduateGroupAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::UserService.GraduateGroupResponse> GraduateGroupAsync(global::UserService.GraduateGroupRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_GraduateGroup, null, options, request);
+      }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       protected override GroupClient NewInstance(ClientBaseConfiguration configuration)
@@ -137,7 +175,8 @@ namespace UserService {
     public static grpc::ServerServiceDefinition BindService(GroupBase serviceImpl)
     {
       return grpc::ServerServiceDefinition.CreateBuilder()
-          .AddMethod(__Method_CreateGroup, serviceImpl.CreateGroup).Build();
+          .AddMethod(__Method_CreateGroup, serviceImpl.CreateGroup)
+          .AddMethod(__Method_GraduateGroup, serviceImpl.GraduateGroup).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the service binding logic.
@@ -148,6 +187,7 @@ namespace UserService {
     public static void BindService(grpc::ServiceBinderBase serviceBinder, GroupBase serviceImpl)
     {
       serviceBinder.AddMethod(__Method_CreateGroup, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.CreateGroupRequest, global::UserService.CreateGroupResponse>(serviceImpl.CreateGroup));
+      serviceBinder.AddMethod(__Method_GraduateGroup, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.GraduateGroupRequest, global::UserService.GraduateGroupResponse>(serviceImpl.GraduateGroup));
     }
 
   }

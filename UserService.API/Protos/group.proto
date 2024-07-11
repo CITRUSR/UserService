@@ -8,6 +8,7 @@ import "google/protobuf/timestamp.proto";
 
 service Group{
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
+  rpc GraduateGroup (GraduateGroupRequest) returns (GraduateGroupResponse);
 }
 
 message CreateGroupRequest{
@@ -20,5 +21,14 @@ message CreateGroupRequest{
 }
 
 message CreateGroupResponse{
+  int32 Id = 1;
+}
+
+message GraduateGroupRequest{
+  int32 Id = 1;
+  google.protobuf.Timestamp GraduatedTime = 2;
+}
+
+message GraduateGroupResponse{
   int32 Id = 1;
 }
