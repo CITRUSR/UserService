@@ -15,4 +15,9 @@ public class Group
     [Required] public DateTime StartedAt { get; set; }
     public ICollection<Student> Students { get; } = new List<Student>();
     public DateTime? GraduatedAt { get; set; }
+
+    public override string ToString()
+    {
+        return $"{CurrentCourse}-{Speciality.Abbreavation}{SubGroup}";
+    }
 }

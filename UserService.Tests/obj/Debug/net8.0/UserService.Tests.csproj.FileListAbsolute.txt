@@ -136,3 +136,6 @@ C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\ne
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
 C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\StackExchange.Redis.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Castle.Core.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Moq.dll
+C:\DocumentProg\Projects\dos\services\UserService\UserService.Tests\bin\Debug\net8.0\Moq.EntityFrameworkCore.dll

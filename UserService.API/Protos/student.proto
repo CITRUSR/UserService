@@ -12,7 +12,8 @@ service Student{
   rpc DropOutStudent(DropOutStudentRequest) returns (DropOutStudentResponse);
   rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
   rpc EditStudent(EditStudentRequest) returns (EditStudentResponse);
-  rpc GetStudentById(GetStudentByIdRequest) returns (GetStudentByIdResponse);
+  rpc GetStudentById(GetStudentByIdRequest) returns (StudentModel);
+  rpc GetStudents(GetStudentsRequest) returns (GetStudentsResponse);
 }
 
 message CreateStudentRequest{
@@ -60,8 +61,28 @@ message GetStudentByIdRequest{
   string Id = 1;
 }
 
+enum SortState{
+  FistNameAsc = 0;
+  FirstNameDesc = 1;
+  LastNameAsc = 2;
+  LastNameDesc = 3;
+  GroupAsc = 4;
+  GroupDesc = 5;
+}
+
+message GetStudentsRequest{
+  google.protobuf.StringValue SearchString = 1;
+  int32 Page = 2;
+  int32 PageSize = 3;
+  SortState SortState = 4;
+}
+
+message GetStudentsResponse{
+  repeated StudentModel Students = 1;
+}
+
 //If isDropped true then student has DroppedTime else doesn't have DroppedTime(equals null)
-message GetStudentByIdResponse{
+message StudentModel{
   string Id = 1;
   string SsoId = 2;
   string FistName = 3;

@@ -18,4 +18,10 @@ public class CommonTest : IDisposable
     {
         ContextFactory.Destroy(Context);
     }
+
+    public void ClearDataBase()
+    {
+        Context.Database.EnsureDeleted();
+        Context.Database.EnsureCreated();
+    }
 }
