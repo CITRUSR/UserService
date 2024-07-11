@@ -11,7 +11,7 @@ public class DeleteStudent : CommonTest
     [Fact]
     public async void DeleteStudent_ShouldBe_Success()
     {
-        var group = Fixture.Create<Group>();
+        var group = Fixture.Create<Domain.Entities.Group>();
 
         var student = Fixture.Build<Domain.Entities.Student>().With(x => x.GroupId, group.Id).Create();
 
