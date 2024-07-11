@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.Student.Commands.EditStudent;
-using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
 namespace UserService.Tests.Student.Commands;
@@ -15,10 +14,10 @@ public class EditStudent : CommonTest
 
         var oldStudent = Fixture.Build<Domain.Entities.Student>().With(x => x.GroupId, oldGroupId).Create();
 
-        var oldGroup = Fixture.Build<Group>().With(x => x.Id, oldGroupId).Create();
+        var oldGroup = Fixture.Build<Domain.Entities.Group>().With(x => x.Id, oldGroupId).Create();
         oldGroup.Students.Add(oldStudent);
 
-        var newGroup = Fixture.Create<Group>();
+        var newGroup = Fixture.Create<Domain.Entities.Group>();
 
         var newStudent = Fixture.Build<Domain.Entities.Student>().With(x => x.GroupId, newGroup.Id)
             .With(x => x.Id, oldStudent.Id).With(x => x.SsoId, oldStudent.SsoId).With(x => x.Group, newGroup)
