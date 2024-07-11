@@ -13,7 +13,7 @@ public class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
             .HasForeignKey(e => e.CuratorId)
             .IsRequired();
 
-        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
         builder.HasIndex(x => x.SsoId);
     }
 }

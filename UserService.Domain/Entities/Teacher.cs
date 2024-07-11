@@ -4,7 +4,8 @@ namespace UserService.Domain.Entities;
 
 public class Teacher
 {
-    public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; }
+
     public Guid SsoId { get; set; }
     [MaxLength(32)] [Required] public string FirstName { get; set; }
     [MaxLength(32)] [Required] public string LastName { get; set; }

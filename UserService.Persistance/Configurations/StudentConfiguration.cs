@@ -13,7 +13,7 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
             .HasForeignKey(e => e.GroupId)
             .IsRequired();
 
-        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
         builder.HasIndex(x => x.SsoId);
     }
 }

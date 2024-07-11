@@ -21,7 +21,8 @@ namespace UserService.Persistance.Migrations
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     Abbreavation = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     Cost = table.Column<decimal>(type: "numeric", nullable: false),
-                    DurationMonths = table.Column<byte>(type: "smallint", nullable: false)
+                    DurationMonths = table.Column<byte>(type: "smallint", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,8 +33,8 @@ namespace UserService.Persistance.Migrations
                 name: "Teachers",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    SsoId = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     LastName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     PatronymicName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
@@ -52,7 +53,7 @@ namespace UserService.Persistance.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     SpecialityId = table.Column<int>(type: "integer", nullable: false),
-                    CuratorId = table.Column<long>(type: "bigint", nullable: false),
+                    CuratorId = table.Column<Guid>(type: "uuid", nullable: false),
                     CurrentCourse = table.Column<byte>(type: "smallint", nullable: false),
                     CurrentSemester = table.Column<byte>(type: "smallint", nullable: false),
                     SubGroup = table.Column<byte>(type: "smallint", nullable: false),
@@ -80,8 +81,8 @@ namespace UserService.Persistance.Migrations
                 name: "Students",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    SsoId = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     LastName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     PatronymicName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
@@ -113,6 +114,16 @@ namespace UserService.Persistance.Migrations
                 name: "IX_Students_GroupId",
                 table: "Students",
                 column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Students_SsoId",
+                table: "Students",
+                column: "SsoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Teachers_SsoId",
+                table: "Teachers",
+                column: "SsoId");
         }
 
         /// <inheritdoc />
