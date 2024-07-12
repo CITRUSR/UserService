@@ -53,6 +53,10 @@ namespace UserService {
     static readonly grpc::Marshaller<global::UserService.GraduateGroupRequest> __Marshaller_Group_GraduateGroupRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.GraduateGroupRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::UserService.GraduateGroupResponse> __Marshaller_Group_GraduateGroupResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.GraduateGroupResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::UserService.TransferGroupToNextSemesterRequest> __Marshaller_Group_TransferGroupToNextSemesterRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.TransferGroupToNextSemesterRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::UserService.TransferGroupToNextSemesterResponse> __Marshaller_Group_TransferGroupToNextSemesterResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.TransferGroupToNextSemesterResponse.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::UserService.CreateGroupRequest, global::UserService.CreateGroupResponse> __Method_CreateGroup = new grpc::Method<global::UserService.CreateGroupRequest, global::UserService.CreateGroupResponse>(
@@ -69,6 +73,14 @@ namespace UserService {
         "GraduateGroup",
         __Marshaller_Group_GraduateGroupRequest,
         __Marshaller_Group_GraduateGroupResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::UserService.TransferGroupToNextSemesterRequest, global::UserService.TransferGroupToNextSemesterResponse> __Method_TransferGroupToNextSemester = new grpc::Method<global::UserService.TransferGroupToNextSemesterRequest, global::UserService.TransferGroupToNextSemesterResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "TransferGroupToNextSemester",
+        __Marshaller_Group_TransferGroupToNextSemesterRequest,
+        __Marshaller_Group_TransferGroupToNextSemesterResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -88,6 +100,12 @@ namespace UserService {
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::System.Threading.Tasks.Task<global::UserService.GraduateGroupResponse> GraduateGroup(global::UserService.GraduateGroupRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::UserService.TransferGroupToNextSemesterResponse> TransferGroupToNextSemester(global::UserService.TransferGroupToNextSemesterRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -161,6 +179,26 @@ namespace UserService {
       {
         return CallInvoker.AsyncUnaryCall(__Method_GraduateGroup, null, options, request);
       }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::UserService.TransferGroupToNextSemesterResponse TransferGroupToNextSemester(global::UserService.TransferGroupToNextSemesterRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return TransferGroupToNextSemester(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::UserService.TransferGroupToNextSemesterResponse TransferGroupToNextSemester(global::UserService.TransferGroupToNextSemesterRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_TransferGroupToNextSemester, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::UserService.TransferGroupToNextSemesterResponse> TransferGroupToNextSemesterAsync(global::UserService.TransferGroupToNextSemesterRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return TransferGroupToNextSemesterAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::UserService.TransferGroupToNextSemesterResponse> TransferGroupToNextSemesterAsync(global::UserService.TransferGroupToNextSemesterRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_TransferGroupToNextSemester, null, options, request);
+      }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       protected override GroupClient NewInstance(ClientBaseConfiguration configuration)
@@ -176,7 +214,8 @@ namespace UserService {
     {
       return grpc::ServerServiceDefinition.CreateBuilder()
           .AddMethod(__Method_CreateGroup, serviceImpl.CreateGroup)
-          .AddMethod(__Method_GraduateGroup, serviceImpl.GraduateGroup).Build();
+          .AddMethod(__Method_GraduateGroup, serviceImpl.GraduateGroup)
+          .AddMethod(__Method_TransferGroupToNextSemester, serviceImpl.TransferGroupToNextSemester).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the service binding logic.
@@ -188,6 +227,7 @@ namespace UserService {
     {
       serviceBinder.AddMethod(__Method_CreateGroup, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.CreateGroupRequest, global::UserService.CreateGroupResponse>(serviceImpl.CreateGroup));
       serviceBinder.AddMethod(__Method_GraduateGroup, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.GraduateGroupRequest, global::UserService.GraduateGroupResponse>(serviceImpl.GraduateGroup));
+      serviceBinder.AddMethod(__Method_TransferGroupToNextSemester, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.TransferGroupToNextSemesterRequest, global::UserService.TransferGroupToNextSemesterResponse>(serviceImpl.TransferGroupToNextSemester));
     }
 
   }
