@@ -11,6 +11,7 @@ service Group{
   rpc GraduateGroup (GraduateGroupRequest) returns (GraduateGroupResponse);
   rpc TransferGroupToNextSemester (TransferGroupToNextSemesterRequest) returns (TransferGroupToNextSemesterResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
+  rpc TransferGroupToNextCourse (TransferGroupToNextCourseRequest) returns (TransferGroupToNextCourseResponse);
 }
 
 message CreateGroupRequest{
@@ -50,4 +51,12 @@ message TransferGroupsToNextSemesterRequest{
 
 message TransferGroupsToNextSemesterResponse{
   repeated int32 IdGroups = 1;
+}
+
+message TransferGroupToNextCourseRequest{
+  int32 Id = 1;
+}
+
+message TransferGroupToNextCourseResponse{
+  int32 Id = 1;
 }

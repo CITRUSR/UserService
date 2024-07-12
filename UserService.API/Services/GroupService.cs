@@ -3,6 +3,7 @@ using MediatR;
 using UserService.Application.CQRS.Group.Commands.CreateGroup;
 using UserService.Application.CQRS.Group.Commands.GraduateGroup;
 using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextSemester;
+using UserService.Application.CQRS.Group.Commands.TransferGroupToNextCourse;
 using UserService.Application.CQRS.Group.Commands.TransferGroupToNextSemester;
 
 namespace UserService.API.Services;
@@ -63,6 +64,19 @@ public class GroupService(IMediator mediator) : Group.GroupBase
         return new TransferGroupsToNextSemesterResponse
         {
             IdGroups = { ids }
+        };
+    }
+
+    public override async Task<TransferGroupToNextCourseResponse> TransferGroupToNextCourse(
+        TransferGroupToNextCourseRequest request, ServerCallContext context)
+    {
+        var command = new TransferGroupToNextCourseCommand(request.Id);
+
+        var id = await _mediator.Send(command);
+
+        return new TransferGroupToNextCourseResponse
+        {
+            Id = id
         };
     }
 }
