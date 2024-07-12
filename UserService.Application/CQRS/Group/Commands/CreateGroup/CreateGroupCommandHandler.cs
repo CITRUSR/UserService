@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Serilog;
 using UserService.Application.Common.Exceptions;
 
 namespace UserService.Application.CQRS.Group.Commands.CreateGroup;
@@ -36,6 +37,8 @@ public class CreateGroupCommandHandler(IAppDbContext dbContext)
 
         await DbContext.Groups.AddAsync(group, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
+        
+        Log.Information($"The group with id:{group.Id} is created");
 
         return group.Id;
     }
