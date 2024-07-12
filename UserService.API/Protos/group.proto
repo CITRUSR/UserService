@@ -12,6 +12,7 @@ service Group{
   rpc TransferGroupToNextSemester (TransferGroupToNextSemesterRequest) returns (TransferGroupToNextSemesterResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
   rpc TransferGroupToNextCourse (TransferGroupToNextCourseRequest) returns (TransferGroupToNextCourseResponse);
+  rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);
 }
 
 message CreateGroupRequest{
@@ -59,4 +60,13 @@ message TransferGroupToNextCourseRequest{
 
 message TransferGroupToNextCourseResponse{
   int32 Id = 1;
+}
+
+//If be empty then will be taking every group
+message TransferGroupsToNextCourseRequest{
+  repeated int32 IdGroups = 1;
+}
+
+message TransferGroupsToNextCourseResponse{
+  repeated int32 IdGroups = 1;
 }
