@@ -50,6 +50,10 @@ namespace UserService {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::UserService.CreateGroupResponse> __Marshaller_Group_CreateGroupResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.CreateGroupResponse.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::UserService.DeleteGroupRequest> __Marshaller_Group_DeleteGroupRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.DeleteGroupRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::UserService.DeleteGroupResponse> __Marshaller_Group_DeleteGroupResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.DeleteGroupResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::UserService.GraduateGroupRequest> __Marshaller_Group_GraduateGroupRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.GraduateGroupRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::UserService.GraduateGroupResponse> __Marshaller_Group_GraduateGroupResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::UserService.GraduateGroupResponse.Parser));
@@ -69,6 +73,14 @@ namespace UserService {
         "CreateGroup",
         __Marshaller_Group_CreateGroupRequest,
         __Marshaller_Group_CreateGroupResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::UserService.DeleteGroupRequest, global::UserService.DeleteGroupResponse> __Method_DeleteGroup = new grpc::Method<global::UserService.DeleteGroupRequest, global::UserService.DeleteGroupResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "DeleteGroup",
+        __Marshaller_Group_DeleteGroupRequest,
+        __Marshaller_Group_DeleteGroupResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::UserService.GraduateGroupRequest, global::UserService.GraduateGroupResponse> __Method_GraduateGroup = new grpc::Method<global::UserService.GraduateGroupRequest, global::UserService.GraduateGroupResponse>(
@@ -106,6 +118,12 @@ namespace UserService {
     {
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::System.Threading.Tasks.Task<global::UserService.CreateGroupResponse> CreateGroup(global::UserService.CreateGroupRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::UserService.DeleteGroupResponse> DeleteGroup(global::UserService.DeleteGroupRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -176,6 +194,26 @@ namespace UserService {
       public virtual grpc::AsyncUnaryCall<global::UserService.CreateGroupResponse> CreateGroupAsync(global::UserService.CreateGroupRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_CreateGroup, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::UserService.DeleteGroupResponse DeleteGroup(global::UserService.DeleteGroupRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return DeleteGroup(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::UserService.DeleteGroupResponse DeleteGroup(global::UserService.DeleteGroupRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_DeleteGroup, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::UserService.DeleteGroupResponse> DeleteGroupAsync(global::UserService.DeleteGroupRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return DeleteGroupAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::UserService.DeleteGroupResponse> DeleteGroupAsync(global::UserService.DeleteGroupRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_DeleteGroup, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::UserService.GraduateGroupResponse GraduateGroup(global::UserService.GraduateGroupRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
@@ -252,6 +290,7 @@ namespace UserService {
     {
       return grpc::ServerServiceDefinition.CreateBuilder()
           .AddMethod(__Method_CreateGroup, serviceImpl.CreateGroup)
+          .AddMethod(__Method_DeleteGroup, serviceImpl.DeleteGroup)
           .AddMethod(__Method_GraduateGroup, serviceImpl.GraduateGroup)
           .AddMethod(__Method_TransferGroupsToNextSemester, serviceImpl.TransferGroupsToNextSemester)
           .AddMethod(__Method_TransferGroupsToNextCourse, serviceImpl.TransferGroupsToNextCourse).Build();
@@ -265,6 +304,7 @@ namespace UserService {
     public static void BindService(grpc::ServiceBinderBase serviceBinder, GroupBase serviceImpl)
     {
       serviceBinder.AddMethod(__Method_CreateGroup, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.CreateGroupRequest, global::UserService.CreateGroupResponse>(serviceImpl.CreateGroup));
+      serviceBinder.AddMethod(__Method_DeleteGroup, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.DeleteGroupRequest, global::UserService.DeleteGroupResponse>(serviceImpl.DeleteGroup));
       serviceBinder.AddMethod(__Method_GraduateGroup, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.GraduateGroupRequest, global::UserService.GraduateGroupResponse>(serviceImpl.GraduateGroup));
       serviceBinder.AddMethod(__Method_TransferGroupsToNextSemester, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.TransferGroupsToNextSemesterRequest, global::UserService.TransferGroupsToNextSemesterResponse>(serviceImpl.TransferGroupsToNextSemester));
       serviceBinder.AddMethod(__Method_TransferGroupsToNextCourse, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::UserService.TransferGroupsToNextCourseRequest, global::UserService.TransferGroupsToNextCourseResponse>(serviceImpl.TransferGroupsToNextCourse));
