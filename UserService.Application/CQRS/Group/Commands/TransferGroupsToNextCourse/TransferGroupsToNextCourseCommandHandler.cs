@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using UserService.Application.Common.Exceptions;
 
 namespace UserService.Application.CQRS.Group.Commands.TransferGroupsToNextCourse;
 
@@ -10,23 +11,37 @@ public class TransferGroupsToNextCourseCommandHandler(IAppDbContext dbContext)
     {
         var groups = await DbContext.Groups.ToListAsync(cancellationToken);
 
+        List<int> invalidGroupsId = new List<int>();
+
         if (request.IdGroups != null && request.IdGroups.Any())
         {
             groups = groups.Where(x => request.IdGroups.Contains(x.Id)).ToList();
-
-            foreach (var group in groups)
-            {
-                group.CurrentCourse++;
-            }
-
-            return groups.Select(x => x.Id).ToList();
         }
 
-        foreach (var group in groups)
+        IncreaseCourse(groups, invalidGroupsId);
+
+        if (invalidGroupsId.Any())
         {
-            group.CurrentCourse++;
+            throw new GroupCourseOutOfRangeException(invalidGroupsId.ToArray());
         }
 
         return groups.Select(x => x.Id).ToList();
+    }
+
+    private void IncreaseCourse(List<Domain.Entities.Group> groups, List<int> invalidGroupsId)
+    {
+        foreach (var group in groups)
+        {
+            var maxCourse = Math.Ceiling(group.Speciality.DurationMonths / 12.0);
+
+            if (group.CurrentCourse + 1 > maxCourse)
+            {
+                invalidGroupsId.Add(group.Id);
+            }
+            else
+            {
+                group.CurrentCourse++;
+            }
+        }
     }
 }
