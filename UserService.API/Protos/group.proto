@@ -9,9 +9,7 @@ import "google/protobuf/timestamp.proto";
 service Group{
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
   rpc GraduateGroup (GraduateGroupRequest) returns (GraduateGroupResponse);
-  rpc TransferGroupToNextSemester (TransferGroupToNextSemesterRequest) returns (TransferGroupToNextSemesterResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
-  rpc TransferGroupToNextCourse (TransferGroupToNextCourseRequest) returns (TransferGroupToNextCourseResponse);
   rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);
 }
 
@@ -37,14 +35,6 @@ message GraduateGroupResponse{
   int32 Id = 1;
 }
 
-message TransferGroupToNextSemesterRequest{
-  int32 Id = 1;
-}
-
-message TransferGroupToNextSemesterResponse{
-  int32 Id = 1;
-}
-
 //If be empty then will be taking every group
 message TransferGroupsToNextSemesterRequest{
   repeated int32 IdGroups = 1;
@@ -52,14 +42,6 @@ message TransferGroupsToNextSemesterRequest{
 
 message TransferGroupsToNextSemesterResponse{
   repeated int32 IdGroups = 1;
-}
-
-message TransferGroupToNextCourseRequest{
-  int32 Id = 1;
-}
-
-message TransferGroupToNextCourseResponse{
-  int32 Id = 1;
 }
 
 //If be empty then will be taking every group
