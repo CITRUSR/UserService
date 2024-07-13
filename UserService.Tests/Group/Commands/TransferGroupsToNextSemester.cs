@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
+using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextSemester;
+using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
 namespace UserService.Tests.Group.Commands;
@@ -9,49 +11,77 @@ public class TransferGroupsToNextSemester : CommonTest
     [Fact]
     public async void TransferGroupsToNextSemester_ShouldBe_SuccessWithList()
     {
-        ClearDataBase();
-
-        var groups = Fixture.CreateMany<Domain.Entities.Group>(5).ToList();
-
-        var semesters = groups.ToDictionary(group => group, group => group.CurrentSemester);
-
-        await Context.Groups.AddRangeAsync(groups);
-        await Context.SaveChangesAsync();
+        var semesters = await Arrange(6);
 
         var command = new TransferGroupsToNextSemesterCommand
         {
-            IdGroups = groups.Select(x => x.Id).ToList(),
+            IdGroups = Context.Groups.Select(x => x.Id).ToList(),
         };
 
-        var handler = new TransferGroupsToNextSemesterCommandHandler(Context);
+        var ids = await Action(command);
 
-        var ids = await handler.Handle(command, CancellationToken.None);
-
-        foreach (var group in groups.Where(x => ids.Contains(x.Id)))
-        {
-            semesters[group].Should().Be(--group.CurrentSemester);
-        }
+        Assert(ids, semesters);
     }
 
     [Fact]
     public async void TransferGroupsToNextSemester_ShouldBe_SuccessWithoutList()
     {
-        ClearDataBase();
-
-        var groups = Fixture.CreateMany<Domain.Entities.Group>(5);
-
-        var semesters = groups.ToDictionary(x => x, x => x.CurrentSemester);
-
-        await Context.Groups.AddRangeAsync(groups);
-        await Context.SaveChangesAsync();
+        var semesters = await Arrange(6);
 
         var command = new TransferGroupsToNextSemesterCommand();
 
+        var ids = await Action(command);
+
+        Assert(ids, semesters);
+    }
+
+    [Fact]
+    public async void TransferGroupsToNextSemester_ShouldBe_GroupSemesterOutOfRange()
+    {
+        var semesters = await Arrange(8);
+
+        var command = new TransferGroupsToNextSemesterCommand();
+
+        Func<Task> act = async () => await Action(command);
+
+        await act.Should().ThrowAsync<GroupSemesterOutOfRangeException>();
+    }
+
+    private async Task<Dictionary<Domain.Entities.Group, byte>> Arrange(int currentSemester)
+    {
+        ClearDataBase();
+
+        var speciality = Fixture.Build<Speciality>()
+            .With(x => x.DurationMonths, 46)
+            .Create();
+
+        var group1 = Fixture.Build<Domain.Entities.Group>()
+            .With(x => x.CurrentSemester, currentSemester)
+            .With(x => x.Speciality, speciality)
+            .Create();
+
+        var group2 = Fixture.Build<Domain.Entities.Group>()
+            .With(x => x.CurrentSemester, currentSemester)
+            .With(x => x.Speciality, speciality)
+            .Create();
+
+        await Context.Groups.AddAsync(group1);
+        await Context.Groups.AddAsync(group2);
+        await Context.SaveChangesAsync();
+
+        return Context.Groups.ToDictionary(x => x, x => x.CurrentSemester);
+    }
+
+    private async Task<List<int>> Action(TransferGroupsToNextSemesterCommand command)
+    {
         var handler = new TransferGroupsToNextSemesterCommandHandler(Context);
 
-        var ids = await handler.Handle(command, CancellationToken.None);
+        return await handler.Handle(command, CancellationToken.None);
+    }
 
-        foreach (var group in Context.Groups.Where(x => ids.Contains(x.Id)))
+    private void Assert(List<int> GroupsId, Dictionary<Domain.Entities.Group, byte> semesters)
+    {
+        foreach (var group in Context.Groups.Where(x => GroupsId.Contains(x.Id)))
         {
             semesters[group].Should().Be(--group.CurrentSemester);
         }
