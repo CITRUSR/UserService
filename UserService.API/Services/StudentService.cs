@@ -20,7 +20,7 @@ public class StudentService(IMediator mediator, IMapper<Domain.Entities.Student,
     public override async Task<CreateStudentResponse> CreateStudent(CreateStudentRequest request,
         ServerCallContext context)
     {
-        var command = new CreateStudentCommand(Guid.Parse(request.Id), request.FirstName, request.LastName,
+        var command = new CreateStudentCommand(Guid.Parse(request.SsoId), request.FirstName, request.LastName,
             request.PatronymicName,
             request.GroupId);
 

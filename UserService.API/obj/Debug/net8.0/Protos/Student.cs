@@ -26,50 +26,50 @@ namespace UserService {
           string.Concat(
             "ChRQcm90b3Mvc3R1ZGVudC5wcm90bxIHU3R1ZGVudBoeZ29vZ2xlL3Byb3Rv",
             "YnVmL3dyYXBwZXJzLnByb3RvGh9nb29nbGUvcHJvdG9idWYvdGltZXN0YW1w",
-            "LnByb3RvIo4BChRDcmVhdGVTdHVkZW50UmVxdWVzdBIKCgJJZBgBIAEoCRIR",
-            "CglGaXJzdE5hbWUYAiABKAkSEAoITGFzdE5hbWUYAyABKAkSNAoOUGF0cm9u",
-            "eW1pY05hbWUYBCABKAsyHC5nb29nbGUucHJvdG9idWYuU3RyaW5nVmFsdWUS",
-            "DwoHR3JvdXBJZBgFIAEoESIjChVDcmVhdGVTdHVkZW50UmVzcG9uc2USCgoC",
-            "SWQYASABKAkiVAoVRHJvcE91dFN0dWRlbnRSZXF1ZXN0EgoKAklkGAEgASgJ",
-            "Ei8KC0Ryb3BwZWRUaW1lGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVz",
-            "dGFtcCIkChZEcm9wT3V0U3R1ZGVudFJlc3BvbnNlEgoKAklkGAEgASgJIiIK",
-            "FERlbGV0ZVN0dWRlbnRSZXF1ZXN0EgoKAklkGAEgASgJIiMKFURlbGV0ZVN0",
-            "dWRlbnRSZXNwb25zZRIKCgJJZBgBIAEoCSKMAQoSRWRpdFN0dWRlbnRSZXF1",
-            "ZXN0EgoKAklkGAEgASgJEhEKCUZpcnN0TmFtZRgCIAEoCRIQCghMYXN0TmFt",
-            "ZRgDIAEoCRI0Cg5QYXRyb255bWljTmFtZRgEIAEoCzIcLmdvb2dsZS5wcm90",
-            "b2J1Zi5TdHJpbmdWYWx1ZRIPCgdHcm91cElkGAUgASgFIiEKE0VkaXRTdHVk",
-            "ZW50UmVzcG9uc2USCgoCSWQYASABKAkiIwoVR2V0U3R1ZGVudEJ5SWRSZXF1",
-            "ZXN0EgoKAklkGAEgASgJIo8BChJHZXRTdHVkZW50c1JlcXVlc3QSMgoMU2Vh",
-            "cmNoU3RyaW5nGAEgASgLMhwuZ29vZ2xlLnByb3RvYnVmLlN0cmluZ1ZhbHVl",
-            "EgwKBFBhZ2UYAiABKAUSEAoIUGFnZVNpemUYAyABKAUSJQoJU29ydFN0YXRl",
-            "GAQgASgOMhIuU3R1ZGVudC5Tb3J0U3RhdGUiPgoTR2V0U3R1ZGVudHNSZXNw",
-            "b25zZRInCghTdHVkZW50cxgBIAMoCzIVLlN0dWRlbnQuU3R1ZGVudE1vZGVs",
-            "ItgBCgxTdHVkZW50TW9kZWwSCgoCSWQYASABKAkSDQoFU3NvSWQYAiABKAkS",
-            "EAoIRmlzdE5hbWUYAyABKAkSEAoITGFzdE5hbWUYBCABKAkSNAoOUGF0cm9u",
-            "eW1pY05hbWUYBSABKAsyHC5nb29nbGUucHJvdG9idWYuU3RyaW5nVmFsdWUS",
-            "DwoHR3JvdXBJZBgGIAEoBRIvCgtEcm9wcGVkVGltZRgHIAEoCzIaLmdvb2ds",
-            "ZS5wcm90b2J1Zi5UaW1lc3RhbXASEQoJSXNEcm9wcGVkGAggASgIIikKGEdl",
-            "dFN0dWRlbnRCeVNzb0lkUmVxdWVzdBINCgVTc29JZBgBIAEoCSpvCglTb3J0",
-            "U3RhdGUSDwoLRmlzdE5hbWVBc2MQABIRCg1GaXJzdE5hbWVEZXNjEAESDwoL",
-            "TGFzdE5hbWVBc2MQAhIQCgxMYXN0TmFtZURlc2MQAxIMCghHcm91cEFzYxAE",
-            "Eg0KCUdyb3VwRGVzYxAFMqgECgdTdHVkZW50Ek4KDUNyZWF0ZVN0dWRlbnQS",
-            "HS5TdHVkZW50LkNyZWF0ZVN0dWRlbnRSZXF1ZXN0Gh4uU3R1ZGVudC5DcmVh",
-            "dGVTdHVkZW50UmVzcG9uc2USUQoORHJvcE91dFN0dWRlbnQSHi5TdHVkZW50",
-            "LkRyb3BPdXRTdHVkZW50UmVxdWVzdBofLlN0dWRlbnQuRHJvcE91dFN0dWRl",
-            "bnRSZXNwb25zZRJOCg1EZWxldGVTdHVkZW50Eh0uU3R1ZGVudC5EZWxldGVT",
-            "dHVkZW50UmVxdWVzdBoeLlN0dWRlbnQuRGVsZXRlU3R1ZGVudFJlc3BvbnNl",
-            "EkgKC0VkaXRTdHVkZW50EhsuU3R1ZGVudC5FZGl0U3R1ZGVudFJlcXVlc3Qa",
-            "HC5TdHVkZW50LkVkaXRTdHVkZW50UmVzcG9uc2USRwoOR2V0U3R1ZGVudEJ5",
-            "SWQSHi5TdHVkZW50LkdldFN0dWRlbnRCeUlkUmVxdWVzdBoVLlN0dWRlbnQu",
-            "U3R1ZGVudE1vZGVsEk0KEUdldFN0dWRlbnRCeVNzb0lkEiEuU3R1ZGVudC5H",
-            "ZXRTdHVkZW50QnlTc29JZFJlcXVlc3QaFS5TdHVkZW50LlN0dWRlbnRNb2Rl",
-            "bBJICgtHZXRTdHVkZW50cxIbLlN0dWRlbnQuR2V0U3R1ZGVudHNSZXF1ZXN0",
-            "GhwuU3R1ZGVudC5HZXRTdHVkZW50c1Jlc3BvbnNlQg6qAgtVc2VyU2Vydmlj",
-            "ZWIGcHJvdG8z"));
+            "LnByb3RvIpEBChRDcmVhdGVTdHVkZW50UmVxdWVzdBINCgVTc29JZBgBIAEo",
+            "CRIRCglGaXJzdE5hbWUYAiABKAkSEAoITGFzdE5hbWUYAyABKAkSNAoOUGF0",
+            "cm9ueW1pY05hbWUYBCABKAsyHC5nb29nbGUucHJvdG9idWYuU3RyaW5nVmFs",
+            "dWUSDwoHR3JvdXBJZBgFIAEoESIjChVDcmVhdGVTdHVkZW50UmVzcG9uc2US",
+            "CgoCSWQYASABKAkiVAoVRHJvcE91dFN0dWRlbnRSZXF1ZXN0EgoKAklkGAEg",
+            "ASgJEi8KC0Ryb3BwZWRUaW1lGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRp",
+            "bWVzdGFtcCIkChZEcm9wT3V0U3R1ZGVudFJlc3BvbnNlEgoKAklkGAEgASgJ",
+            "IiIKFERlbGV0ZVN0dWRlbnRSZXF1ZXN0EgoKAklkGAEgASgJIiMKFURlbGV0",
+            "ZVN0dWRlbnRSZXNwb25zZRIKCgJJZBgBIAEoCSKMAQoSRWRpdFN0dWRlbnRS",
+            "ZXF1ZXN0EgoKAklkGAEgASgJEhEKCUZpcnN0TmFtZRgCIAEoCRIQCghMYXN0",
+            "TmFtZRgDIAEoCRI0Cg5QYXRyb255bWljTmFtZRgEIAEoCzIcLmdvb2dsZS5w",
+            "cm90b2J1Zi5TdHJpbmdWYWx1ZRIPCgdHcm91cElkGAUgASgFIiEKE0VkaXRT",
+            "dHVkZW50UmVzcG9uc2USCgoCSWQYASABKAkiIwoVR2V0U3R1ZGVudEJ5SWRS",
+            "ZXF1ZXN0EgoKAklkGAEgASgJIo8BChJHZXRTdHVkZW50c1JlcXVlc3QSMgoM",
+            "U2VhcmNoU3RyaW5nGAEgASgLMhwuZ29vZ2xlLnByb3RvYnVmLlN0cmluZ1Zh",
+            "bHVlEgwKBFBhZ2UYAiABKAUSEAoIUGFnZVNpemUYAyABKAUSJQoJU29ydFN0",
+            "YXRlGAQgASgOMhIuU3R1ZGVudC5Tb3J0U3RhdGUiPgoTR2V0U3R1ZGVudHNS",
+            "ZXNwb25zZRInCghTdHVkZW50cxgBIAMoCzIVLlN0dWRlbnQuU3R1ZGVudE1v",
+            "ZGVsItgBCgxTdHVkZW50TW9kZWwSCgoCSWQYASABKAkSDQoFU3NvSWQYAiAB",
+            "KAkSEAoIRmlzdE5hbWUYAyABKAkSEAoITGFzdE5hbWUYBCABKAkSNAoOUGF0",
+            "cm9ueW1pY05hbWUYBSABKAsyHC5nb29nbGUucHJvdG9idWYuU3RyaW5nVmFs",
+            "dWUSDwoHR3JvdXBJZBgGIAEoBRIvCgtEcm9wcGVkVGltZRgHIAEoCzIaLmdv",
+            "b2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEQoJSXNEcm9wcGVkGAggASgIIikK",
+            "GEdldFN0dWRlbnRCeVNzb0lkUmVxdWVzdBINCgVTc29JZBgBIAEoCSpvCglT",
+            "b3J0U3RhdGUSDwoLRmlzdE5hbWVBc2MQABIRCg1GaXJzdE5hbWVEZXNjEAES",
+            "DwoLTGFzdE5hbWVBc2MQAhIQCgxMYXN0TmFtZURlc2MQAxIMCghHcm91cEFz",
+            "YxAEEg0KCUdyb3VwRGVzYxAFMqgECgdTdHVkZW50Ek4KDUNyZWF0ZVN0dWRl",
+            "bnQSHS5TdHVkZW50LkNyZWF0ZVN0dWRlbnRSZXF1ZXN0Gh4uU3R1ZGVudC5D",
+            "cmVhdGVTdHVkZW50UmVzcG9uc2USUQoORHJvcE91dFN0dWRlbnQSHi5TdHVk",
+            "ZW50LkRyb3BPdXRTdHVkZW50UmVxdWVzdBofLlN0dWRlbnQuRHJvcE91dFN0",
+            "dWRlbnRSZXNwb25zZRJOCg1EZWxldGVTdHVkZW50Eh0uU3R1ZGVudC5EZWxl",
+            "dGVTdHVkZW50UmVxdWVzdBoeLlN0dWRlbnQuRGVsZXRlU3R1ZGVudFJlc3Bv",
+            "bnNlEkgKC0VkaXRTdHVkZW50EhsuU3R1ZGVudC5FZGl0U3R1ZGVudFJlcXVl",
+            "c3QaHC5TdHVkZW50LkVkaXRTdHVkZW50UmVzcG9uc2USRwoOR2V0U3R1ZGVu",
+            "dEJ5SWQSHi5TdHVkZW50LkdldFN0dWRlbnRCeUlkUmVxdWVzdBoVLlN0dWRl",
+            "bnQuU3R1ZGVudE1vZGVsEk0KEUdldFN0dWRlbnRCeVNzb0lkEiEuU3R1ZGVu",
+            "dC5HZXRTdHVkZW50QnlTc29JZFJlcXVlc3QaFS5TdHVkZW50LlN0dWRlbnRN",
+            "b2RlbBJICgtHZXRTdHVkZW50cxIbLlN0dWRlbnQuR2V0U3R1ZGVudHNSZXF1",
+            "ZXN0GhwuU3R1ZGVudC5HZXRTdHVkZW50c1Jlc3BvbnNlQg6qAgtVc2VyU2Vy",
+            "dmljZWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::UserService.SortState), }, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::UserService.CreateStudentRequest), global::UserService.CreateStudentRequest.Parser, new[]{ "Id", "FirstName", "LastName", "PatronymicName", "GroupId" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::UserService.CreateStudentRequest), global::UserService.CreateStudentRequest.Parser, new[]{ "SsoId", "FirstName", "LastName", "PatronymicName", "GroupId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::UserService.CreateStudentResponse), global::UserService.CreateStudentResponse.Parser, new[]{ "Id" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::UserService.DropOutStudentRequest), global::UserService.DropOutStudentRequest.Parser, new[]{ "Id", "DroppedTime" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::UserService.DropOutStudentResponse), global::UserService.DropOutStudentResponse.Parser, new[]{ "Id" }, null, null, null, null),
@@ -135,7 +135,7 @@ namespace UserService {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public CreateStudentRequest(CreateStudentRequest other) : this() {
-      id_ = other.id_;
+      ssoId_ = other.ssoId_;
       firstName_ = other.firstName_;
       lastName_ = other.lastName_;
       PatronymicName = other.PatronymicName;
@@ -149,15 +149,15 @@ namespace UserService {
       return new CreateStudentRequest(this);
     }
 
-    /// <summary>Field number for the "Id" field.</summary>
-    public const int IdFieldNumber = 1;
-    private string id_ = "";
+    /// <summary>Field number for the "SsoId" field.</summary>
+    public const int SsoIdFieldNumber = 1;
+    private string ssoId_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Id {
-      get { return id_; }
+    public string SsoId {
+      get { return ssoId_; }
       set {
-        id_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        ssoId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -226,7 +226,7 @@ namespace UserService {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (Id != other.Id) return false;
+      if (SsoId != other.SsoId) return false;
       if (FirstName != other.FirstName) return false;
       if (LastName != other.LastName) return false;
       if (PatronymicName != other.PatronymicName) return false;
@@ -238,7 +238,7 @@ namespace UserService {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (Id.Length != 0) hash ^= Id.GetHashCode();
+      if (SsoId.Length != 0) hash ^= SsoId.GetHashCode();
       if (FirstName.Length != 0) hash ^= FirstName.GetHashCode();
       if (LastName.Length != 0) hash ^= LastName.GetHashCode();
       if (patronymicName_ != null) hash ^= PatronymicName.GetHashCode();
@@ -261,9 +261,9 @@ namespace UserService {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (Id.Length != 0) {
+      if (SsoId.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteString(Id);
+        output.WriteString(SsoId);
       }
       if (FirstName.Length != 0) {
         output.WriteRawTag(18);
@@ -290,9 +290,9 @@ namespace UserService {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Id.Length != 0) {
+      if (SsoId.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteString(Id);
+        output.WriteString(SsoId);
       }
       if (FirstName.Length != 0) {
         output.WriteRawTag(18);
@@ -319,8 +319,8 @@ namespace UserService {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (Id.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
+      if (SsoId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(SsoId);
       }
       if (FirstName.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(FirstName);
@@ -346,8 +346,8 @@ namespace UserService {
       if (other == null) {
         return;
       }
-      if (other.Id.Length != 0) {
-        Id = other.Id;
+      if (other.SsoId.Length != 0) {
+        SsoId = other.SsoId;
       }
       if (other.FirstName.Length != 0) {
         FirstName = other.FirstName;
@@ -379,7 +379,7 @@ namespace UserService {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            Id = input.ReadString();
+            SsoId = input.ReadString();
             break;
           }
           case 18: {
@@ -417,7 +417,7 @@ namespace UserService {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            Id = input.ReadString();
+            SsoId = input.ReadString();
             break;
           }
           case 18: {

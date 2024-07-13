@@ -18,7 +18,7 @@ service Student{
 }
 
 message CreateStudentRequest{
-  string Id = 1;
+  string SsoId = 1;
   string FirstName = 2;
   string LastName = 3;
   google.protobuf.StringValue PatronymicName = 4;
