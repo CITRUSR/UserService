@@ -6,6 +6,12 @@ namespace UserService.Tests.Student.Queries;
 
 public class GetStudents : CommonTest
 {
+    private readonly struct CreateStudentOption(string firstName, string lastName)
+    {
+        public string FirstName { get; } = firstName;
+        public string LastName { get; } = lastName;
+    }
+
     [Fact]
     public async void GetStudents_ShouldBe_SuccessWithPageSize()
     {
@@ -59,15 +65,8 @@ public class GetStudents : CommonTest
     [Fact]
     public async void GetStudents_ShouldBe_SuccessWithFiltrationByNameAsc()
     {
-        ClearDataBase();
-
-        var studentA = Fixture.Build<Domain.Entities.Student>().With(x => x.FirstName, "Avgeei").Create();
-        var studentB = Fixture.Build<Domain.Entities.Student>().With(x => x.FirstName, "Cdei").Create();
-
-        await Context.AddAsync(studentA);
-        await Context.AddAsync(studentB);
-
-        await Context.SaveChangesAsync();
+        var (studentA, studentB) =
+            await Arrange(new CreateStudentOption("Abas", "Asb"), new CreateStudentOption("Bbs", "bbs"));
 
         var query = new GetStudentsQuery()
         {
@@ -77,9 +76,7 @@ public class GetStudents : CommonTest
             SearchString = "",
         };
 
-        var handler = new GetStudentsQueryHandler(Context);
-
-        var students = await handler.Handle(query, CancellationToken.None);
+        var students = await Action(query);
 
         students[0].Should().BeEquivalentTo(studentA);
         students[1].Should().BeEquivalentTo(studentB);
@@ -88,15 +85,8 @@ public class GetStudents : CommonTest
     [Fact]
     public async void GetStudents_ShouldBe_SuccessWithFiltrationByNameDesc()
     {
-        ClearDataBase();
-
-        var studentA = Fixture.Build<Domain.Entities.Student>().With(x => x.FirstName, "Avgeei").Create();
-        var studentB = Fixture.Build<Domain.Entities.Student>().With(x => x.FirstName, "Cdei").Create();
-
-        await Context.AddAsync(studentA);
-        await Context.AddAsync(studentB);
-
-        await Context.SaveChangesAsync();
+        var (studentA, studentB) =
+            await Arrange(new CreateStudentOption("Abas", "Asb"), new CreateStudentOption("Bbs", "bbs"));
 
         var query = new GetStudentsQuery()
         {
@@ -106,9 +96,7 @@ public class GetStudents : CommonTest
             SearchString = "",
         };
 
-        var handler = new GetStudentsQueryHandler(Context);
-
-        var students = await handler.Handle(query, CancellationToken.None);
+        var students = await Action(query);
 
         students[0].Should().BeEquivalentTo(studentB);
         students[1].Should().BeEquivalentTo(studentA);
@@ -117,15 +105,8 @@ public class GetStudents : CommonTest
     [Fact]
     public async void GetStudents_ShouldBe_SuccessWithFiltrationByLastNameAsc()
     {
-        ClearDataBase();
-
-        var studentA = Fixture.Build<Domain.Entities.Student>().With(x => x.LastName, "Avgeei").Create();
-        var studentB = Fixture.Build<Domain.Entities.Student>().With(x => x.LastName, "Cdei").Create();
-
-        await Context.AddAsync(studentA);
-        await Context.AddAsync(studentB);
-
-        await Context.SaveChangesAsync();
+        var (studentA, studentB) =
+            await Arrange(new CreateStudentOption("Abas", "Asb"), new CreateStudentOption("Bbs", "bbs"));
 
         var query = new GetStudentsQuery()
         {
@@ -135,9 +116,7 @@ public class GetStudents : CommonTest
             SearchString = "",
         };
 
-        var handler = new GetStudentsQueryHandler(Context);
-
-        var students = await handler.Handle(query, CancellationToken.None);
+        var students = await Action(query);
 
         students[0].Should().BeEquivalentTo(studentA);
         students[1].Should().BeEquivalentTo(studentB);
@@ -146,15 +125,8 @@ public class GetStudents : CommonTest
     [Fact]
     public async void GetStudents_ShouldBe_SuccessWithFiltrationByLastNameDesc()
     {
-        ClearDataBase();
-
-        var studentA = Fixture.Build<Domain.Entities.Student>().With(x => x.LastName, "Avgeei").Create();
-        var studentB = Fixture.Build<Domain.Entities.Student>().With(x => x.LastName, "Cdei").Create();
-
-        await Context.AddAsync(studentA);
-        await Context.AddAsync(studentB);
-
-        await Context.SaveChangesAsync();
+        var (studentA, studentB) =
+            await Arrange(new CreateStudentOption("Abas", "Asb"), new CreateStudentOption("Bbs", "bbs"));
 
         var query = new GetStudentsQuery()
         {
@@ -164,9 +136,7 @@ public class GetStudents : CommonTest
             SearchString = "",
         };
 
-        var handler = new GetStudentsQueryHandler(Context);
-
-        var students = await handler.Handle(query, CancellationToken.None);
+        var students = await Action(query);
 
         students[0].Should().BeEquivalentTo(studentB);
         students[1].Should().BeEquivalentTo(studentA);
@@ -175,15 +145,7 @@ public class GetStudents : CommonTest
     [Fact]
     public async void GetStudents_ShouldBe_SuccessWithFiltrationByGroupAsc()
     {
-        ClearDataBase();
-
-        var studentA = Fixture.Create<Domain.Entities.Student>();
-        var studentB = Fixture.Create<Domain.Entities.Student>();
-
-        await Context.AddAsync(studentA);
-        await Context.AddAsync(studentB);
-
-        await Context.SaveChangesAsync();
+        ArrangeForGroupTests();
 
         var studentExc = Context.Students.OrderBy(s => s.Group.CurrentSemester)
             .ThenBy(s => s.Group.Speciality.Abbreavation).ThenBy(s => s.Group.SubGroup);
@@ -196,9 +158,7 @@ public class GetStudents : CommonTest
             SearchString = "",
         };
 
-        var handler = new GetStudentsQueryHandler(Context);
-
-        var students = await handler.Handle(query, CancellationToken.None);
+        var students = await Action(query);
 
         students.Should().BeEquivalentTo(studentExc, options => options.WithStrictOrdering());
     }
@@ -206,15 +166,7 @@ public class GetStudents : CommonTest
     [Fact]
     public async void GetStudents_ShouldBe_SuccessWithFiltrationByGroupDesc()
     {
-        ClearDataBase();
-
-        var studentA = Fixture.Create<Domain.Entities.Student>();
-        var studentB = Fixture.Create<Domain.Entities.Student>();
-
-        await Context.AddAsync(studentA);
-        await Context.AddAsync(studentB);
-
-        await Context.SaveChangesAsync();
+        ArrangeForGroupTests();
 
         var studentExc = Context.Students.OrderByDescending(s => s.Group.CurrentSemester)
             .ThenBy(s => s.Group.Speciality.Abbreavation).ThenBy(s => s.Group.SubGroup);
@@ -227,10 +179,51 @@ public class GetStudents : CommonTest
             SearchString = "",
         };
 
-        var handler = new GetStudentsQueryHandler(Context);
-
-        var students = await handler.Handle(query, CancellationToken.None);
+        var students = await Action(query);
 
         students.Should().BeEquivalentTo(studentExc, options => options.WithStrictOrdering());
+    }
+
+    private async Task<(Domain.Entities.Student studentA, Domain.Entities.Student studentB)> Arrange(
+        CreateStudentOption studentOptionA, CreateStudentOption studentOptionB)
+    {
+        ClearDataBase();
+
+        var studentA = Fixture.Build<Domain.Entities.Student>()
+            .With(x => x.FirstName, studentOptionA.FirstName)
+            .With(x => x.LastName, studentOptionA.LastName)
+            .Create();
+
+        var studentB = Fixture.Build<Domain.Entities.Student>()
+            .With(x => x.FirstName, studentOptionB.FirstName)
+            .With(x => x.LastName, studentOptionB.LastName)
+            .Create();
+
+        await Context.AddAsync(studentA);
+        await Context.AddAsync(studentB);
+
+        await Context.SaveChangesAsync();
+
+        return (studentA, studentB);
+    }
+
+    private async void ArrangeForGroupTests()
+    {
+        ClearDataBase();
+
+        var studentA = Fixture.Create<Domain.Entities.Student>();
+        var studentB = Fixture.Create<Domain.Entities.Student>();
+
+        await Context.AddAsync(studentA);
+        await Context.AddAsync(studentB);
+
+        await Context.SaveChangesAsync();
+    }
+
+    private async Task<List<Domain.Entities.Student>> Action(GetStudentsQuery query)
+    {
+        var handler = new GetStudentsQueryHandler(Context);
+
+        return await handler.Handle(query, CancellationToken.None);
     }
 }
