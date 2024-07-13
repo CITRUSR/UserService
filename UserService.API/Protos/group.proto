@@ -8,6 +8,7 @@ import "google/protobuf/timestamp.proto";
 
 service Group{
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
+  rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse);
   rpc GraduateGroup (GraduateGroupRequest) returns (GraduateGroupResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
   rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);
@@ -51,4 +52,12 @@ message TransferGroupsToNextCourseRequest{
 
 message TransferGroupsToNextCourseResponse{
   repeated int32 IdGroups = 1;
+}
+
+message DeleteGroupRequest{
+  int32 Id = 1;
+}
+
+message DeleteGroupResponse{
+  int32 Id = 1;
 }

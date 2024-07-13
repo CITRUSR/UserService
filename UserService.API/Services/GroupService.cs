@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using MediatR;
 using UserService.Application.CQRS.Group.Commands.CreateGroup;
+using UserService.Application.CQRS.Group.Commands.DeleteGroup;
 using UserService.Application.CQRS.Group.Commands.GraduateGroup;
 using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextSemester;
@@ -22,6 +23,18 @@ public class GroupService(IMediator mediator) : Group.GroupBase
         return new CreateGroupResponse
         {
             Id = id,
+        };
+    }
+
+    public override async Task<DeleteGroupResponse> DeleteGroup(DeleteGroupRequest request, ServerCallContext context)
+    {
+        var command = new DeleteGroupCommand(request.Id);
+
+        var id = await _mediator.Send(command);
+
+        return new DeleteGroupResponse
+        {
+            Id = id
         };
     }
 
