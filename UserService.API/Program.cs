@@ -27,5 +27,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapGrpcService<StudentService>();
+app.MapGrpcService<GroupService>();
 
 app.Run();
