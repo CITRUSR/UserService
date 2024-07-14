@@ -2,6 +2,7 @@
 using MediatR;
 using UserService.Application.CQRS.Group.Commands.CreateGroup;
 using UserService.Application.CQRS.Group.Commands.DeleteGroup;
+using UserService.Application.CQRS.Group.Commands.EditGroup;
 using UserService.Application.CQRS.Group.Commands.GraduateGroup;
 using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextSemester;
@@ -33,6 +34,21 @@ public class GroupService(IMediator mediator) : Group.GroupBase
         var id = await _mediator.Send(command);
 
         return new DeleteGroupResponse
+        {
+            Id = id
+        };
+    }
+
+    public override async Task<EditGroupResponse> EditGroup(EditGroupRequest request, ServerCallContext context)
+    {
+        var command = new EditGroupCommand(request.Id, request.SpecialityId, Guid.Parse(request.CuratorId),
+            (byte)request.CurrentCourse,
+            (byte)request.CurrentSemester,
+            (byte)request.SubGroup);
+
+        var id = await _mediator.Send(command);
+
+        return new EditGroupResponse
         {
             Id = id
         };
