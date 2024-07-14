@@ -6,12 +6,15 @@ using UserService.Application.CQRS.Group.Commands.EditGroup;
 using UserService.Application.CQRS.Group.Commands.GraduateGroup;
 using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextSemester;
+using UserService.Application.CQRS.Group.Queries.GetGroupById;
+using UserService.Persistance.Mappers;
 
 namespace UserService.API.Services;
 
-public class GroupService(IMediator mediator) : Group.GroupBase
+public class GroupService(IMediator mediator, IMapper<Domain.Entities.Group, GroupModel> mapper) : Group.GroupBase
 {
     private readonly IMediator _mediator = mediator;
+    private readonly IMapper<Domain.Entities.Group, GroupModel> _mapper = mapper;
 
     public override async Task<CreateGroupResponse> CreateGroup(CreateGroupRequest request, ServerCallContext context)
     {
@@ -97,5 +100,14 @@ public class GroupService(IMediator mediator) : Group.GroupBase
         {
             IdGroups = { ids }
         };
+    }
+
+    public override async Task<GroupModel> GetGroupById(GetGroupByIdRequest request, ServerCallContext context)
+    {
+        var query = new GetGroupByIdQuery(request.Id);
+
+        var group = await _mediator.Send(query);
+
+        return _mapper.Map(group);
     }
 }
