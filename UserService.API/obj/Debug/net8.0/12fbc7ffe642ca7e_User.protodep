@@ -1,3 +1,0 @@
-obj\Debug\net8.0\Protos/User.cs \
-obj\Debug\net8.0\Protos/UserGrpc.cs: C:/Users/Admin/.nuget/packages/grpc.tools/2.64.0/build/native/include/google/protobuf/wrappers.proto\
- Protos/user.proto
