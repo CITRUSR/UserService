@@ -1,4 +1,0 @@
-obj\Debug\net8.0\Protos/Student.cs \
-obj\Debug\net8.0\Protos/StudentGrpc.cs: C:/Users/Admin/.nuget/packages/grpc.tools/2.64.0/build/native/include/google/protobuf/wrappers.proto\
- C:/Users/Admin/.nuget/packages/grpc.tools/2.64.0/build/native/include/google/protobuf/timestamp.proto\
- Protos/student.proto
