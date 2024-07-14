@@ -13,6 +13,20 @@ service Group{
   rpc GraduateGroup (GraduateGroupRequest) returns (GraduateGroupResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
   rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);
+  rpc GetGroupById (GetGroupByIdRequest) returns (GroupModel);
+}
+
+//If IsGraduated true then GraduatedAt is not null else GraduatedAt is null
+message GroupModel{
+  int32 Id = 1;
+  int32 SpecialityId = 2;
+  string CuratorId = 3;
+  uint32 CurrentCourse = 4;
+  uint32 CurrentSemester = 5;
+  uint32 SubGroup = 6;
+  google.protobuf.Timestamp StartedAt = 7;
+  google.protobuf.Timestamp GraduatedAt = 8;
+  bool IsGraduated = 9;
 }
 
 message CreateGroupRequest{
@@ -73,5 +87,9 @@ message EditGroupRequest{
 }
 
 message EditGroupResponse{
+  int32 Id = 1;
+}
+
+message GetGroupByIdRequest{
   int32 Id = 1;
 }

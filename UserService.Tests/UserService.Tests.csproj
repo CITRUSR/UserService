@@ -33,8 +33,4 @@
       <ProjectReference Include="..\UserService.Persistance\UserService.Persistance.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Group\Queries\" />
-    </ItemGroup>
-
 </Project>
