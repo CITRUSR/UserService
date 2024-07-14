@@ -40,6 +40,7 @@
 
     <ItemGroup>
         <Folder Include="logs\"/>
+        <Folder Include="obj\Debug\net8.0\Protos\" />
     </ItemGroup>
 
 </Project>
