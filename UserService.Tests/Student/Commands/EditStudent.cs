@@ -10,6 +10,8 @@ public class EditStudent : CommonTest
     [Fact]
     public async void EditStudent_ShouldBe_Success()
     {
+        ClearDataBase();
+        
         int oldGroupId = 12;
 
         var oldStudent = Fixture.Build<Domain.Entities.Student>().With(x => x.GroupId, oldGroupId).Create();

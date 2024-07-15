@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.Student.Queries.GetStudents;
 using UserService.Tests.Common;
 
@@ -30,11 +31,10 @@ public class GetStudents : CommonTest
             SearchString = "",
         };
 
-        var handler = new GetStudentsQueryHandler(Context);
+        var studentsRes = await Action(query);
 
-        var studentsRes = await handler.Handle(query, CancellationToken.None);
-
-        studentsRes.Should().HaveCount(10);
+        studentsRes.Items.Should().HaveCount(10);
+        studentsRes.MaxPage.Should().Be(2);
     }
 
     [Fact]
@@ -55,11 +55,10 @@ public class GetStudents : CommonTest
             SearchString = "",
         };
 
-        var handler = new GetStudentsQueryHandler(Context);
+        var studentsRes = await Action(query);
 
-        var studentsRes = await handler.Handle(query, CancellationToken.None);
-
-        studentsRes.Should().HaveCount(2);
+        studentsRes.Items.Should().HaveCount(2);
+        studentsRes.MaxPage.Should().Be(2);
     }
 
     [Fact]
@@ -78,8 +77,8 @@ public class GetStudents : CommonTest
 
         var students = await Action(query);
 
-        students[0].Should().BeEquivalentTo(studentA);
-        students[1].Should().BeEquivalentTo(studentB);
+        students.Items[0].Should().BeEquivalentTo(studentA);
+        students.Items[1].Should().BeEquivalentTo(studentB);
     }
 
     [Fact]
@@ -98,8 +97,8 @@ public class GetStudents : CommonTest
 
         var students = await Action(query);
 
-        students[0].Should().BeEquivalentTo(studentB);
-        students[1].Should().BeEquivalentTo(studentA);
+        students.Items[0].Should().BeEquivalentTo(studentB);
+        students.Items[1].Should().BeEquivalentTo(studentA);
     }
 
     [Fact]
@@ -118,8 +117,8 @@ public class GetStudents : CommonTest
 
         var students = await Action(query);
 
-        students[0].Should().BeEquivalentTo(studentA);
-        students[1].Should().BeEquivalentTo(studentB);
+        students.Items[0].Should().BeEquivalentTo(studentA);
+        students.Items[1].Should().BeEquivalentTo(studentB);
     }
 
     [Fact]
@@ -138,8 +137,8 @@ public class GetStudents : CommonTest
 
         var students = await Action(query);
 
-        students[0].Should().BeEquivalentTo(studentB);
-        students[1].Should().BeEquivalentTo(studentA);
+        students.Items[0].Should().BeEquivalentTo(studentB);
+        students.Items[1].Should().BeEquivalentTo(studentA);
     }
 
     [Fact]
@@ -160,7 +159,7 @@ public class GetStudents : CommonTest
 
         var students = await Action(query);
 
-        students.Should().BeEquivalentTo(studentExc, options => options.WithStrictOrdering());
+        students.Items.Should().BeEquivalentTo(studentExc, options => options.WithStrictOrdering());
     }
 
     [Fact]
@@ -181,7 +180,7 @@ public class GetStudents : CommonTest
 
         var students = await Action(query);
 
-        students.Should().BeEquivalentTo(studentExc, options => options.WithStrictOrdering());
+        students.Items.Should().BeEquivalentTo(studentExc, options => options.WithStrictOrdering());
     }
 
     private async Task<(Domain.Entities.Student studentA, Domain.Entities.Student studentB)> Arrange(
@@ -220,7 +219,7 @@ public class GetStudents : CommonTest
         await Context.SaveChangesAsync();
     }
 
-    private async Task<List<Domain.Entities.Student>> Action(GetStudentsQuery query)
+    private async Task<PaginationList<Domain.Entities.Student>> Action(GetStudentsQuery query)
     {
         var handler = new GetStudentsQueryHandler(Context);
 
