@@ -5,6 +5,7 @@ option csharp_namespace = "UserService";
 package Group;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 service Group{
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
@@ -14,6 +15,7 @@ service Group{
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
   rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);
   rpc GetGroupById (GetGroupByIdRequest) returns (GroupModel);
+  rpc GetGroups (GetGroupsRequest) returns (GetGroupsResponse);
 }
 
 //If IsGraduated true then GraduatedAt is not null else GraduatedAt is null
@@ -92,4 +94,21 @@ message EditGroupResponse{
 
 message GetGroupByIdRequest{
   int32 Id = 1;
+}
+
+enum GroupSortState{
+  GroupAsc = 0;
+  GroupDesc = 1;
+}
+
+message GetGroupsRequest{
+  google.protobuf.StringValue SearchString = 1;
+  int32 Page = 2;
+  int32 PageSize = 3;
+  GroupSortState SortState = 4;
+}
+
+message GetGroupsResponse{
+  repeated GroupModel Groups = 1;
+  int32 LastPage = 2;
 }

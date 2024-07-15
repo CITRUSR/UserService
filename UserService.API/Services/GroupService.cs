@@ -7,6 +7,7 @@ using UserService.Application.CQRS.Group.Commands.GraduateGroup;
 using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.Group.Queries.GetGroupById;
+using UserService.Application.CQRS.Group.Queries.GetGroups;
 using UserService.Persistance.Mappers;
 
 namespace UserService.API.Services;
@@ -109,5 +110,24 @@ public class GroupService(IMediator mediator, IMapper<Domain.Entities.Group, Gro
         var group = await _mediator.Send(query);
 
         return _mapper.Map(group);
+    }
+
+    public override async Task<GetGroupsResponse> GetGroups(GetGroupsRequest request, ServerCallContext context)
+    {
+        var query = new GetGroupsQuery
+        {
+            PageSize = request.PageSize,
+            Page = request.Page,
+            SortState = (Application.CQRS.Group.Queries.GetGroups.GroupSortState)request.SortState,
+            SearchString = request.SearchString,
+        };
+
+        var groups = await _mediator.Send(query);
+
+        return new GetGroupsResponse
+        {
+            Groups = { groups.Items.Select(x => _mapper.Map(x)) },
+            LastPage = groups.MaxPage,
+        };
     }
 }
