@@ -109,7 +109,8 @@ public class StudentService(IMediator mediator, IMapper<Domain.Entities.Student,
             Students =
             {
                 students.Select(x => _mapper.Map(x))
-            }
+            },
+            LastPage = students.MaxPage,
         };
     }
 }

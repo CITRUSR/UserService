@@ -80,6 +80,7 @@ message GetStudentsRequest{
 
 message GetStudentsResponse{
   repeated StudentModel Students = 1;
+  int32 LastPage = 2;
 }
 
 //If isDropped true then student has DroppedTime else doesn't have DroppedTime(equals null)
