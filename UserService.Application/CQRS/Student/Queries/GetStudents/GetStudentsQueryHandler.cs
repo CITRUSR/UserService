@@ -1,12 +1,13 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using UserService.Application.Common.Paging;
 
 namespace UserService.Application.CQRS.Student.Queries.GetStudents;
 
 public class GetStudentsQueryHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<GetStudentsQuery, List<Domain.Entities.Student>>
+    : HandlerBase(dbContext), IRequestHandler<GetStudentsQuery, PaginationList<Domain.Entities.Student>>
 {
-    public async Task<List<Domain.Entities.Student>> Handle(GetStudentsQuery request,
+    public async Task<PaginationList<Domain.Entities.Student>> Handle(GetStudentsQuery request,
         CancellationToken cancellationToken)
     {
         IQueryable<Domain.Entities.Student> students = DbContext.Students;
@@ -29,9 +30,6 @@ public class GetStudentsQueryHandler(IAppDbContext dbContext)
             SortState.GroupDesc => students.OrderByDescending(s => s.Group.CurrentSemester)
         };
 
-        var studentsRes = await students.Skip((request.Page - 1) * request.PageSize).Take(request.PageSize)
-            .ToListAsync(cancellationToken);
-
-        return studentsRes;
+        return await PaginationList<Domain.Entities.Student>.CreateAsync(students, request.Page, request.PageSize);
     }
 }
