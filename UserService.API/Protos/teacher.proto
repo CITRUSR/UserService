@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "UserService";
+
+package Teacher;
+
+import "google/protobuf/wrappers.proto";
+
+service Teacher{
+  rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
+}
+
+message CreateTeacherRequest{
+  string SsoId = 1;
+  string FirstName = 2;
+  string LastName = 3;
+  google.protobuf.StringValue PatronymicName = 4;
+  int32 RoomId = 5;
+}
+
+message CreateTeacherResponse{
+  string Id = 1;
+}

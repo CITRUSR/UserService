@@ -26,4 +26,8 @@
       <ProjectReference Include="..\UserService.Domain\UserService.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="CQRS\Teacher\Queries\" />
+    </ItemGroup>
+
 </Project>
