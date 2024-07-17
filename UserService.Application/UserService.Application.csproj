@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="CQRS\Teacher\Queries\" />
+      <Folder Include="CQRS\TeacherEntity\Queries\" />
     </ItemGroup>
 
 </Project>

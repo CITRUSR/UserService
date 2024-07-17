@@ -1,4 +1,4 @@
-﻿namespace UserService.Persistance.Mappers;
+﻿namespace UserService.API.Mappers;
 
 public interface IMapper<TFrom, TOut>
 {

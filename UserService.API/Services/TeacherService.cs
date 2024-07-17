@@ -1,10 +1,10 @@
 ﻿using Grpc.Core;
 using MediatR;
-using UserService.Application.CQRS.Teacher.Commands.CreateTeacher;
+using UserService.Application.CQRS.TeacherEntity.Commands.CreateTeacher;
 
 namespace UserService.API.Services;
 
-public class TeacherService(IMediator mediator) : Teacher.TeacherBase
+public class TeacherService(IMediator mediator) : UserService.TeacherService.TeacherServiceBase
 {
     private readonly IMediator _mediator = mediator;
 

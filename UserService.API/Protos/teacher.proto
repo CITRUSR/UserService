@@ -6,7 +6,7 @@ package Teacher;
 
 import "google/protobuf/wrappers.proto";
 
-service Teacher{
+service TeacherService{
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
 }
 
