@@ -1,21 +1,23 @@
 ﻿using Grpc.Core;
 using MediatR;
-using UserService.Application.CQRS.Group.Commands.CreateGroup;
-using UserService.Application.CQRS.Group.Commands.DeleteGroup;
-using UserService.Application.CQRS.Group.Commands.EditGroup;
-using UserService.Application.CQRS.Group.Commands.GraduateGroup;
-using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextCourse;
-using UserService.Application.CQRS.Group.Commands.TransferGroupsToNextSemester;
-using UserService.Application.CQRS.Group.Queries.GetGroupById;
-using UserService.Application.CQRS.Group.Queries.GetGroups;
-using UserService.Persistance.Mappers;
+using UserService.API.Mappers;
+using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
+using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
+using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
+using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroup;
+using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
+using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
+using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
+using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
+using UserService.Domain.Entities;
 
 namespace UserService.API.Services;
 
-public class GroupService(IMediator mediator, IMapper<Domain.Entities.Group, GroupModel> mapper) : Group.GroupBase
+public class GroupService(IMediator mediator, IMapper<Group, GroupModel> mapper)
+    : UserService.GroupService.GroupServiceBase
 {
     private readonly IMediator _mediator = mediator;
-    private readonly IMapper<Domain.Entities.Group, GroupModel> _mapper = mapper;
+    private readonly IMapper<Group, GroupModel> _mapper = mapper;
 
     public override async Task<CreateGroupResponse> CreateGroup(CreateGroupRequest request, ServerCallContext context)
     {
@@ -118,7 +120,7 @@ public class GroupService(IMediator mediator, IMapper<Domain.Entities.Group, Gro
         {
             PageSize = request.PageSize,
             Page = request.Page,
-            SortState = (Application.CQRS.Group.Queries.GetGroups.GroupSortState)request.SortState,
+            SortState = (Application.CQRS.GroupEntity.Queries.GetGroups.GroupSortState)request.SortState,
             SearchString = request.SearchString,
         };
 

@@ -1,10 +1,11 @@
 ﻿using Google.Protobuf.WellKnownTypes;
+using UserService.Domain.Entities;
 
-namespace UserService.Persistance.Mappers;
+namespace UserService.API.Mappers;
 
-public class StudentMapper : IMapper<Domain.Entities.Student, StudentModel>
+public class StudentMapper : IMapper<Student, StudentModel>
 {
-    public StudentModel Map(Domain.Entities.Student from)
+    public StudentModel Map(Student from)
     {
         return new StudentModel
         {

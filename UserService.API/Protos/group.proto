@@ -7,7 +7,7 @@ package Group;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-service Group{
+service GroupService{
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
   rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse);
   rpc EditGroup (EditGroupRequest) returns (EditGroupResponse);

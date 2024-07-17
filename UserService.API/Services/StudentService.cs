@@ -1,21 +1,22 @@
 ﻿using Grpc.Core;
 using MediatR;
-using UserService.Application.CQRS.Student.Commands.DeleteStudent;
-using UserService.Application.CQRS.Student.Commands.DropOutStudent;
-using UserService.Application.CQRS.Student.Commands.EditStudent;
-using UserService.Application.CQRS.Student.Quereis;
-using UserService.Application.CQRS.Student.Queries.GetStudentBySsoId;
-using UserService.Application.CQRS.Student.Queries.GetStudents;
-using UserService.Application.Student.Commands.CreateStudent;
-using UserService.Persistance.Mappers;
+using UserService.API.Mappers;
+using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
+using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
+using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
+using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
+using UserService.Domain.Entities;
 
 namespace UserService.API.Services;
 
-public class StudentService(IMediator mediator, IMapper<Domain.Entities.Student, StudentModel> mapper)
-    : Student.StudentBase
+public class StudentService(IMediator mediator, IMapper<Student, StudentModel> mapper)
+    : UserService.StudentService.StudentServiceBase
 {
     private readonly IMediator _mediator = mediator;
-    private readonly IMapper<Domain.Entities.Student, StudentModel> _mapper = mapper;
+    private readonly IMapper<Student, StudentModel> _mapper = mapper;
 
     public override async Task<CreateStudentResponse> CreateStudent(CreateStudentRequest request,
         ServerCallContext context)
@@ -99,7 +100,7 @@ public class StudentService(IMediator mediator, IMapper<Domain.Entities.Student,
             Page = request.Page,
             PageSize = request.PageSize,
             SearchString = request.SearchString,
-            SortState = (Application.CQRS.Student.Queries.GetStudents.SortState)request.SortState,
+            SortState = (Application.CQRS.StudentEntity.Queries.GetStudents.SortState)request.SortState,
         };
 
         var students = await _mediator.Send(query);

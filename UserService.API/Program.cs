@@ -1,10 +1,10 @@
 using Serilog;
 using UserService.API.Interceptors;
+using UserService.API.Mappers;
 using UserService.API.Services;
 using UserService.Application;
 using UserService.Persistance;
 using UserService.Persistance.Extensions;
-using UserService.Persistance.Mappers;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console().CreateLogger();
@@ -28,5 +28,6 @@ app.UseHttpsRedirection();
 
 app.MapGrpcService<StudentService>();
 app.MapGrpcService<GroupService>();
+app.MapGrpcService<TeacherService>();
 
 app.Run();
