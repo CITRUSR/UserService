@@ -35,6 +35,8 @@
 
     <ItemGroup>
       <Folder Include="obj\Debug\net8.0\" />
+      <Folder Include="SpecialityEntity\Commands\" />
+      <Folder Include="SpecialityEntity\Queries\" />
       <Folder Include="TeacherEntity\Queries\" />
     </ItemGroup>
 

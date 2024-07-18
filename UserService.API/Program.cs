@@ -29,5 +29,6 @@ app.UseHttpsRedirection();
 app.MapGrpcService<StudentService>();
 app.MapGrpcService<GroupService>();
 app.MapGrpcService<TeacherService>();
+app.MapGrpcService<SpecialityService>();
 
 app.Run();
