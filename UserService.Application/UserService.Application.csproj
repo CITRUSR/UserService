@@ -27,7 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="CQRS\SpecialityEntity\Commands\" />
       <Folder Include="CQRS\SpecialityEntity\Queries\" />
       <Folder Include="CQRS\TeacherEntity\Queries\" />
     </ItemGroup>
