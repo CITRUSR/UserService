@@ -5,5 +5,24 @@ option csharp_namespace = "UserService";
 package Speciality;
 
 service SpecialityService{
-  
+  rpc CreateSpeciality(CreateSpecialityRequest) returns (CreateSpecialityResponse);
+}
+
+message DecimalValue {
+  // Whole units part of the amount
+  int64 units = 1;
+  // Nano units of the amount (10^-9)
+  // Must be same sign as units
+  sfixed32 nanos = 2;
+}
+
+message CreateSpecialityRequest{
+  string Name = 1;
+  string Abbreavation = 2;
+  DecimalValue Cost = 3;
+  uint32 DurationMonths = 4;
+}
+
+message CreateSpecialityResponse{
+  int32 Id = 1;
 }

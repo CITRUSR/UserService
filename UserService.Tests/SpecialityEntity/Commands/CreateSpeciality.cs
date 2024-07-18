@@ -10,6 +10,8 @@ public class CreateSpeciality : CommonTest
     [Fact]
     public async void CreateSpeciality_ShouldBe_Success()
     {
+        ClearDataBase();
+
         var command = Fixture.Create<CreateSpecialityCommand>();
 
         var handler = new CreateSpecialityCommandHandler(Context);
