@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using UserService.Domain.Entities;
 
-namespace UserService.Application.CQRS.SpecialityEntity.Commands;
+namespace UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 
 public class CreateSpecialityCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext), IRequestHandler<CreateSpecialityCommand, int>

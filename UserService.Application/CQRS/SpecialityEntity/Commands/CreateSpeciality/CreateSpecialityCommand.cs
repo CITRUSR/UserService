@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace UserService.Application.CQRS.SpecialityEntity.Commands;
+namespace UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 
 public record CreateSpecialityCommand(
     string Name,
