@@ -8,9 +8,9 @@ public class CreateGroupCommandValidator : AbstractValidator<CreateGroupCommand>
     {
         RuleFor(x => x.CuratorId).NotNull();
         RuleFor(x => x.SpecialityId).NotNull();
-        RuleFor(x => x.CurrentCourse).NotNull();
-        RuleFor(x => x.CurrentSemester).NotNull();
-        RuleFor(x => x.SubGroup).NotNull();
+        RuleFor(x => x.CurrentCourse).NotNull().InclusiveBetween((byte)1, byte.MaxValue);
+        RuleFor(x => x.CurrentSemester).NotNull().InclusiveBetween((byte)1, byte.MaxValue);
+        RuleFor(x => x.SubGroup).NotNull().InclusiveBetween((byte)1, byte.MaxValue);
         RuleFor(x => x.StartedAt).NotNull();
     }
 }
