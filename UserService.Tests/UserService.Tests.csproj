@@ -39,4 +39,10 @@
       <Folder Include="TeacherEntity\Queries\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="UserService.Application">
+        <HintPath>bin\Debug\net8.0\UserService.Application.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>
