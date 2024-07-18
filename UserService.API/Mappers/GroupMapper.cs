@@ -1,10 +1,11 @@
 ﻿using Google.Protobuf.WellKnownTypes;
+using UserService.Domain.Entities;
 
-namespace UserService.Persistance.Mappers;
+namespace UserService.API.Mappers;
 
-public class GroupMapper : IMapper<Domain.Entities.Group, GroupModel>
+public class GroupMapper : IMapper<Group, GroupModel>
 {
-    public GroupModel Map(Domain.Entities.Group from)
+    public GroupModel Map(Group from)
     {
         return new GroupModel
         {

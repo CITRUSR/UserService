@@ -7,7 +7,7 @@ package Student;
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 
-service Student{
+service StudentService{
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
   rpc DropOutStudent(DropOutStudentRequest) returns (DropOutStudentResponse);
   rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
