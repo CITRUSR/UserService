@@ -6,6 +6,7 @@ package Speciality;
 
 service SpecialityService{
   rpc CreateSpeciality(CreateSpecialityRequest) returns (CreateSpecialityResponse);
+  rpc DeleteSpeciality(DeleteSpecialityRequest) returns (DeleteSpecialityResponse);
 }
 
 message DecimalValue {
@@ -24,5 +25,13 @@ message CreateSpecialityRequest{
 }
 
 message CreateSpecialityResponse{
+  int32 Id = 1;
+}
+
+message DeleteSpecialityRequest{
+  int32 Id = 1;
+}
+
+message DeleteSpecialityResponse{
   int32 Id = 1;
 }

@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using MediatR;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
 
 namespace UserService.API.Services;
 
@@ -19,6 +20,19 @@ public class SpecialityService(IMediator mediator) : UserService.SpecialityServi
         var id = await _mediator.Send(command);
 
         return new CreateSpecialityResponse
+        {
+            Id = id,
+        };
+    }
+
+    public override async Task<DeleteSpecialityResponse> DeleteSpeciality(DeleteSpecialityRequest request,
+        ServerCallContext context)
+    {
+        var command = new DeleteSpecialityCommand(request.Id);
+
+        var id = await _mediator.Send(command);
+
+        return new DeleteSpecialityResponse
         {
             Id = id,
         };
