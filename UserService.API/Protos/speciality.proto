@@ -9,6 +9,7 @@ service SpecialityService{
   rpc DeleteSpeciality(DeleteSpecialityRequest) returns (DeleteSpecialityResponse);
   rpc SoftDeleteSpeciality(SoftDeleteSpecialityRequest) returns (SoftDeleteSpecialityResponse);
   rpc EditSpeciality(EditSpecialityRequest) returns (EditSpecialityResponse);
+  rpc GetSpecialityById(GetSpecialityByIdRequest) returns (SpecialityModel);
 }
 
 message DecimalValue {
@@ -16,7 +17,16 @@ message DecimalValue {
   int64 units = 1;
   // Nano units of the amount (10^-9)
   // Must be same sign as units
-  sfixed32 nanos = 2;
+  sfixed64 nanos = 2;
+}
+
+message SpecialityModel{
+  int32 Id = 1;
+  string Name = 2;
+  string Abbreavation = 3;
+  DecimalValue Cost = 4;
+  uint32 DurationMonths = 5;
+  bool IsDeleted = 6;
 }
 
 message CreateSpecialityRequest{
@@ -56,5 +66,9 @@ message EditSpecialityRequest{
 }
 
 message EditSpecialityResponse{
+  int32 Id = 1;
+}
+
+message GetSpecialityByIdRequest{
   int32 Id = 1;
 }
