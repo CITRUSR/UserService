@@ -19,7 +19,29 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext) : HandlerBase(dbCont
                                        x.SubGroup.ToString().Contains(request.SearchString));
         }
 
-        groups = request.SortState switch
+        groups = GetFilteredByGraduatedStatus(groups, request.GraduatedStatus);
+
+        groups = GetSortedBySortState(groups, request.SortState);
+
+        return await PaginationList<Group>.CreateAsync(groups, request.Page, request.PageSize);
+    }
+
+    private IQueryable<Group> GetFilteredByGraduatedStatus(IQueryable<Group> groups,
+        GroupGraduatedStatus graduatedStatus)
+    {
+        groups = graduatedStatus switch
+        {
+            GroupGraduatedStatus.All => groups,
+            GroupGraduatedStatus.OnlyActive => groups.Where(x => x.GraduatedAt == null),
+            GroupGraduatedStatus.OnlyGraduated => groups.Where(x => x.GraduatedAt != null),
+        };
+
+        return groups;
+    }
+
+    private IQueryable<Group> GetSortedBySortState(IQueryable<Group> groups, GroupSortState sortState)
+    {
+        groups = sortState switch
         {
             GroupSortState.GroupAsc => groups.OrderBy(x => x.CurrentCourse)
                 .ThenBy(x => x.Speciality.Abbreavation)
@@ -29,6 +51,6 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext) : HandlerBase(dbCont
                 .ThenBy(x => x.SubGroup),
         };
 
-        return await PaginationList<Group>.CreateAsync(groups, request.Page, request.PageSize);
+        return groups;
     }
 }
