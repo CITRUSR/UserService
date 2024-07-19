@@ -2,6 +2,7 @@
 using MediatR;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpeciality;
 
 namespace UserService.API.Services;
@@ -47,6 +48,26 @@ public class SpecialityService(IMediator mediator) : UserService.SpecialityServi
         var id = await _mediator.Send(command);
 
         return new SoftDeleteSpecialityResponse
+        {
+            Id = id,
+        };
+    }
+
+    public override async Task<EditSpecialityResponse> EditSpeciality(EditSpecialityRequest request,
+        ServerCallContext context)
+    {
+        decimal cost = new CustomTypes.DecimalValue(request.Cost.Units, request.Cost.Nanos);
+
+        var command = new EditSpecialityCommand(request.Id,
+            request.Name,
+            request.Abbreavation,
+            cost,
+            (byte)request.DurationMonths,
+            request.IsDeleted);
+
+        var id = await _mediator.Send(command);
+
+        return new EditSpecialityResponse
         {
             Id = id,
         };

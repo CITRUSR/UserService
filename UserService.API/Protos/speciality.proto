@@ -8,6 +8,7 @@ service SpecialityService{
   rpc CreateSpeciality(CreateSpecialityRequest) returns (CreateSpecialityResponse);
   rpc DeleteSpeciality(DeleteSpecialityRequest) returns (DeleteSpecialityResponse);
   rpc SoftDeleteSpeciality(SoftDeleteSpecialityRequest) returns (SoftDeleteSpecialityResponse);
+  rpc EditSpeciality(EditSpecialityRequest) returns (EditSpecialityResponse);
 }
 
 message DecimalValue {
@@ -42,5 +43,18 @@ message SoftDeleteSpecialityRequest{
 }
 
 message SoftDeleteSpecialityResponse{
+  int32 Id = 1;
+}
+
+message EditSpecialityRequest{
+  int32 Id = 1;
+  string Name = 2;
+  string Abbreavation = 3;
+  DecimalValue Cost = 4;
+  uint32 DurationMonths = 5;
+  bool IsDeleted = 6;
+}
+
+message EditSpecialityResponse{
   int32 Id = 1;
 }
