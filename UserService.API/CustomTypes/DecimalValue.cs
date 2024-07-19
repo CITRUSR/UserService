@@ -3,18 +3,18 @@
 public partial class DecimalValue
 {
     private const decimal NanoFactor = 1_000_000_000;
-    private long _units { get; set; }
-    private long _nanos { get; set; }
+    public long Units { get; set; }
+    public int Nanos { get; set; }
 
     public DecimalValue(long units, int nanos)
     {
-        _units = units;
-        _nanos = nanos;
+        Units = units;
+        Nanos = nanos;
     }
 
     public static implicit operator decimal(DecimalValue grpcDecimal)
     {
-        return grpcDecimal._units + grpcDecimal._nanos / NanoFactor;
+        return grpcDecimal.Units + grpcDecimal.Nanos / NanoFactor;
     }
 
     public static implicit operator DecimalValue(decimal value)
