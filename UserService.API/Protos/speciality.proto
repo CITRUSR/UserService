@@ -4,12 +4,15 @@ option csharp_namespace = "UserService";
 
 package Speciality;
 
+import "google/protobuf/wrappers.proto";
+
 service SpecialityService{
   rpc CreateSpeciality(CreateSpecialityRequest) returns (CreateSpecialityResponse);
   rpc DeleteSpeciality(DeleteSpecialityRequest) returns (DeleteSpecialityResponse);
   rpc SoftDeleteSpeciality(SoftDeleteSpecialityRequest) returns (SoftDeleteSpecialityResponse);
   rpc EditSpeciality(EditSpecialityRequest) returns (EditSpecialityResponse);
   rpc GetSpecialityById(GetSpecialityByIdRequest) returns (SpecialityModel);
+  rpc GetSpecialities(GetSpecialitiesRequest) returns (GetSpecialitiesResponse);
 }
 
 message DecimalValue {
@@ -71,4 +74,34 @@ message EditSpecialityResponse{
 
 message GetSpecialityByIdRequest{
   int32 Id = 1;
+}
+
+enum SpecialitySortState{
+  NameAsc = 0;
+  NameDesc = 1;
+  AbbreviationAsc = 2;
+  AbbreviationDesc = 3;
+  CostAsc = 4;
+  CostDesc = 5;
+  DurationMonthsAsc = 6;
+  DurationMonthsDesc = 7;
+}
+
+enum SpecialityDeletedStatus{
+  All = 0;
+  OnlyDeleted = 1;
+  OnlyActive = 2;
+}
+
+message GetSpecialitiesRequest{
+  google.protobuf.StringValue SearchString = 1;
+  int32 Page = 2;
+  int32 PageSize = 3;
+  SpecialitySortState SortState = 4;
+  SpecialityDeletedStatus DeletedStatus = 5;
+}
+
+message GetSpecialitiesResponse{
+  repeated SpecialityModel Specialities = 1;
+  int32 LastPage = 2;
 }

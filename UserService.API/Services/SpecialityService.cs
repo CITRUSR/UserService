@@ -5,6 +5,7 @@ using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
 using UserService.Domain.Entities;
 
@@ -53,6 +54,30 @@ public class SpecialityService(IMediator mediator, IMapper<Speciality, Specialit
         var speciality = await _mediator.Send(query);
 
         return _mapper.Map(speciality);
+    }
+
+    public override async Task<GetSpecialitiesResponse> GetSpecialities(GetSpecialitiesRequest request,
+        ServerCallContext context)
+    {
+        var query = new GetSpecialitiesQuery
+        {
+            PageSize = request.PageSize,
+            Page = request.Page,
+            SearchString = request.SearchString,
+            SortState =
+                (Application.CQRS.SpecialityEntity.Queries.GetSpecialities.SpecialitySortState)request.SortState,
+            DeletedStatus =
+                (Application.CQRS.SpecialityEntity.Queries.GetSpecialities.SpecialityDeletedStatus)request
+                    .DeletedStatus,
+        };
+
+        var specialities = await _mediator.Send(query);
+
+        return new GetSpecialitiesResponse
+        {
+            Specialities = { specialities.Items.Select(x => _mapper.Map(x)) },
+            LastPage = specialities.MaxPage,
+        };
     }
 
     public override async Task<SoftDeleteSpecialityResponse> SoftDeleteSpeciality(SoftDeleteSpecialityRequest request,
