@@ -12,6 +12,7 @@
         <Protobuf Include="Protos/student.proto" GrpcServices="Server, Client"/>
         <Protobuf Include="Protos/group.proto" GrpcServices="Server, Client"/>
         <Protobuf Include="Protos/teacher.proto" GrpcServices="Server, Client"/>
+        <Protobuf Include="Protos/speciality.proto" GrpcServices="Server, Client"/>
     </ItemGroup>
 
     <ItemGroup>

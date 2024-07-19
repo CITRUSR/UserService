@@ -8,6 +8,7 @@ public static class MappersInjection
     {
         services.AddSingleton<IMapper<Student, StudentModel>, StudentMapper>();
         services.AddSingleton<IMapper<Group, GroupModel>, GroupMapper>();
+        services.AddSingleton<IMapper<Speciality, SpecialityModel>, SpecialityMapper>();
 
         return services;
     }
