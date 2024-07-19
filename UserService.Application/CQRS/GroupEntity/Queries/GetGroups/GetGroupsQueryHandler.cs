@@ -12,7 +12,7 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext) : HandlerBase(dbCont
     {
         IQueryable<Group> groups = DbContext.Groups;
 
-        if (String.IsNullOrWhiteSpace(request.SearchString))
+        if (String.IsNullOrWhiteSpace(request.SearchString) == false)
         {
             groups = groups.Where(x => x.Speciality.Abbreavation.Contains(request.SearchString) ||
                                        x.CurrentCourse.ToString().Contains(request.SearchString) ||
