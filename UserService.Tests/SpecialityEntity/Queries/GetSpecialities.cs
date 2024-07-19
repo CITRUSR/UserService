@@ -272,6 +272,83 @@ public class GetSpecialities : CommonTest
         specialities.Items[0].Should().BeEquivalentTo(specialityA);
     }
 
+    [Fact]
+    public async void GetSpecialities_ShouldBe_SuccessWithDeletedStatus_All()
+    {
+        await SeedDataForDeletedStatusTests();
+
+        var query = new GetSpecialitiesQuery
+        {
+            Page = 1,
+            PageSize = 10,
+            SearchString = "",
+            SortState = SpecialitySortState.NameAsc,
+            DeletedStatus = SpecialityDeletedStatus.All,
+        };
+
+        var specialities = await Action(query);
+
+        specialities.Items.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async void GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyDeleted()
+    {
+        var (speciality1, speciality2) = await SeedDataForDeletedStatusTests();
+
+        var query = new GetSpecialitiesQuery
+        {
+            Page = 1,
+            PageSize = 10,
+            SearchString = "",
+            SortState = SpecialitySortState.NameAsc,
+            DeletedStatus = SpecialityDeletedStatus.OnlyDeleted,
+        };
+
+        var specialities = await Action(query);
+
+        specialities.Items.Should().HaveCount(1);
+        specialities.Items[0].Should().BeEquivalentTo(speciality1);
+    }
+
+    [Fact]
+    public async void GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyActive()
+    {
+        var (speciality1, speciality2) = await SeedDataForDeletedStatusTests();
+
+        var query = new GetSpecialitiesQuery
+        {
+            Page = 1,
+            PageSize = 10,
+            SearchString = "",
+            SortState = SpecialitySortState.NameAsc,
+            DeletedStatus = SpecialityDeletedStatus.OnlyActive,
+        };
+
+        var specialities = await Action(query);
+
+        specialities.Items.Should().HaveCount(1);
+        specialities.Items[0].Should().BeEquivalentTo(speciality2);
+    }
+
+    private async Task<(Speciality, Speciality)> SeedDataForDeletedStatusTests()
+    {
+        ClearDataBase();
+
+        var speciality1 = Fixture.Build<Speciality>()
+            .With(x => x.IsDeleted, true)
+            .Create();
+
+        var speciality2 = Fixture.Build<Speciality>()
+            .With(x => x.IsDeleted, false)
+            .Create();
+
+        await Context.Specialities.AddRangeAsync([speciality1, speciality2]);
+        await Context.SaveChangesAsync();
+
+        return (speciality1, speciality2);
+    }
+
     private async Task<(Speciality, Speciality)> SeedDataForDurationMonthsTests()
     {
         CreateSpecialityOptions optionsForFirstSpeciality = Fixture.Build<CreateSpecialityOptions>()
