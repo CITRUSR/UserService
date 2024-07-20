@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using UserService.Application.Common.Paging;
 using UserService.Domain.Entities;
 
@@ -14,9 +15,8 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext) : HandlerBase(dbCont
 
         if (String.IsNullOrWhiteSpace(request.SearchString) == false)
         {
-            groups = groups.Where(x => x.Speciality.Abbreavation.Contains(request.SearchString) ||
-                                       x.CurrentCourse.ToString().Contains(request.SearchString) ||
-                                       x.SubGroup.ToString().Contains(request.SearchString));
+            groups = groups.Where(x =>
+                $"{x.CurrentCourse}-{x.Speciality.Abbreavation}{x.SubGroup}".Contains(request.SearchString));
         }
 
         groups = GetFilteredByGraduatedStatus(groups, request.GraduatedStatus);
