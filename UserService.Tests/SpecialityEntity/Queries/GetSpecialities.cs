@@ -8,27 +8,12 @@ namespace UserService.Tests.SpecialityEntity.Queries;
 
 public class GetSpecialities : CommonTest
 {
-    private struct CreateSpecialityOptions(string name, string abbreviation, int durationMonths, decimal cost)
-    {
-        public string Name { get; set; } = name;
-        public string Abbreviation { get; set; } = abbreviation;
-        public int DurationMonths { get; set; } = durationMonths;
-        public decimal Cost { get; set; } = cost;
-    }
-
     [Fact]
     public async void GetSpecialities_ShouldBe_SuccessWithPageSize()
     {
         await SeedDataForPageTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.NameAsc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery();
 
         var specialities = await Action(query);
 
@@ -41,14 +26,7 @@ public class GetSpecialities : CommonTest
     {
         await SeedDataForPageTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 2,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.NameAsc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery(page: 2);
 
         var specialities = await Action(query);
 
@@ -61,19 +39,11 @@ public class GetSpecialities : CommonTest
     {
         var (specialityA, specialityB) = await SeedDataForNameTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.NameAsc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery();
 
         var specialities = await Action(query);
 
-        specialities.Items[0].Should().BeEquivalentTo(specialityA);
-        specialities.Items[1].Should().BeEquivalentTo(specialityB);
+        specialities.Items.Should().BeEquivalentTo([specialityA, specialityB]);
     }
 
     [Fact]
@@ -81,19 +51,11 @@ public class GetSpecialities : CommonTest
     {
         var (specialityA, specialityB) = await SeedDataForNameTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.NameDesc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery(sortState: SpecialitySortState.NameDesc);
 
         var specialities = await Action(query);
 
-        specialities.Items[0].Should().BeEquivalentTo(specialityB);
-        specialities.Items[1].Should().BeEquivalentTo(specialityA);
+        specialities.Items.Should().BeEquivalentTo([specialityB, specialityA]);
     }
 
     [Fact]
@@ -101,19 +63,11 @@ public class GetSpecialities : CommonTest
     {
         var (specialityA, specialityB) = await SeedDataForAbbrTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.AbbreviationAsc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery(sortState: SpecialitySortState.AbbreviationAsc);
 
         var specialities = await Action(query);
 
-        specialities.Items[0].Should().BeEquivalentTo(specialityA);
-        specialities.Items[1].Should().BeEquivalentTo(specialityB);
+        specialities.Items.Should().BeEquivalentTo([specialityA, specialityB]);
     }
 
     [Fact]
@@ -121,19 +75,11 @@ public class GetSpecialities : CommonTest
     {
         var (specialityA, specialityB) = await SeedDataForAbbrTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.AbbreviationDesc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery(sortState: SpecialitySortState.AbbreviationDesc);
 
         var specialities = await Action(query);
 
-        specialities.Items[0].Should().BeEquivalentTo(specialityB);
-        specialities.Items[1].Should().BeEquivalentTo(specialityA);
+        specialities.Items.Should().BeEquivalentTo([specialityB, specialityA]);
     }
 
     [Fact]
@@ -141,19 +87,11 @@ public class GetSpecialities : CommonTest
     {
         var (specialityA, specialityB) = await SeedDataForCostTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.CostAsc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery(sortState: SpecialitySortState.CostAsc);
 
         var specialities = await Action(query);
 
-        specialities.Items[0].Should().BeEquivalentTo(specialityA);
-        specialities.Items[1].Should().BeEquivalentTo(specialityB);
+        specialities.Items.Should().BeEquivalentTo([specialityA, specialityB]);
     }
 
     [Fact]
@@ -161,19 +99,11 @@ public class GetSpecialities : CommonTest
     {
         var (specialityA, specialityB) = await SeedDataForCostTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.CostDesc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery(sortState: SpecialitySortState.CostDesc);
 
         var specialities = await Action(query);
 
-        specialities.Items[0].Should().BeEquivalentTo(specialityB);
-        specialities.Items[1].Should().BeEquivalentTo(specialityA);
+        specialities.Items.Should().BeEquivalentTo([specialityB, specialityA]);
     }
 
     [Fact]
@@ -181,19 +111,11 @@ public class GetSpecialities : CommonTest
     {
         var (specialityA, specialityB) = await SeedDataForDurationMonthsTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.DurationMonthsAsc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery(sortState: SpecialitySortState.DurationMonthsAsc);
 
         var specialities = await Action(query);
 
-        specialities.Items[0].Should().BeEquivalentTo(specialityA);
-        specialities.Items[1].Should().BeEquivalentTo(specialityB);
+        specialities.Items.Should().BeEquivalentTo([specialityA, specialityB]);
     }
 
     [Fact]
@@ -201,75 +123,11 @@ public class GetSpecialities : CommonTest
     {
         var (specialityA, specialityB) = await SeedDataForDurationMonthsTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.DurationMonthsDesc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery(sortState: SpecialitySortState.DurationMonthsDesc);
 
         var specialities = await Action(query);
 
-        specialities.Items[0].Should().BeEquivalentTo(specialityB);
-        specialities.Items[1].Should().BeEquivalentTo(specialityA);
-    }
-
-    [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringWithName()
-    {
-        var specialityA = Fixture.Build<Speciality>()
-            .With(x => x.Name, "AAA")
-            .Create();
-
-        var specialityB = Fixture.Build<Speciality>()
-            .With(x => x.Name, "BBB")
-            .Create();
-
-        await Context.Specialities.AddRangeAsync([specialityA, specialityB]);
-        await Context.SaveChangesAsync();
-
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "A",
-            SortState = SpecialitySortState.NameAsc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
-
-        var specialities = await Action(query);
-
-        specialities.Items[0].Should().BeEquivalentTo(specialityA);
-    }
-
-    [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringWithAbbr()
-    {
-        var specialityA = Fixture.Build<Speciality>()
-            .With(x => x.Abbreavation, "AAA")
-            .Create();
-
-        var specialityB = Fixture.Build<Speciality>()
-            .With(x => x.Abbreavation, "BBB")
-            .Create();
-
-        await Context.Specialities.AddRangeAsync([specialityA, specialityB]);
-        await Context.SaveChangesAsync();
-
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "A",
-            SortState = SpecialitySortState.NameAsc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
-
-        var specialities = await Action(query);
-
-        specialities.Items[0].Should().BeEquivalentTo(specialityA);
+        specialities.Items.Should().BeEquivalentTo([specialityB, specialityA]);
     }
 
     [Fact]
@@ -277,14 +135,7 @@ public class GetSpecialities : CommonTest
     {
         await SeedDataForDeletedStatusTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.NameAsc,
-            DeletedStatus = SpecialityDeletedStatus.All,
-        };
+        var query = CreateQuery(deletedStatus: SpecialityDeletedStatus.All);
 
         var specialities = await Action(query);
 
@@ -296,14 +147,7 @@ public class GetSpecialities : CommonTest
     {
         var (speciality1, speciality2) = await SeedDataForDeletedStatusTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.NameAsc,
-            DeletedStatus = SpecialityDeletedStatus.OnlyDeleted,
-        };
+        var query = CreateQuery(deletedStatus: SpecialityDeletedStatus.OnlyDeleted);
 
         var specialities = await Action(query);
 
@@ -316,14 +160,7 @@ public class GetSpecialities : CommonTest
     {
         var (speciality1, speciality2) = await SeedDataForDeletedStatusTests();
 
-        var query = new GetSpecialitiesQuery
-        {
-            Page = 1,
-            PageSize = 10,
-            SearchString = "",
-            SortState = SpecialitySortState.NameAsc,
-            DeletedStatus = SpecialityDeletedStatus.OnlyActive,
-        };
+        var query = CreateQuery(deletedStatus: SpecialityDeletedStatus.OnlyActive);
 
         var specialities = await Action(query);
 
@@ -331,103 +168,131 @@ public class GetSpecialities : CommonTest
         specialities.Items[0].Should().BeEquivalentTo(speciality2);
     }
 
+    [Fact]
+    public async void GetSpecialities_ShouldBe_SuccessWithSearchString()
+    {
+        await TestSearchString("AA", 1, speciality => speciality.Name == "AAA");
+        await TestSearchString("CC", 1, speciality => speciality.Abbreavation == "CCC");
+    }
+
+    private async Task TestSearchString(string searchString, int expectedCount, Func<Speciality, bool> predicate)
+    {
+        var (speciality1, speciality2, query) = await SeedDataForSearchStringTests(searchString);
+        var specialities = await Action(query);
+
+        specialities.Items.Should().HaveCount(expectedCount);
+        specialities.Items.Should().ContainSingle(speciality => predicate(speciality));
+    }
+
+    private async Task<(Speciality, Speciality, GetSpecialitiesQuery)> SeedDataForSearchStringTests(string searchString)
+    {
+        Speciality specialityA = Fixture.Build<Speciality>()
+            .With(x => x.Name, "AAA")
+            .With(x => x.Abbreavation, "CCC")
+            .Create();
+        Speciality specialityB = Fixture.Build<Speciality>()
+            .With(x => x.Name, "BBB")
+            .With(x => x.Abbreavation, "DDD")
+            .Create();
+
+        await AddSpecialitiesToContext([specialityA, specialityB]);
+
+        var query = CreateQuery(searchString: searchString);
+
+        return (specialityA, specialityB, query);
+    }
+
     private async Task<(Speciality, Speciality)> SeedDataForDeletedStatusTests()
     {
-        ClearDataBase();
-
-        var speciality1 = Fixture.Build<Speciality>()
+        var specialityA = Fixture.Build<Speciality>()
             .With(x => x.IsDeleted, true)
             .Create();
 
-        var speciality2 = Fixture.Build<Speciality>()
+        var specialityB = Fixture.Build<Speciality>()
             .With(x => x.IsDeleted, false)
             .Create();
 
-        await Context.Specialities.AddRangeAsync([speciality1, speciality2]);
-        await Context.SaveChangesAsync();
+        await AddSpecialitiesToContext([specialityA, specialityB]);
 
-        return (speciality1, speciality2);
+        return (specialityA, specialityB);
     }
 
     private async Task<(Speciality, Speciality)> SeedDataForDurationMonthsTests()
     {
-        CreateSpecialityOptions optionsForFirstSpeciality = Fixture.Build<CreateSpecialityOptions>()
+        Speciality specialityA = Fixture.Build<Speciality>()
             .With(x => x.DurationMonths, 1)
             .Create();
-        CreateSpecialityOptions optionsForSecondSpeciality = Fixture.Build<CreateSpecialityOptions>()
+        Speciality specialityB = Fixture.Build<Speciality>()
             .With(x => x.DurationMonths, 2)
             .Create();
 
-        return await SeedDataForOrderingTests(optionsForFirstSpeciality, optionsForSecondSpeciality);
+        await AddSpecialitiesToContext([specialityA, specialityB]);
+        return (specialityA, specialityB);
     }
 
     private async Task<(Speciality, Speciality)> SeedDataForCostTests()
     {
-        CreateSpecialityOptions optionsForFirstSpeciality = Fixture.Build<CreateSpecialityOptions>()
+        Speciality specialityA = Fixture.Build<Speciality>()
             .With(x => x.Cost, 1)
             .Create();
-        CreateSpecialityOptions optionsForSecondSpeciality = Fixture.Build<CreateSpecialityOptions>()
+        Speciality specialityB = Fixture.Build<Speciality>()
             .With(x => x.Cost, 2)
             .Create();
 
-        return await SeedDataForOrderingTests(optionsForFirstSpeciality, optionsForSecondSpeciality);
+        await AddSpecialitiesToContext([specialityA, specialityB]);
+        return (specialityA, specialityB);
     }
 
     private async Task<(Speciality, Speciality)> SeedDataForAbbrTests()
     {
-        CreateSpecialityOptions optionsForFirstSpeciality = Fixture.Build<CreateSpecialityOptions>()
-            .With(x => x.Abbreviation, "ABC")
+        Speciality specialityA = Fixture.Build<Speciality>()
+            .With(x => x.Abbreavation, "ABC")
             .Create();
-        CreateSpecialityOptions optionsForSecondSpeciality = Fixture.Build<CreateSpecialityOptions>()
-            .With(x => x.Abbreviation, "BBC")
+        Speciality specialityB = Fixture.Build<Speciality>()
+            .With(x => x.Abbreavation, "BBC")
             .Create();
 
-        return await SeedDataForOrderingTests(optionsForFirstSpeciality, optionsForSecondSpeciality);
+        await AddSpecialitiesToContext([specialityA, specialityB]);
+        return (specialityA, specialityB);
     }
 
     private async Task<(Speciality, Speciality)> SeedDataForNameTests()
     {
-        CreateSpecialityOptions optionsForFirstSpeciality = Fixture.Build<CreateSpecialityOptions>()
+        Speciality specialityA = Fixture.Build<Speciality>()
             .With(x => x.Name, "ABC")
             .Create();
-        CreateSpecialityOptions optionsForSecondSpeciality = Fixture.Build<CreateSpecialityOptions>()
+        Speciality specialityB = Fixture.Build<Speciality>()
             .With(x => x.Name, "BBC")
             .Create();
 
-        return await SeedDataForOrderingTests(optionsForFirstSpeciality, optionsForSecondSpeciality);
-    }
-
-    private async Task<(Speciality, Speciality)> SeedDataForOrderingTests(
-        CreateSpecialityOptions specialityOptionsForFirstSpeciality,
-        CreateSpecialityOptions specialityOptionsForSecondSpeciality)
-    {
-        ClearDataBase();
-
-        var speciality1 = Fixture.Build<Speciality>()
-            .With(x => x.Name, specialityOptionsForFirstSpeciality.Name)
-            .With(x => x.Abbreavation, specialityOptionsForFirstSpeciality.Abbreviation)
-            .With(x => x.DurationMonths, specialityOptionsForFirstSpeciality.DurationMonths)
-            .With(x => x.Cost, specialityOptionsForFirstSpeciality.Cost)
-            .Create();
-
-        var speciality2 = Fixture.Build<Speciality>()
-            .With(x => x.Name, specialityOptionsForSecondSpeciality.Name)
-            .With(x => x.Abbreavation, specialityOptionsForSecondSpeciality.Abbreviation)
-            .With(x => x.DurationMonths, specialityOptionsForSecondSpeciality.DurationMonths)
-            .With(x => x.Cost, specialityOptionsForSecondSpeciality.Cost)
-            .Create();
-
-        await Context.Specialities.AddRangeAsync([speciality1, speciality2]);
-        await Context.SaveChangesAsync();
-
-        return (speciality1, speciality2);
+        await AddSpecialitiesToContext([specialityA, specialityB]);
+        return (specialityA, specialityB);
     }
 
     private async Task SeedDataForPageTests()
     {
-        ClearDataBase();
-
         var specialities = Fixture.CreateMany<Speciality>(12);
+
+        await AddSpecialitiesToContext(specialities.ToArray());
+    }
+
+    private GetSpecialitiesQuery CreateQuery(int page = 1, int pageSize = 10, string searchString = "",
+        SpecialitySortState sortState = SpecialitySortState.NameAsc,
+        SpecialityDeletedStatus deletedStatus = SpecialityDeletedStatus.All)
+    {
+        return new GetSpecialitiesQuery
+        {
+            Page = page,
+            PageSize = pageSize,
+            SearchString = searchString,
+            DeletedStatus = deletedStatus,
+            SortState = sortState,
+        };
+    }
+
+    private async Task AddSpecialitiesToContext(params Speciality[] specialities)
+    {
+        ClearDataBase();
 
         await Context.Specialities.AddRangeAsync(specialities);
         await Context.SaveChangesAsync();
