@@ -6,9 +6,9 @@ public class CreateTeacherCommandValidator : AbstractValidator<CreateTeacherComm
 {
     public CreateTeacherCommandValidator()
     {
-        RuleFor(x => x.FirstName).NotNull().NotEmpty();
-        RuleFor(x => x.LastName).NotNull().NotEmpty();
-        RuleFor(x => x.RoomId).NotNull();
-        RuleFor(x => x.SsoId).NotNull();
+        RuleFor(x => x.FirstName).NotNull().NotEmpty().MaximumLength(32);
+        RuleFor(x => x.LastName).NotNull().NotEmpty().MaximumLength(32);
+        RuleFor(x => x.PatronymicName).MaximumLength(32);
+        RuleFor(x => x.SsoId).NotEqual(Guid.Empty);
     }
 }

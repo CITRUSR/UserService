@@ -6,6 +6,6 @@ public class GetStudentBySsoIdQueryValidator : AbstractValidator<GetStudentBySso
 {
     public GetStudentBySsoIdQueryValidator()
     {
-        RuleFor(x => x.SsoId).NotNull();
+        RuleFor(x => x.SsoId).NotEqual(Guid.Empty);
     }
 }

@@ -6,6 +6,6 @@ public class DeleteStudentCommandValidator : AbstractValidator<DeleteStudentComm
 {
     public DeleteStudentCommandValidator()
     {
-        RuleFor(x => x.Id).NotNull();
+        RuleFor(x => x.Id).NotEqual(Guid.Empty);
     }
 }

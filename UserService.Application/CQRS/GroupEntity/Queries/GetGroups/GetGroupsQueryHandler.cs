@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using UserService.Application.Common.Paging;
 using UserService.Domain.Entities;
 
@@ -12,14 +13,35 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext) : HandlerBase(dbCont
     {
         IQueryable<Group> groups = DbContext.Groups;
 
-        if (String.IsNullOrWhiteSpace(request.SearchString))
+        if (String.IsNullOrWhiteSpace(request.SearchString) == false)
         {
-            groups = groups.Where(x => x.Speciality.Abbreavation.Contains(request.SearchString) ||
-                                       x.CurrentCourse.ToString().Contains(request.SearchString) ||
-                                       x.SubGroup.ToString().Contains(request.SearchString));
+            groups = groups.Where(x =>
+                $"{x.CurrentCourse}-{x.Speciality.Abbreavation}{x.SubGroup}".Contains(request.SearchString));
         }
 
-        groups = request.SortState switch
+        groups = GetFilteredByGraduatedStatus(groups, request.GraduatedStatus);
+
+        groups = GetSortedBySortState(groups, request.SortState);
+
+        return await PaginationList<Group>.CreateAsync(groups, request.Page, request.PageSize);
+    }
+
+    private IQueryable<Group> GetFilteredByGraduatedStatus(IQueryable<Group> groups,
+        GroupGraduatedStatus graduatedStatus)
+    {
+        groups = graduatedStatus switch
+        {
+            GroupGraduatedStatus.All => groups,
+            GroupGraduatedStatus.OnlyActive => groups.Where(x => x.GraduatedAt == null),
+            GroupGraduatedStatus.OnlyGraduated => groups.Where(x => x.GraduatedAt != null),
+        };
+
+        return groups;
+    }
+
+    private IQueryable<Group> GetSortedBySortState(IQueryable<Group> groups, GroupSortState sortState)
+    {
+        groups = sortState switch
         {
             GroupSortState.GroupAsc => groups.OrderBy(x => x.CurrentCourse)
                 .ThenBy(x => x.Speciality.Abbreavation)
@@ -29,6 +51,6 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext) : HandlerBase(dbCont
                 .ThenBy(x => x.SubGroup),
         };
 
-        return await PaginationList<Group>.CreateAsync(groups, request.Page, request.PageSize);
+        return groups;
     }
 }

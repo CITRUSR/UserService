@@ -4,129 +4,177 @@ using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
-namespace UserService.Tests.GroupEntity.Queries;
-
-public class GetGroups : CommonTest
+namespace UserService.Tests.GroupEntity.Queries
 {
-    [Fact]
-    public async void GetGroups_ShouldBe_SuccessWithPageSize()
+    public class GetGroupsTests : CommonTest
     {
-        await SeedDataForPageTests();
-
-        var query = new GetGroupsQuery
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithPageSize()
         {
-            PageSize = 10,
-            Page = 1,
-            SearchString = "",
-            SortState = GroupSortState.GroupAsc,
-        };
+            await SeedDataForPageTests();
+            var query = CreateQuery(pageSize: 10, page: 1);
+            var groupsRes = await ExecuteQuery(query);
 
-        var groupsRes = await Action(query);
+            groupsRes.Items.Should().HaveCount(10);
+            groupsRes.MaxPage.Should().Be(2);
+        }
 
-        groupsRes.Items.Should().HaveCount(10);
-        groupsRes.MaxPage.Should().Be(2);
-    }
-
-    [Fact]
-    public async void GetGroups_ShouldBe_SuccessWithPageNumber()
-    {
-        await SeedDataForPageTests();
-
-        var query = new GetGroupsQuery
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithPageNumber()
         {
-            PageSize = 10,
-            Page = 2,
-            SearchString = "",
-            SortState = GroupSortState.GroupAsc,
-        };
+            await SeedDataForPageTests();
+            var query = CreateQuery(pageSize: 10, page: 2);
+            var groupsRes = await ExecuteQuery(query);
 
-        var groupsRes = await Action(query);
+            groupsRes.Items.Should().HaveCount(2);
+            groupsRes.MaxPage.Should().Be(2);
+        }
 
-        groupsRes.Items.Should().HaveCount(2);
-        groupsRes.MaxPage.Should().Be(2);
-    }
-
-    [Fact]
-    public async void GetGroups_ShouldBeSuccessWithFiltrationByGroupAsc()
-    {
-        var (group1, group2) = await SeedDataForFiltrationTests();
-
-        var query = new GetGroupsQuery
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithFiltrationByGroupAsc()
         {
-            PageSize = 10,
-            Page = 1,
-            SearchString = "",
-            SortState = GroupSortState.GroupAsc,
-        };
+            var (group1, group2, query) = await SeedDataForFiltrationTests(GroupSortState.GroupAsc);
+            var groups = await ExecuteQuery(query);
 
-        var groups = await Action(query);
+            groups.Items.Should().BeEquivalentTo(new[] { group1, group2 });
+        }
 
-        groups.Items[0].Should().BeEquivalentTo(group1);
-        groups.Items[1].Should().BeEquivalentTo(group2);
-    }
-
-    [Fact]
-    public async void GetGroups_ShouldBeSuccessWithFiltrationByGroupDesc()
-    {
-        var (group1, group2) = await SeedDataForFiltrationTests();
-
-        var query = new GetGroupsQuery
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithFiltrationByGroupDesc()
         {
-            PageSize = 10,
-            Page = 1,
-            SearchString = "",
-            SortState = GroupSortState.GroupDesc,
-        };
+            var (group1, group2, query) = await SeedDataForFiltrationTests(GroupSortState.GroupDesc);
+            var groups = await ExecuteQuery(query);
 
-        var groups = await Action(query);
+            groups.Items.Should().BeEquivalentTo(new[] { group2, group1 });
+        }
 
-        groups.Items[1].Should().BeEquivalentTo(group1);
-        groups.Items[0].Should().BeEquivalentTo(group2);
-    }
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithGroupGraduatedStatus_All()
+        {
+            var (group1, group2, query) = await SeedDataForGraduatedStatusTests(GroupGraduatedStatus.All);
+            var groups = await ExecuteQuery(query);
 
-    private async Task SeedDataForPageTests()
-    {
-        ClearDataBase();
+            groups.Items.Should().HaveCount(2);
+        }
 
-        var groups = Fixture.CreateMany<Group>(12);
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithGroupGraduatedStatus_OnlyActive()
+        {
+            var (group1, group2, query) = await SeedDataForGraduatedStatusTests(GroupGraduatedStatus.OnlyActive);
+            var groups = await ExecuteQuery(query);
 
-        await Context.Groups.AddRangeAsync(groups);
-        await Context.SaveChangesAsync();
-    }
+            groups.Items.Should().HaveCount(1);
+            groups.Items[0].Should().BeEquivalentTo(group2);
+        }
 
-    private async Task<(Group, Group)> SeedDataForFiltrationTests()
-    {
-        ClearDataBase();
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithGroupGraduatedStatus_OnlyGraduated()
+        {
+            var (group1, group2, query) = await SeedDataForGraduatedStatusTests(GroupGraduatedStatus.OnlyGraduated);
+            var groups = await ExecuteQuery(query);
 
-        var speciality1 = Fixture.Build<Speciality>()
-            .With(x => x.Abbreavation, "ABC")
-            .Create();
+            groups.Items.Should().HaveCount(1);
+            groups.Items[0].Should().BeEquivalentTo(group1);
+        }
 
-        var speciality2 = Fixture.Build<Speciality>()
-            .With(x => x.Abbreavation, "BBC")
-            .Create();
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithSearchString()
+        {
+            await TestSearchString("AA", 1, group => group.Speciality.Abbreavation == "AAA");
+            await TestSearchString("1-A", 1, group => group.CurrentCourse == 1);
+            await TestSearchString("3", 1, group => group.SubGroup == 3);
+        }
 
-        var group1 = Fixture.Build<Group>()
-            .With(x => x.CurrentCourse, 1)
-            .With(x => x.Speciality, speciality1)
-            .Create();
+        private async Task TestSearchString(string searchString, int expectedCount, Func<Group, bool> predicate)
+        {
+            var (group1, group2, query) = await SeedDataForSearchStringTests(searchString);
+            var groups = await ExecuteQuery(query);
 
-        var group2 = Fixture.Build<Group>()
-            .With(x => x.CurrentCourse, 2)
-            .With(x => x.Speciality, speciality2)
-            .Create();
+            groups.Items.Should().HaveCount(expectedCount);
+            groups.Items.Should().ContainSingle(group => predicate(group));
+        }
 
-        await Context.Groups.AddAsync(group1);
-        await Context.Groups.AddAsync(group2);
-        await Context.SaveChangesAsync();
+        private async Task<(Group, Group, GetGroupsQuery)> SeedDataForSearchStringTests(string searchString)
+        {
+            var (group1, group2) = CreateGroupsWithSpeciality();
+            await AddGroupsToContext(group1, group2);
 
-        return (group1, group2);
-    }
+            var query = CreateQuery(searchString: searchString);
+            return (group1, group2, query);
+        }
 
-    private async Task<PaginationList<Group>> Action(GetGroupsQuery query)
-    {
-        var handler = new GetGroupsQueryHandler(Context);
+        private async Task<(Group, Group, GetGroupsQuery)> SeedDataForGraduatedStatusTests(
+            GroupGraduatedStatus graduatedStatus)
+        {
+            var (group1, group2) = CreateGroupsWithGraduationStatus();
+            await AddGroupsToContext(group1, group2);
 
-        return await handler.Handle(query, CancellationToken.None);
+            var query = CreateQuery(graduatedStatus: graduatedStatus);
+            return (group1, group2, query);
+        }
+
+        private async Task SeedDataForPageTests()
+        {
+            var groups = Fixture.CreateMany<Group>(12);
+            await AddGroupsToContext(groups.ToArray());
+        }
+
+        private async Task<(Group, Group, GetGroupsQuery)> SeedDataForFiltrationTests(GroupSortState sortState)
+        {
+            var (group1, group2) = CreateGroupsWithSpeciality();
+            await AddGroupsToContext(group1, group2);
+
+            var query = CreateQuery(sortState: sortState);
+            return (group1, group2, query);
+        }
+
+        private async Task<PaginationList<Group>> ExecuteQuery(GetGroupsQuery query)
+        {
+            var handler = new GetGroupsQueryHandler(Context);
+            return await handler.Handle(query, CancellationToken.None);
+        }
+
+        private GetGroupsQuery CreateQuery(int pageSize = 10, int page = 1, string searchString = "",
+            GroupSortState sortState = GroupSortState.GroupDesc,
+            GroupGraduatedStatus graduatedStatus = GroupGraduatedStatus.All)
+        {
+            return new GetGroupsQuery
+            {
+                PageSize = pageSize,
+                Page = page,
+                SearchString = searchString,
+                SortState = sortState,
+                GraduatedStatus = graduatedStatus,
+            };
+        }
+
+        private async Task AddGroupsToContext(params Group[] groups)
+        {
+            ClearDataBase();
+
+            await Context.Groups.AddRangeAsync(groups);
+            await Context.SaveChangesAsync();
+        }
+
+        private (Group, Group) CreateGroupsWithSpeciality()
+        {
+            var speciality1 = Fixture.Build<Speciality>().With(x => x.Abbreavation, "AAA").Create();
+            var speciality2 = Fixture.Build<Speciality>().With(x => x.Abbreavation, "BBB").Create();
+
+            var group1 = Fixture.Build<Group>().With(x => x.Speciality, speciality1).With(x => x.CurrentCourse, 1)
+                .With(x => x.SubGroup, 3).Create();
+            var group2 = Fixture.Build<Group>().With(x => x.Speciality, speciality2).With(x => x.CurrentCourse, 2)
+                .With(x => x.SubGroup, 4).Create();
+
+            return (group1, group2);
+        }
+
+        private (Group, Group) CreateGroupsWithGraduationStatus()
+        {
+            var group1 = Fixture.Build<Group>().With(x => x.GraduatedAt, DateTime.Now).Create();
+            var group2 = Fixture.Build<Group>().Without(x => x.GraduatedAt).Create();
+
+            return (group1, group2);
+        }
     }
 }

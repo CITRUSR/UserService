@@ -10,4 +10,5 @@ public class GetStudentsQuery : IRequest<PaginationList<Student>>
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 10;
     public SortState SortState { get; set; } = SortState.LastNameAsc;
+    public StudentDroppedOutStatus DroppedOutStatus { get; set; } = StudentDroppedOutStatus.All;
 }
