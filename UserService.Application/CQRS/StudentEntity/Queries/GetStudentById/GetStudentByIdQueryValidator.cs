@@ -6,6 +6,6 @@ public class GetStudentByIdQueryValidator : AbstractValidator<GetStudentByIdQuer
 {
     public GetStudentByIdQueryValidator()
     {
-        RuleFor(x => x.Id).NotNull();
+        RuleFor(x => x.Id).NotEqual(Guid.Empty);
     }
 }

@@ -6,7 +6,7 @@ public class DropOutStudentCommandValidator : AbstractValidator<DropOutStudentCo
 {
     public DropOutStudentCommandValidator()
     {
-        RuleFor(x => x.Id).NotNull();
-        RuleFor(x => x.DroppedOutTime).NotNull();
+        RuleFor(x => x.Id).NotEqual(Guid.Empty);
+        RuleFor(x => x.DroppedOutTime).NotEqual(DateTime.MinValue);
     }
 }

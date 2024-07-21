@@ -6,7 +6,6 @@ public class GraduateGroupCommandValidator : AbstractValidator<GraduateGroupComm
 {
     public GraduateGroupCommandValidator()
     {
-        RuleFor(x => x.GroupId).NotNull();
-        RuleFor(x => x.GraduatedTime).NotNull();
+        RuleFor(x => x.GraduatedTime).NotEqual(DateTime.MinValue);
     }
 }
