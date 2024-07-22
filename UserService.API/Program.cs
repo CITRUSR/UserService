@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Serilog;
 using UserService.API.Interceptors;
 using UserService.API.Mappers;
@@ -16,6 +17,11 @@ builder.Services.AddGrpc(options => { options.Interceptors.Add<ServerExceptionsI
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddMappers();
+
+JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+{
+    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+};
 
 var app = builder.Build();
 
