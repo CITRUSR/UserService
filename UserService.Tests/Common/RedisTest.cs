@@ -8,26 +8,30 @@ namespace UserService.Tests.Common;
 
 public class RedisTest : CommonTest, IAsyncLifetime
 {
-    public RedisCache Redis { get; set; }
+    protected RedisCache Redis { get; set; }
+    private INetwork _network;
 
     private RedisContainer _redisContainer;
 
     public async Task InitializeAsync()
     {
-        var network = CreateNetwork();
+        _network = CreateNetwork();
 
-        _redisContainer = CreateRedisContainer(network);
+        _redisContainer = CreateRedisContainer(_network);
 
         await _redisContainer.StartAsync();
 
         Redis = CreateRedisCache();
     }
 
-    public Task DisposeAsync()
+    public async Task DisposeAsync()
     {
         Redis.Dispose();
 
-        return _redisContainer.DisposeAsync().AsTask();
+        await _redisContainer.DisposeAsync();
+
+        await _network.DeleteAsync();
+        await _network.DisposeAsync();
     }
 
     private INetwork CreateNetwork()
