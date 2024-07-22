@@ -30,4 +30,9 @@ public static class RedisExtension
 
         return value;
     }
+
+    public static async Task SetObjetAsync<T>(this IDistributedCache cache, string key, T value)
+    {
+        await cache.SetStringAsync(key, JsonConvert.SerializeObject(value));
+    }
 }
