@@ -10,6 +10,10 @@ public class PaginationList<T> : List<T>
     public int TotalCount { get; }
     public int MaxPage => Convert.ToInt32(Math.Ceiling((double)TotalCount / PageSize));
 
+    public PaginationList()
+    {
+    }
+
     private PaginationList(List<T> items, int page, int pageSize, int totalCount)
     {
         Items = items;
