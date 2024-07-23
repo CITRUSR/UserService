@@ -9,15 +9,12 @@ namespace UserService.Tests.Common;
 public class RedisTest : CommonTest, IAsyncLifetime
 {
     protected RedisCache Redis { get; set; }
-    private INetwork _network;
 
     private RedisContainer _redisContainer;
 
     public async Task InitializeAsync()
     {
-        _network = CreateNetwork();
-
-        _redisContainer = CreateRedisContainer(_network);
+        _redisContainer = CreateRedisContainer();
 
         await _redisContainer.StartAsync();
 
@@ -29,26 +26,15 @@ public class RedisTest : CommonTest, IAsyncLifetime
         Redis.Dispose();
 
         await _redisContainer.DisposeAsync();
-
-        await _network.DeleteAsync();
-        await _network.DisposeAsync();
     }
 
-    private INetwork CreateNetwork()
-    {
-        return new NetworkBuilder()
-            .WithDriver(NetworkDriver.Bridge)
-            .WithName("test-network")
-            .Build();
-    }
-
-    private RedisContainer CreateRedisContainer(INetwork network)
+    private RedisContainer CreateRedisContainer()
     {
         return new RedisBuilder()
-            .WithNetwork(network)
             .WithImage("redis:7.4-rc")
             .WithPortBinding("6370", "6379")
             .WithHostname("redis")
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(6379))
             .Build();
     }
 
