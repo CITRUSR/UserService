@@ -4,7 +4,7 @@ using UserService.API.Mappers;
 using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
-using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroup;
+using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
@@ -57,16 +57,25 @@ public class GroupService(IMediator mediator, IMapper<Group, GroupModel> mapper)
         return _mapper.Map(group);
     }
 
-    public override async Task<GraduateGroupResponse> GraduateGroup(GraduateGroupRequest request,
+    public override async Task<GraduateGroupsResponse> GraduateGroups(GraduateGroupsRequest request,
         ServerCallContext context)
     {
-        var command = new GraduateGroupCommand(request.Id, request.GraduatedTime.ToDateTime());
+        var command = new GraduateGroupsCommand(request.GroupsId.ToList(), request.GraduatedTime.ToDateTime());
 
-        var id = await _mediator.Send(command);
+        var groups = await _mediator.Send(command);
 
-        return new GraduateGroupResponse
+        return new GraduateGroupsResponse
         {
-            Id = id,
+            Groups =
+            {
+                groups.Select(x => new GraduateGroupResponseModel
+                {
+                    Id = x.Id,
+                    CurrentSemester = x.CurrentSemester,
+                    SubGroup = x.SubGroup,
+                    Abbr = x.Speciality.Abbreavation,
+                })
+            },
         };
     }
 

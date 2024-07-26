@@ -11,7 +11,7 @@ service GroupService{
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
   rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse);
   rpc EditGroup (EditGroupRequest) returns (GroupModel);
-  rpc GraduateGroup (GraduateGroupRequest) returns (GraduateGroupResponse);
+  rpc GraduateGroups (GraduateGroupsRequest) returns (GraduateGroupsResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
   rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);
   rpc GetGroupById (GetGroupByIdRequest) returns (GroupModel);
@@ -44,13 +44,20 @@ message CreateGroupResponse{
   int32 Id = 1;
 }
 
-message GraduateGroupRequest{
-  int32 Id = 1;
+message GraduateGroupsRequest{
+  repeated int32 GroupsId = 1;
   google.protobuf.Timestamp GraduatedTime = 2;
 }
 
-message GraduateGroupResponse{
+message GraduateGroupResponseModel{
   int32 Id = 1;
+  string Abbr = 2;
+  int32 CurrentSemester = 3;
+  int32 SubGroup = 4;
+}
+
+message GraduateGroupsResponse{
+  repeated GraduateGroupResponseModel groups = 1;
 }
 
 //If be empty then will be taking every group
