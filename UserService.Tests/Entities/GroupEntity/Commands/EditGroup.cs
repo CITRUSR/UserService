@@ -37,9 +37,9 @@ public class EditGroup : CommonTest
         var command = new EditGroupCommand(newGroup.Id, speciality.Id, curator.Id, newGroup.CurrentCourse,
             newGroup.CurrentSemester, newGroup.SubGroup);
 
-        var id = await Action(command);
+        var group = await Action(command);
 
-        Context.Groups.FirstOrDefault(x => x.Id == id).Should().BeEquivalentTo(newGroup);
+        group.Should().BeEquivalentTo(newGroup);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class EditGroup : CommonTest
         await act.Should().ThrowAsync<TeacherNotFoundException>();
     }
 
-    private async Task<int> Action(EditGroupCommand command)
+    private async Task<Group> Action(EditGroupCommand command)
     {
         var handler = new EditGroupCommandHandler(Context);
 

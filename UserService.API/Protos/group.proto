@@ -10,7 +10,7 @@ import "google/protobuf/wrappers.proto";
 service GroupService{
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
   rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse);
-  rpc EditGroup (EditGroupRequest) returns (EditGroupResponse);
+  rpc EditGroup (EditGroupRequest) returns (GroupModel);
   rpc GraduateGroup (GraduateGroupRequest) returns (GraduateGroupResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
   rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);
@@ -86,10 +86,6 @@ message EditGroupRequest{
   uint32 CurrentCourse = 4;
   uint32 CurrentSemester = 5;
   uint32 SubGroup = 6;
-}
-
-message EditGroupResponse{
-  int32 Id = 1;
 }
 
 message GetGroupByIdRequest{

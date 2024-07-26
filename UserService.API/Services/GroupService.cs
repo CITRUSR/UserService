@@ -45,19 +45,16 @@ public class GroupService(IMediator mediator, IMapper<Group, GroupModel> mapper)
         };
     }
 
-    public override async Task<EditGroupResponse> EditGroup(EditGroupRequest request, ServerCallContext context)
+    public override async Task<GroupModel> EditGroup(EditGroupRequest request, ServerCallContext context)
     {
         var command = new EditGroupCommand(request.Id, request.SpecialityId, Guid.Parse(request.CuratorId),
             (byte)request.CurrentCourse,
             (byte)request.CurrentSemester,
             (byte)request.SubGroup);
 
-        var id = await _mediator.Send(command);
+        var group = await _mediator.Send(command);
 
-        return new EditGroupResponse
-        {
-            Id = id
-        };
+        return _mapper.Map(group);
     }
 
     public override async Task<GraduateGroupResponse> GraduateGroup(GraduateGroupRequest request,

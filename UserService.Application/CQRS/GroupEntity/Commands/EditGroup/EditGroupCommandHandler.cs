@@ -8,9 +8,9 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 
 public class EditGroupCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<EditGroupCommand, int>
+    : HandlerBase(dbContext), IRequestHandler<EditGroupCommand, Group>
 {
-    public async Task<int> Handle(EditGroupCommand request, CancellationToken cancellationToken)
+    public async Task<Group> Handle(EditGroupCommand request, CancellationToken cancellationToken)
     {
         var group = await DbContext.Groups.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
@@ -57,6 +57,6 @@ public class EditGroupCommandHandler(IAppDbContext dbContext)
 
         Log.Information($"The group with id:{request.Id} is updated" + "old state:{@oldGroup} new state:{@group}");
 
-        return request.Id;
+        return group;
     }
 }
