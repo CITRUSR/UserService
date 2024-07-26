@@ -1,15 +1,16 @@
 ﻿using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Networks;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Testcontainers.Redis;
+using UserService.Application.Abstraction;
+using UserService.Application.Common.Cache;
 
 namespace UserService.Tests.Common;
 
 public class RedisTest : CommonTest, IAsyncLifetime
 {
-    protected RedisCache Redis { get; set; }
+    protected ICacheService CacheService { get; set; }
 
+    private RedisCache _redisCache;
     private RedisContainer _redisContainer;
 
     public async Task InitializeAsync()
@@ -18,12 +19,13 @@ public class RedisTest : CommonTest, IAsyncLifetime
 
         await _redisContainer.StartAsync();
 
-        Redis = CreateRedisCache();
+        _redisCache = CreateRedisCache();
+        CacheService = new CacheService(_redisCache);
     }
 
     public async Task DisposeAsync()
     {
-        Redis.Dispose();
+        _redisCache.Dispose();
 
         await _redisContainer.DisposeAsync();
     }
