@@ -7,6 +7,7 @@ using UserService.Application.Common.Behaviors;
 using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
+using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 using UserService.Domain.Entities;
@@ -35,5 +36,6 @@ public static class DependencyInjection
         services.Decorate<IRequestHandler<GetGroupByIdQuery, Group>, GetGroupByIdQueryHandlerCached>();
         services.Decorate<IRequestHandler<GetGroupsQuery, PaginationList<Group>>, GetGroupsQueryHandlerCached>();
         services.Decorate<IRequestHandler<DeleteGroupCommand, int>, DeleteGroupCommandHandlerCached>();
+        services.Decorate<IRequestHandler<EditGroupCommand, Group>, EditGroupCommandHandlerCached>();
     }
 }
