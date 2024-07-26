@@ -2,6 +2,6 @@
 
 public static class CacheKeys
 {
-    public static string GroupById(int groupId) => $"group-{groupId}";
-    public static string GetGroups(int currentPage, int pageSize) => $"groups-{currentPage}-{pageSize}";
+    public static string ById<T, K>(K id) => $"{typeof(T)}-{id}";
+    public static string GetEntities<T>(int currentPage, int pageSize) => $"{typeof(T)}-{currentPage}-{pageSize}";
 }
