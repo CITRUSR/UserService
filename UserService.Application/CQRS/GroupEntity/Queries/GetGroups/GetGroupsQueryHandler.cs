@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
 using UserService.Domain.Entities;
 

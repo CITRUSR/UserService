@@ -1,28 +1,26 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Caching.Distributed;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 using UserService.Domain.Entities;
-using UserService.Persistance.Extensions;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 
-public class GetGroupsQueryHandlerCached(IDistributedCache cache, GetGroupsQueryHandler handler)
+public class GetGroupsQueryHandlerCached(GetGroupsQueryHandler handler, ICacheService cacheService)
     : IRequestHandler<GetGroupsQuery, PaginationList<Group>>
 {
-    private readonly IDistributedCache _cache = cache;
     private readonly GetGroupsQueryHandler _handler = handler;
+    private readonly ICacheService _cacheService = cacheService;
 
     public async Task<PaginationList<Group>> Handle(GetGroupsQuery request, CancellationToken cancellationToken)
     {
-        int[] pagesForCaching = [1, 2, 3];
-
-        if (pagesForCaching.Contains(request.Page) &&
+        if (request.Page <= CacheConstants.PagesForCaching &&
             request is { SortState: GroupSortState.GroupAsc, GraduatedStatus: GroupGraduatedStatus.OnlyActive })
         {
-            return await _cache.GetOrCreateAsync(CacheKeys.GetGroups(request.Page, request.PageSize),
-                _handler.Handle,
-                request, cancellationToken);
+            var key = CacheKeys.GetEntities<Group>(request.Page, request.PageSize);
+
+            return await _cacheService.GetOrCreateAsync<PaginationList<Group>>(key,
+                async () => await _handler.Handle(request, cancellationToken), cancellationToken);
         }
 
         return await _handler.Handle(request, cancellationToken);

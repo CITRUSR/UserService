@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.GraduateGroup;

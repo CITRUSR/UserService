@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UserService.Application;
+using UserService.Application.Abstraction;
 using UserService.Domain.Entities;
 using UserService.Persistance.Configurations;
 

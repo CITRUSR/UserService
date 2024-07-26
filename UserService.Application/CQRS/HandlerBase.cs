@@ -1,4 +1,6 @@
-﻿namespace UserService.Application.CQRS;
+﻿using UserService.Application.Abstraction;
+
+namespace UserService.Application.CQRS;
 
 public class HandlerBase
 {

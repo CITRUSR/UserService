@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using UserService.Application.Abstraction;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.TeacherEntity.Commands.CreateTeacher;

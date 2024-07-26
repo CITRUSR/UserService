@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Domain.Entities;
 

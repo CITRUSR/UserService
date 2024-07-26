@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Serilog;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
