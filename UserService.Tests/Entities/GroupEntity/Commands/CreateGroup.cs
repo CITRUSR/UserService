@@ -6,13 +6,11 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class CreateGroup : CommonTest
+public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void CreateGroup_ShouldBe_Success()
     {
-        ClearDataBase();
-
         var speciality = Fixture.Create<Speciality>();
         var curator = Fixture.Create<Teacher>();
 
@@ -31,8 +29,6 @@ public class CreateGroup : CommonTest
     [Fact]
     public async void CreateGroup_ShouldBe_SpecialityNotFoundException()
     {
-        ClearDataBase();
-
         var curator = Fixture.Create<Teacher>();
 
         await Context.Teachers.AddAsync(curator);
@@ -48,8 +44,6 @@ public class CreateGroup : CommonTest
     [Fact]
     public async void CreateGroup_ShouldBe_TeacherNotFoundException()
     {
-        ClearDataBase();
-
         var speciality = Fixture.Create<Speciality>();
 
         await Context.Specialities.AddAsync(speciality);

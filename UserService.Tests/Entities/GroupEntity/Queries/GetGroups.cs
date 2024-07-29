@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Queries
 {
-    public class GetGroupsTests : CommonTest
+    public class GetGroupsTests(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
     {
         [Fact]
         public async void GetGroups_ShouldBe_SuccessWithPageSize()
@@ -78,10 +78,20 @@ namespace UserService.Tests.Entities.GroupEntity.Queries
         }
 
         [Fact]
-        public async void GetGroups_ShouldBe_SuccessWithSearchString()
+        public async void GetGroups_ShouldBe_SuccessWithSearchStringByAbbr()
         {
             await TestSearchString("AA", 1, group => group.Speciality.Abbreavation == "AAA");
+        }
+
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithSearchStringByCurrentCourse()
+        {
             await TestSearchString("1-A", 1, group => group.CurrentCourse == 1);
+        }
+
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithSearchStringBySubGroup()
+        {
             await TestSearchString("3", 1, group => group.SubGroup == 3);
         }
 
@@ -150,10 +160,8 @@ namespace UserService.Tests.Entities.GroupEntity.Queries
 
         private async Task AddGroupsToContext(params Group[] groups)
         {
-            ClearDataBase();
-
             await Context.Groups.AddRangeAsync(groups);
-            await Context.SaveChangesAsync();
+            await Context.SaveChangesAsync(CancellationToken.None);
         }
 
         private (Group, Group) CreateGroupsWithSpeciality()

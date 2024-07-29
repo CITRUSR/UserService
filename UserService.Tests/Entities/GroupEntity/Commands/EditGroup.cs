@@ -6,13 +6,11 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class EditGroup : CommonTest
+public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void EditGroup_ShouldBe_Success()
     {
-        ClearDataBase();
-
         var speciality = Fixture.Create<Speciality>();
         var curator = Fixture.Create<Teacher>();
 
@@ -32,7 +30,7 @@ public class EditGroup : CommonTest
         await Context.Teachers.AddAsync(curator);
         await Context.Groups.AddAsync(oldGroup);
 
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         var command = new EditGroupCommand(newGroup.Id, speciality.Id, curator.Id, newGroup.CurrentCourse,
             newGroup.CurrentSemester, newGroup.SubGroup);
@@ -58,7 +56,7 @@ public class EditGroup : CommonTest
         var group = Fixture.Create<Group>();
 
         await Context.Groups.AddAsync(group);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         var command = Fixture.Build<EditGroupCommand>()
             .With(x => x.Id, group.Id)
@@ -78,7 +76,7 @@ public class EditGroup : CommonTest
 
         await Context.Groups.AddAsync(group);
         await Context.Specialities.AddAsync(speciality);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         var command = Fixture.Build<EditGroupCommand>()
             .With(x => x.Id, group.Id)

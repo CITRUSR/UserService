@@ -6,17 +6,20 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Queries;
 
-public class GetGroupByIdCached : RedisTest
+public class GetGroupByIdCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
     public async void GetGroupByIdCached_ShouldBe_SuccessWithoutCache()
     {
-        ClearDataBase();
+        var speciality = Fixture.Create<Speciality>();
+        var curator = Fixture.Create<Teacher>();
 
-        var group = CreateGroup();
+        var group = CreateGroup(curator.Id, speciality.Id);
 
         await Context.Groups.AddAsync(group);
-        await Context.SaveChangesAsync();
+        await Context.Teachers.AddAsync(curator);
+        await Context.Specialities.AddAsync(speciality);
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         var query = new GetGroupByIdQuery(group.Id);
 
@@ -24,13 +27,15 @@ public class GetGroupByIdCached : RedisTest
         var groupFromCache = await CacheService.GetObjectAsync<Group>(CacheKeys.ById<Group, int>(group.Id));
 
         Context.Groups.Find(groupRes.Id).Should().BeEquivalentTo(group);
-        groupFromCache.Should().BeEquivalentTo(group);
+        groupFromCache.Should()
+            .BeEquivalentTo(group, options => options.Excluding(x => x.Curator)
+                .Excluding(x => x.Speciality));
     }
 
     [Fact]
     public async void GetGroupByIdCached_ShouldBe_SuccessWithCache()
     {
-        var group = CreateGroup();
+        var group = CreateGroup(Guid.NewGuid(), 123);
 
         await CacheService.SetObjectAsync(CacheKeys.ById<Group, int>(group.Id), group);
 
@@ -43,11 +48,13 @@ public class GetGroupByIdCached : RedisTest
         groupFromCache.Should().BeEquivalentTo(group);
     }
 
-    private Group CreateGroup()
+    private Group CreateGroup(Guid curatorId, int specialityId)
     {
         return Fixture.Build<Group>()
             .Without(x => x.Curator)
             .Without(x => x.Speciality)
+            .With(x => x.SpecialityId, specialityId)
+            .With(x => x.CuratorId, curatorId)
             .Create();
     }
 

@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
 
-public class DropOutStudent : CommonTest
+public class DropOutStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void DropOutStudent_ShouldBe_Success()
@@ -14,7 +14,7 @@ public class DropOutStudent : CommonTest
         var student = Fixture.Create<Student>();
         student.DroppedOutAt = null;
 
-        await Context.AddAsync(student);
+        await Context.Students.AddAsync(student);
 
         var command = Fixture.Build<DropOutStudentCommand>().With(x => x.Id, student.Id).Create();
         var handler = new DropOutStudentCommandHandler(Context);
@@ -29,7 +29,7 @@ public class DropOutStudent : CommonTest
     {
         var student = Fixture.Create<Student>();
 
-        await Context.AddAsync(student);
+        await Context.Students.AddAsync(student);
 
         var command = Fixture.Create<DropOutStudentCommand>();
         var handler = new DropOutStudentCommandHandler(Context);

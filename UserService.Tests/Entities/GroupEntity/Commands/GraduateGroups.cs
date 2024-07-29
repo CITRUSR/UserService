@@ -6,13 +6,11 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class GraduateGroups : CommonTest
+public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void GraduateGroup_ShouldBe_Success()
     {
-        ClearDataBase();
-
         var students = Fixture.CreateMany<Student>(5);
         var groups = Fixture.CreateMany<Group>();
         foreach (var group in groups)
@@ -25,7 +23,7 @@ public class GraduateGroups : CommonTest
 
 
         await Context.Groups.AddRangeAsync(groups);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         DateTime graduatedTime = DateTime.Now;
 

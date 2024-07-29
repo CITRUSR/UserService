@@ -7,7 +7,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Queries;
 
-public class GetGroupsCached : RedisTest
+public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
     public async void GetGroupsCached_ShouldBe_SuccessWithoutCache_WithValidatedQuery()
@@ -18,12 +18,11 @@ public class GetGroupsCached : RedisTest
         var groupsFromCache =
             await CacheService.GetObjectAsync<PaginationList<Group>>(CacheKeys.GetEntities<Group>(1, 10));
 
-        Context.Groups.Should().BeEquivalentTo(groups.Items);
         CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10)).Should().NotBeNull();
 
-        ClearSpecialityGroups(groups);
-
-        groupsFromCache.Should().BeEquivalentTo(groups);
+        groupsFromCache.Items.Should().BeEquivalentTo(groups.Items, options => options.Excluding(x => x.Speciality)
+            .Excluding(x => x.Curator));
+        groupsFromCache.Should().BeEquivalentTo(groups, options => options.Excluding(x => x.Items));
     }
 
     [Fact]
@@ -57,19 +56,12 @@ public class GetGroupsCached : RedisTest
         var groupsFromCache =
             await CacheService.GetObjectAsync<PaginationList<Group>>(CacheKeys.GetEntities<Group>(1, 10));
 
-        ClearSpecialityGroups(groups);
-
         cacheString.Should().NotBeNull();
-        groupsFromCache.Should().BeEquivalentTo(groups);
+        groupsFromCache.Items.Should().BeEquivalentTo(groups.Items, options => options.Excluding(x => x.Speciality)
+            .Excluding(x => x.Curator));
+        groupsFromCache.Should().BeEquivalentTo(groups, options => options.Excluding(x => x.Items));
     }
 
-    private void ClearSpecialityGroups(PaginationList<Group> groups)
-    {
-        foreach (var group in groups.Items)
-        {
-            group.Speciality.Groups.Clear();
-        }
-    }
 
     private async Task<PaginationList<Group>> GetGroupsCachedWithValidatedQuery(int page, GroupSortState sortState,
         GroupGraduatedStatus graduatedStatus)
@@ -82,21 +74,35 @@ public class GetGroupsCached : RedisTest
 
     private async Task SeedDataForTestsWithValidatedQueryForCaching()
     {
-        var groups = CreateGroups(10);
-        // var groups = Fixture.CreateMany<Group>(10);
+        var speciality = Fixture.Create<Speciality>();
+        var curator = Fixture.Create<Teacher>();
 
+        var groups = CreateGroups(10, curator.Id, speciality);
+
+        await AddSpecialitiesToContext([speciality]);
+        await AddCuratorsToContext([curator]);
         await AddGroupsToContext(groups.ToList());
     }
 
     private async Task AddGroupsToContext(List<Group> groups)
     {
-        ClearDataBase();
-
         await Context.Groups.AddRangeAsync(groups);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
     }
 
-    private List<Group> CreateGroups(int count)
+    private async Task AddSpecialitiesToContext(List<Speciality> specialities)
+    {
+        await Context.Specialities.AddRangeAsync(specialities);
+        await Context.SaveChangesAsync(CancellationToken.None);
+    }
+
+    private async Task AddCuratorsToContext(List<Teacher> curators)
+    {
+        await Context.Teachers.AddRangeAsync(curators);
+        await Context.SaveChangesAsync(CancellationToken.None);
+    }
+
+    private List<Group> CreateGroups(int count, Guid curatorId, Speciality speciality)
     {
         List<Group> groups = new List<Group>();
 
@@ -105,6 +111,9 @@ public class GetGroupsCached : RedisTest
             groups.Add(Fixture.Build<Group>()
                 .Without(x => x.Curator)
                 .Without(x => x.GraduatedAt)
+                .Without(x => x.Id)
+                .With(x => x.CuratorId, curatorId)
+                .With(x => x.Speciality, speciality)
                 .Create());
         }
 

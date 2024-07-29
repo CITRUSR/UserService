@@ -6,17 +6,15 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Queries;
 
-public class GetStudentBySsoId : CommonTest
+public class GetStudentBySsoId(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void GetStudentBySsoId_ShouldBe_Success()
     {
-        ClearDataBase();
-
         var student = Fixture.Create<Student>();
 
         await Context.Students.AddAsync(student);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         var query = new GetStudentBySsoIdQuery(student.SsoId);
 

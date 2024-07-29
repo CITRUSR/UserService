@@ -6,17 +6,15 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 
-public class DeleteSpeciality : CommonTest
+public class DeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void DeleteSpeciality_ShouldBe_Success()
     {
-        ClearDataBase();
-
         var speciality = Fixture.Create<Speciality>();
 
         await Context.Specialities.AddAsync(speciality);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         var command = new DeleteSpecialityCommand(speciality.Id);
 

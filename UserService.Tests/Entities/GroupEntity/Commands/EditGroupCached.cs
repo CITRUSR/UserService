@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class EditGroupCached : RedisTest
+public class EditGroupCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
     public async void EditGroupCached_ShouldBe_Success()
@@ -45,12 +45,16 @@ public class EditGroupCached : RedisTest
 
         var speciality = Fixture.Create<Speciality>();
 
+        speciality.Groups.Add(oldGroup);
+
         var curator = Fixture.Create<Teacher>();
+
+        curator.Groups.Add(oldGroup);
 
         Context.Specialities.Add(speciality);
         Context.Teachers.Add(curator);
 
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         return (curator.Id, speciality.Id, oldGroup);
     }

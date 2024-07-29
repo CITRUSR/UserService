@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Queries;
 
-public class GetStudents : CommonTest
+public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void GetStudents_ShouldBe_SuccessWithPageSize()
@@ -254,10 +254,8 @@ public class GetStudents : CommonTest
 
     private async Task AddStudentsToContext(params Student[] students)
     {
-        ClearDataBase();
-
         await Context.Students.AddRangeAsync(students);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
     }
 
     private async Task<PaginationList<Student>> Action(GetStudentsQuery query)

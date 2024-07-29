@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class TransferGroupsToNextCourse : CommonTest
+public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void TransferGroupsToNextCourse_ShouldBe_SuccessWithList()
@@ -18,29 +18,20 @@ public class TransferGroupsToNextCourse : CommonTest
             IdGroups = Context.Groups.Select(x => x.Id).ToList()
         };
 
-        var ids = await Action(command);
+        var groups = await Action(command);
 
-        Assert(ids, courses);
-    }
-
-    [Fact]
-    public async void TransferGroupsToNextCourse_ShouldBe_SuccessWithoutList()
-    {
-        var courses = await Arrange(2);
-
-        var command = new TransferGroupsToNextCourseCommand();
-
-        var ids = await Action(command);
-
-        Assert(ids, courses);
+        Assert(groups, courses);
     }
 
     [Fact]
     public async void TransferGroupsToNextCourse_ShouldBe_GroupCourseOutOfRangeException()
     {
-        var courses = await Arrange(4);
+        await Arrange(4);
 
-        var command = new TransferGroupsToNextCourseCommand();
+        var command = new TransferGroupsToNextCourseCommand
+        {
+            IdGroups = Context.Groups.Select(x => x.Id).ToList()
+        };
 
         Func<Task> act = () => Action(command);
 
@@ -49,8 +40,6 @@ public class TransferGroupsToNextCourse : CommonTest
 
     private async Task<Dictionary<Group, byte>> Arrange(int CurrentCourse)
     {
-        ClearDataBase();
-
         var speciality = Fixture.Build<Speciality>()
             .With(x => x.DurationMonths, 46)
             .Create();
@@ -72,16 +61,16 @@ public class TransferGroupsToNextCourse : CommonTest
         return Context.Groups.ToDictionary(x => x, x => x.CurrentCourse);
     }
 
-    private async Task<List<int>> Action(TransferGroupsToNextCourseCommand command)
+    private async Task<List<Group>> Action(TransferGroupsToNextCourseCommand command)
     {
         var handler = new TransferGroupsToNextCourseCommandHandler(Context);
 
         return await handler.Handle(command, CancellationToken.None);
     }
 
-    private void Assert(List<int> ids, Dictionary<Group, byte> courses)
+    private void Assert(List<Group> groups, Dictionary<Group, byte> courses)
     {
-        foreach (var group in Context.Groups.Where(x => ids.Contains(x.Id)))
+        foreach (var group in groups)
         {
             courses[group].Should().Be(--group.CurrentCourse);
         }

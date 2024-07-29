@@ -6,16 +6,21 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
 
-public class CreateStudent : CommonTest
+public class CreateStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void CreateStudent_ShouldBe_Success()
     {
         var group = Fixture.Create<Group>();
 
-        await Context.AddAsync(group);
-        
-        var command = Fixture.Build<CreateStudentCommand>().With(x => x.GroupId, group.Id).Create();
+        await Context.Groups.AddAsync(group);
+
+        var command = Fixture.Build<CreateStudentCommand>()
+            .With(x => x.GroupId, group.Id)
+            .With(x => x.FirstName, "ASDASDASFASGAS")
+            .With(x => x.LastName, "ASDASDASGAS")
+            .With(x => x.PatronymicName, "asaASa")
+            .Create();
 
         CreateStudentCommandHandler handler = new CreateStudentCommandHandler(Context);
 

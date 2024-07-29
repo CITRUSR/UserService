@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Services;
 
-public class CacheService : RedisTest
+public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
     public async void CacheService_GetStringAsync_ShouldBe_Success()
@@ -112,7 +112,7 @@ public class CacheService : RedisTest
         var groups = Fixture.CreateMany<Group>(CacheConstants.PagesForCaching * 10);
 
         await Context.Groups.AddRangeAsync(groups);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         IQueryable<Group> dbGroups = Context.Groups;
 

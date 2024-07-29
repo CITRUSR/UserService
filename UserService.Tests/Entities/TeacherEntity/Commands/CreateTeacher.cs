@@ -4,12 +4,16 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.TeacherEntity.Commands;
 
-public class CreateTeacher : CommonTest
+public class CreateTeacher(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void CreateTeacher_ShouldBe_Success()
     {
-        var command = Fixture.Create<CreateTeacherCommand>();
+        var command = Fixture.Build<CreateTeacherCommand>()
+            .With(x => x.FirstName, "asadas")
+            .With(x => x.LastName, "asadas")
+            .With(x => x.PatronymicName, "asadas")
+            .Create();
 
         var id = await Action(command);
 

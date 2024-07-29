@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Queries;
 
-public class GetSpecialities : CommonTest
+public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void GetSpecialities_ShouldBe_SuccessWithPageSize()
@@ -169,9 +169,14 @@ public class GetSpecialities : CommonTest
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchString()
+    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringName()
     {
         await TestSearchString("AA", 1, speciality => speciality.Name == "AAA");
+    }
+
+    [Fact]
+    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringAbbr()
+    {
         await TestSearchString("CC", 1, speciality => speciality.Abbreavation == "CCC");
     }
 
@@ -292,10 +297,8 @@ public class GetSpecialities : CommonTest
 
     private async Task AddSpecialitiesToContext(params Speciality[] specialities)
     {
-        ClearDataBase();
-
         await Context.Specialities.AddRangeAsync(specialities);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
     }
 
     private async Task<PaginationList<Speciality>> Action(GetSpecialitiesQuery query)

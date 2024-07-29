@@ -6,17 +6,15 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Queries;
 
-public class GetSpecialityById : CommonTest
+public class GetSpecialityById(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void GetSpecialityById_ShouldBe_Success()
     {
-        ClearDataBase();
-
         var speciality = Fixture.Create<Speciality>();
 
         await Context.Specialities.AddAsync(speciality);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         var query = new GetSpecialityByIdQuery(speciality.Id);
 

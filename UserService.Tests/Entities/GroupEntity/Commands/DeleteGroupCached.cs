@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class DeleteGroupCached : RedisTest
+public class DeleteGroupCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
     public async void DeleteGroupCached_ShouldBe_Success()
@@ -14,7 +14,7 @@ public class DeleteGroupCached : RedisTest
         var group = Fixture.Create<Group>();
 
         Context.Groups.Add(group);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         await CacheService.SetObjectAsync(CacheKeys.ById<Group, int>(group.Id), group);
 

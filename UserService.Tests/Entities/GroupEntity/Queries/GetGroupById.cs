@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Queries;
 
-public class GetGroupById : CommonTest
+public class GetGroupById(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void GetGroupById_ShouldBe_Success()
@@ -14,7 +14,7 @@ public class GetGroupById : CommonTest
         var group = Fixture.Create<Group>();
 
         await Context.Groups.AddAsync(group);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         var query = new GetGroupByIdQuery(group.Id);
 

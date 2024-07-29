@@ -4,14 +4,14 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 
-public class CreateSpeciality : CommonTest
+public class CreateSpeciality(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void CreateSpeciality_ShouldBe_Success()
     {
-        ClearDataBase();
-
-        var command = Fixture.Create<CreateSpecialityCommand>();
+        var command = Fixture.Build<CreateSpecialityCommand>()
+            .With(x => x.Abbreavation, "ASDASAS")
+            .Create();
 
         var handler = new CreateSpecialityCommandHandler(Context);
 

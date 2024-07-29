@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
 
-public class DeleteStudent : CommonTest
+public class DeleteStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void DeleteStudent_ShouldBe_Success()
@@ -17,8 +17,8 @@ public class DeleteStudent : CommonTest
 
         group.Students.Add(student);
 
-        await Context.AddAsync(student);
-        await Context.AddAsync(group);
+        await Context.Students.AddAsync(student);
+        await Context.Groups.AddAsync(group);
 
         var command = new DeleteStudentCommand(student.Id);
         var handler = new DeleteStudentCommandHandler(Context);
@@ -34,7 +34,7 @@ public class DeleteStudent : CommonTest
     {
         var student = Fixture.Create<Student>();
 
-        await Context.AddAsync(student);
+        await Context.Students.AddAsync(student);
 
         var command = new DeleteStudentCommand(Guid.NewGuid());
         var handler = new DeleteStudentCommandHandler(Context);

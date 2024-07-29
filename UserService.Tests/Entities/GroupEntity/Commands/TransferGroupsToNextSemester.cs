@@ -6,7 +6,7 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class TransferGroupsToNextSemester : CommonTest
+public class TransferGroupsToNextSemester(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void TransferGroupsToNextSemester_ShouldBe_SuccessWithList()
@@ -49,8 +49,6 @@ public class TransferGroupsToNextSemester : CommonTest
 
     private async Task<Dictionary<Group, byte>> Arrange(int currentSemester)
     {
-        ClearDataBase();
-
         var speciality = Fixture.Build<Speciality>()
             .With(x => x.DurationMonths, 46)
             .Create();
@@ -67,7 +65,7 @@ public class TransferGroupsToNextSemester : CommonTest
 
         await Context.Groups.AddAsync(group1);
         await Context.Groups.AddAsync(group2);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         return Context.Groups.ToDictionary(x => x, x => x.CurrentSemester);
     }

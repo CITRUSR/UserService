@@ -6,13 +6,11 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
 
-public class EditStudent : CommonTest
+public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void EditStudent_ShouldBe_Success()
     {
-        ClearDataBase();
-        
         int oldGroupId = 12;
 
         var oldStudent = Fixture.Build<Student>().With(x => x.GroupId, oldGroupId).Create();
@@ -26,9 +24,9 @@ public class EditStudent : CommonTest
             .With(x => x.Id, oldStudent.Id).With(x => x.SsoId, oldStudent.SsoId).With(x => x.Group, newGroup)
             .With(x => x.DroppedOutAt, oldStudent.DroppedOutAt).Create();
 
-        await Context.AddAsync(oldStudent);
-        await Context.AddAsync(oldGroup);
-        await Context.AddAsync(newGroup);
+        await Context.Students.AddAsync(oldStudent);
+        await Context.Groups.AddAsync(oldGroup);
+        await Context.Groups.AddAsync(newGroup);
 
         var command = new EditStudentCommand(oldStudent.Id, newStudent.FirstName, newStudent.LastName,
             newStudent.PatronymicName, newStudent.GroupId);
@@ -47,7 +45,7 @@ public class EditStudent : CommonTest
     {
         var oldStudent = Fixture.Create<Student>();
 
-        await Context.AddAsync(oldStudent);
+        await Context.Students.AddAsync(oldStudent);
 
         var command = Fixture.Create<EditStudentCommand>();
         var handler = new EditStudentCommandHandler(Context);
@@ -61,7 +59,7 @@ public class EditStudent : CommonTest
     {
         var oldStudent = Fixture.Create<Student>();
 
-        await Context.AddAsync(oldStudent);
+        await Context.Students.AddAsync(oldStudent);
 
         var command = Fixture.Build<EditStudentCommand>().With(x => x.Id, oldStudent.Id).Create();
         var handler = new EditStudentCommandHandler(Context);

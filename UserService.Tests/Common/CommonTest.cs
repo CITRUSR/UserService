@@ -1,27 +1,42 @@
-﻿using AutoFixture;
+﻿using Microsoft.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Persistance;
 
 namespace UserService.Tests.Common;
 
-public class CommonTest : IDisposable
+public class CommonTest : IAsyncLifetime, IClassFixture<DatabaseFixture>
 {
-    protected readonly AppDbContext Context;
+    protected readonly IAppDbContext Context;
     protected readonly Fixture Fixture;
+    private readonly DatabaseFixture _databaseFixture;
 
-    public CommonTest()
+    public CommonTest(DatabaseFixture databaseFixture)
     {
-        Context = ContextFactory.Create();
+        _databaseFixture = databaseFixture;
+        Context = CreateDbContext();
         Fixture = new Fixture();
     }
 
-    public void Dispose()
+    public async Task InitializeAsync()
     {
-        ContextFactory.Destroy(Context);
+        await Context.BeginTransactionAsync();
     }
 
-    public void ClearDataBase()
+    public async Task DisposeAsync()
     {
-        Context.Database.EnsureDeleted();
-        Context.Database.EnsureCreated();
+        await Context.RollbackTransactionAsync();
+    }
+
+    private IAppDbContext CreateDbContext()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseNpgsql(_databaseFixture.ConnectionString)
+            .Options;
+
+        var db = new AppDbContext(options);
+
+        db.Database.EnsureCreated();
+
+        return db;
     }
 }

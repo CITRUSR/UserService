@@ -6,13 +6,11 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 
-public class EditSpeciality : CommonTest
+public class EditSpeciality(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void EditSpeciality_ShouldBe_Success()
     {
-        ClearDataBase();
-
         var speciality = Fixture.Create<Speciality>();
 
         var newSpeciality = Fixture.Build<Speciality>()
@@ -20,7 +18,7 @@ public class EditSpeciality : CommonTest
             .Create();
 
         await Context.Specialities.AddAsync(speciality);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         var command = new EditSpecialityCommand(speciality.Id,
             newSpeciality.Name,

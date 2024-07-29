@@ -6,16 +6,14 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class DeleteGroup : CommonTest
+public class DeleteGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
     public async void DeleteGroup_ShouldBe_Success()
     {
-        ClearDataBase();
-
         var group = Fixture.Create<Group>();
         await Context.Groups.AddAsync(group);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(CancellationToken.None);
 
         var command = new DeleteGroupCommand(group.Id);
         var handler = new DeleteGroupCommandHandler(Context);

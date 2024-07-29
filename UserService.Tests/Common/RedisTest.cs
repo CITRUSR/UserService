@@ -6,7 +6,7 @@ using UserService.Application.Common.Cache;
 
 namespace UserService.Tests.Common;
 
-public class RedisTest : CommonTest, IAsyncLifetime
+public class RedisTest(DatabaseFixture databaseFixture) : CommonTest(databaseFixture), IAsyncLifetime
 {
     protected ICacheService CacheService { get; set; }
 
