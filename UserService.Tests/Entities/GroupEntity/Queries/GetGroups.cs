@@ -158,12 +158,6 @@ namespace UserService.Tests.Entities.GroupEntity.Queries
             };
         }
 
-        private async Task AddGroupsToContext(params Group[] groups)
-        {
-            await Context.Groups.AddRangeAsync(groups);
-            await Context.SaveChangesAsync(CancellationToken.None);
-        }
-
         private (Group, Group) CreateGroupsWithSpeciality()
         {
             var speciality1 = Fixture.Build<Speciality>().With(x => x.Abbreavation, "AAA").Create();

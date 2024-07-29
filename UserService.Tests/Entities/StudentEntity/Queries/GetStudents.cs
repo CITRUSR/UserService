@@ -182,7 +182,7 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
 
     private async Task TestSearchString(string searchString, int expectedCount, Func<Student, bool> predicate)
     {
-        var (studentA, studentB) = await SeedDataForSearchStringTests();
+        await SeedDataForSearchStringTests();
 
         var query = CreateQuery(searchString: searchString);
 
@@ -192,7 +192,7 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
         students.Items.Should().Contain(student => predicate(student));
     }
 
-    private async Task<(Student, Student)> SeedDataForSearchStringTests()
+    private async Task SeedDataForSearchStringTests()
     {
         var speciality = Fixture.Build<Speciality>()
             .With(x => x.Abbreavation, "H")
@@ -216,8 +216,6 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             .Create();
 
         await AddStudentsToContext([studentA, studentB]);
-
-        return (studentA, studentB);
     }
 
     private async Task<(Student, Student)> SeedDataForTests()
@@ -250,12 +248,6 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             SortState = sortState,
             DroppedOutStatus = droppedOutStatus,
         };
-    }
-
-    private async Task AddStudentsToContext(params Student[] students)
-    {
-        await Context.Students.AddRangeAsync(students);
-        await Context.SaveChangesAsync(CancellationToken.None);
     }
 
     private async Task<PaginationList<Student>> Action(GetStudentsQuery query)

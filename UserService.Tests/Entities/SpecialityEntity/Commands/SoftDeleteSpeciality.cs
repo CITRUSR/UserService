@@ -13,8 +13,7 @@ public class SoftDeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(
     {
         var speciality = Fixture.Create<Speciality>();
 
-        await Context.Specialities.AddAsync(speciality);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddSpecialitiesToContext(speciality);
 
         var command = new SoftDeleteSpecialityCommand(speciality.Id);
 

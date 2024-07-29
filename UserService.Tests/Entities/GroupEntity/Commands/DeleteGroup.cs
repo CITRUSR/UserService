@@ -12,8 +12,8 @@ public class DeleteGroup(DatabaseFixture databaseFixture) : CommonTest(databaseF
     public async void DeleteGroup_ShouldBe_Success()
     {
         var group = Fixture.Create<Group>();
-        await Context.Groups.AddAsync(group);
-        await Context.SaveChangesAsync(CancellationToken.None);
+
+        await AddGroupsToContext(group);
 
         var command = new DeleteGroupCommand(group.Id);
         var handler = new DeleteGroupCommandHandler(Context);

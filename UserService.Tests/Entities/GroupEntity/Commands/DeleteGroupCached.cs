@@ -13,8 +13,7 @@ public class DeleteGroupCached(DatabaseFixture databaseFixture) : RedisTest(data
     {
         var group = Fixture.Create<Group>();
 
-        Context.Groups.Add(group);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddGroupsToContext(group);
 
         await CacheService.SetObjectAsync(CacheKeys.ById<Group, int>(group.Id), group);
 

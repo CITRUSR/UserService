@@ -24,9 +24,8 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
             .With(x => x.Id, oldStudent.Id).With(x => x.SsoId, oldStudent.SsoId).With(x => x.Group, newGroup)
             .With(x => x.DroppedOutAt, oldStudent.DroppedOutAt).Create();
 
-        await Context.Students.AddAsync(oldStudent);
-        await Context.Groups.AddAsync(oldGroup);
-        await Context.Groups.AddAsync(newGroup);
+        await AddStudentsToContext(oldStudent);
+        await AddGroupsToContext(oldGroup, newGroup);
 
         var command = new EditStudentCommand(oldStudent.Id, newStudent.FirstName, newStudent.LastName,
             newStudent.PatronymicName, newStudent.GroupId);
@@ -45,7 +44,7 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         var oldStudent = Fixture.Create<Student>();
 
-        await Context.Students.AddAsync(oldStudent);
+        await AddStudentsToContext(oldStudent);
 
         var command = Fixture.Create<EditStudentCommand>();
         var handler = new EditStudentCommandHandler(Context);
@@ -59,7 +58,7 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         var oldStudent = Fixture.Create<Student>();
 
-        await Context.Students.AddAsync(oldStudent);
+        await AddStudentsToContext(oldStudent);
 
         var command = Fixture.Build<EditStudentCommand>().With(x => x.Id, oldStudent.Id).Create();
         var handler = new EditStudentCommandHandler(Context);

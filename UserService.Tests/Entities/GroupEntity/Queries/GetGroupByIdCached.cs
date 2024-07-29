@@ -16,10 +16,9 @@ public class GetGroupByIdCached(DatabaseFixture databaseFixture) : RedisTest(dat
 
         var group = CreateGroup(curator.Id, speciality.Id);
 
-        await Context.Groups.AddAsync(group);
-        await Context.Teachers.AddAsync(curator);
-        await Context.Specialities.AddAsync(speciality);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddTeachersToContext(curator);
+        await AddSpecialitiesToContext(speciality);
+        await AddGroupsToContext(group);
 
         var query = new GetGroupByIdQuery(group.Id);
 

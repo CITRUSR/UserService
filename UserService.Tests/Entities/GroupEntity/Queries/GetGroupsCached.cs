@@ -79,27 +79,9 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
 
         var groups = CreateGroups(10, curator.Id, speciality);
 
-        await AddSpecialitiesToContext([speciality]);
-        await AddCuratorsToContext([curator]);
-        await AddGroupsToContext(groups.ToList());
-    }
-
-    private async Task AddGroupsToContext(List<Group> groups)
-    {
-        await Context.Groups.AddRangeAsync(groups);
-        await Context.SaveChangesAsync(CancellationToken.None);
-    }
-
-    private async Task AddSpecialitiesToContext(List<Speciality> specialities)
-    {
-        await Context.Specialities.AddRangeAsync(specialities);
-        await Context.SaveChangesAsync(CancellationToken.None);
-    }
-
-    private async Task AddCuratorsToContext(List<Teacher> curators)
-    {
-        await Context.Teachers.AddRangeAsync(curators);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddSpecialitiesToContext(speciality);
+        await AddTeachersToContext(curator);
+        await AddGroupsToContext(groups.ToArray());
     }
 
     private List<Group> CreateGroups(int count, Guid curatorId, Speciality speciality)

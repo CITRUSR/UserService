@@ -41,20 +41,16 @@ public class EditGroupCached(DatabaseFixture databaseFixture) : RedisTest(databa
             .Without(x => x.Speciality)
             .Create();
 
-        Context.Groups.Add(oldGroup);
-
         var speciality = Fixture.Create<Speciality>();
-
-        speciality.Groups.Add(oldGroup);
 
         var curator = Fixture.Create<Teacher>();
 
-        curator.Groups.Add(oldGroup);
+        oldGroup.CuratorId = curator.Id;
+        oldGroup.SpecialityId = speciality.Id;
 
-        Context.Specialities.Add(speciality);
-        Context.Teachers.Add(curator);
-
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddSpecialitiesToContext(speciality);
+        await AddTeachersToContext(curator);
+        await AddGroupsToContext(oldGroup);
 
         return (curator.Id, speciality.Id, oldGroup);
     }

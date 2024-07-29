@@ -111,8 +111,7 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     {
         var groups = Fixture.CreateMany<Group>(CacheConstants.PagesForCaching * 10);
 
-        await Context.Groups.AddRangeAsync(groups);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddGroupsToContext(groups.ToArray());
 
         IQueryable<Group> dbGroups = Context.Groups;
 

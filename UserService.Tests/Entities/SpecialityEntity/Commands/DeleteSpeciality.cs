@@ -13,8 +13,7 @@ public class DeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(data
     {
         var speciality = Fixture.Create<Speciality>();
 
-        await Context.Specialities.AddAsync(speciality);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddSpecialitiesToContext(speciality);
 
         var command = new DeleteSpecialityCommand(speciality.Id);
 

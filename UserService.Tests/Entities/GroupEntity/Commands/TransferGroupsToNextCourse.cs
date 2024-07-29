@@ -54,9 +54,7 @@ public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture) : Commo
             .With(x => x.Speciality, speciality)
             .Create();
 
-        await Context.Groups.AddAsync(group1);
-        await Context.Groups.AddAsync(group2);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddGroupsToContext(group1, group2);
 
         return Context.Groups.ToDictionary(x => x, x => x.CurrentCourse);
     }

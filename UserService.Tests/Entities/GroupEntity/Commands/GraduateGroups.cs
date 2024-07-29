@@ -21,9 +21,7 @@ public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databa
             }
         }
 
-
-        await Context.Groups.AddRangeAsync(groups);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddGroupsToContext(groups.ToArray());
 
         DateTime graduatedTime = DateTime.Now;
 
