@@ -26,11 +26,9 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
             .With(x => x.GraduatedAt, oldGroup.GraduatedAt)
             .Create();
 
-        await Context.Specialities.AddAsync(speciality);
-        await Context.Teachers.AddAsync(curator);
-        await Context.Groups.AddAsync(oldGroup);
-
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddSpecialitiesToContext(speciality);
+        await AddTeachersToContext(curator);
+        await AddGroupsToContext(oldGroup);
 
         var command = new EditGroupCommand(newGroup.Id, speciality.Id, curator.Id, newGroup.CurrentCourse,
             newGroup.CurrentSemester, newGroup.SubGroup);
@@ -55,8 +53,7 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     {
         var group = Fixture.Create<Group>();
 
-        await Context.Groups.AddAsync(group);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddGroupsToContext(group);
 
         var command = Fixture.Build<EditGroupCommand>()
             .With(x => x.Id, group.Id)
@@ -74,9 +71,8 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
 
         var speciality = Fixture.Create<Speciality>();
 
-        await Context.Groups.AddAsync(group);
-        await Context.Specialities.AddAsync(speciality);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddGroupsToContext(group);
+        await AddSpecialitiesToContext(speciality);
 
         var command = Fixture.Build<EditGroupCommand>()
             .With(x => x.Id, group.Id)

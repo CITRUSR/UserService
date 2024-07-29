@@ -295,12 +295,6 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
         };
     }
 
-    private async Task AddSpecialitiesToContext(params Speciality[] specialities)
-    {
-        await Context.Specialities.AddRangeAsync(specialities);
-        await Context.SaveChangesAsync(CancellationToken.None);
-    }
-
     private async Task<PaginationList<Speciality>> Action(GetSpecialitiesQuery query)
     {
         var handler = new GetSpecialitiesQueryHandler(Context);

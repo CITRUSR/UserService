@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UserService.Application.Abstraction;
+using UserService.Domain.Entities;
 using UserService.Persistance;
 
 namespace UserService.Tests.Common;
@@ -25,6 +26,30 @@ public class CommonTest : IAsyncLifetime, IClassFixture<DatabaseFixture>
     public async Task DisposeAsync()
     {
         await Context.RollbackTransactionAsync();
+    }
+
+    protected async Task AddGroupsToContext(params Group[] groups)
+    {
+        await Context.Groups.AddRangeAsync(groups);
+        await Context.SaveChangesAsync(CancellationToken.None);
+    }
+
+    protected async Task AddTeachersToContext(params Teacher[] teachers)
+    {
+        await Context.Teachers.AddRangeAsync(teachers);
+        await Context.SaveChangesAsync(CancellationToken.None);
+    }
+
+    protected async Task AddSpecialitiesToContext(params Speciality[] specialities)
+    {
+        await Context.Specialities.AddRangeAsync(specialities);
+        await Context.SaveChangesAsync(CancellationToken.None);
+    }
+
+    protected async Task AddStudentsToContext(params Student[] students)
+    {
+        await Context.Students.AddRangeAsync(students);
+        await Context.SaveChangesAsync(CancellationToken.None);
     }
 
     private IAppDbContext CreateDbContext()

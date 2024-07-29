@@ -38,7 +38,7 @@ public class TransferGroupsToNextSemester(DatabaseFixture databaseFixture) : Com
     [Fact]
     public async void TransferGroupsToNextSemester_ShouldBe_GroupSemesterOutOfRange()
     {
-        var semesters = await Arrange(8);
+        await Arrange(8);
 
         var command = new TransferGroupsToNextSemesterCommand();
 
@@ -63,9 +63,7 @@ public class TransferGroupsToNextSemester(DatabaseFixture databaseFixture) : Com
             .With(x => x.Speciality, speciality)
             .Create();
 
-        await Context.Groups.AddAsync(group1);
-        await Context.Groups.AddAsync(group2);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddGroupsToContext(group1, group2);
 
         return Context.Groups.ToDictionary(x => x, x => x.CurrentSemester);
     }

@@ -17,8 +17,7 @@ public class EditSpeciality(DatabaseFixture databaseFixture) : CommonTest(databa
             .With(x => x.Id, speciality.Id)
             .Create();
 
-        await Context.Specialities.AddAsync(speciality);
-        await Context.SaveChangesAsync(CancellationToken.None);
+        await AddSpecialitiesToContext(speciality);
 
         var command = new EditSpecialityCommand(speciality.Id,
             newSpeciality.Name,
