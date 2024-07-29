@@ -10,4 +10,7 @@ public interface IAppDbContext
     public DbSet<Group> Groups { get; set; }
     public DbSet<Speciality> Specialities { get; set; }
     public Task<int> SaveChangesAsync(CancellationToken token);
+    Task BeginTransactionAsync();
+    Task CommitTransactionAsync();
+    Task RollbackTransactionAsync();
 }

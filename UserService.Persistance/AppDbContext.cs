@@ -24,4 +24,30 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.ApplyConfiguration(new SpecialityConfiguration());
         base.OnModelCreating(modelBuilder);
     }
+
+    public async Task BeginTransactionAsync()
+    {
+        if (Database.CurrentTransaction == null)
+        {
+            await Database.BeginTransactionAsync();
+        }
+    }
+
+    public async Task CommitTransactionAsync()
+    {
+        var transaction = Database.CurrentTransaction;
+        if (transaction != null)
+        {
+            await transaction.CommitAsync();
+        }
+    }
+
+    public async Task RollbackTransactionAsync()
+    {
+        var transaction = Database.CurrentTransaction;
+        if (transaction != null)
+        {
+            await transaction.RollbackAsync();
+        }
+    }
 }
