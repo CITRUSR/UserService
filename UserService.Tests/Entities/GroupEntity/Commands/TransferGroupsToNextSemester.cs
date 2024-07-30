@@ -13,26 +13,11 @@ public class TransferGroupsToNextSemester(DatabaseFixture databaseFixture) : Com
     {
         var semesters = await Arrange(6);
 
-        var command = new TransferGroupsToNextSemesterCommand
-        {
-            IdGroups = Context.Groups.Select(x => x.Id).ToList(),
-        };
+        var command = new TransferGroupsToNextSemesterCommand(Context.Groups.Select(x => x.Id).ToList());
 
-        var ids = await Action(command);
+        var groups = await Action(command);
 
-        Assert(ids, semesters);
-    }
-
-    [Fact]
-    public async void TransferGroupsToNextSemester_ShouldBe_SuccessWithoutList()
-    {
-        var semesters = await Arrange(6);
-
-        var command = new TransferGroupsToNextSemesterCommand();
-
-        var ids = await Action(command);
-
-        Assert(ids, semesters);
+        Assert(groups, semesters);
     }
 
     [Fact]
@@ -40,11 +25,21 @@ public class TransferGroupsToNextSemester(DatabaseFixture databaseFixture) : Com
     {
         await Arrange(8);
 
-        var command = new TransferGroupsToNextSemesterCommand();
+        var command = new TransferGroupsToNextSemesterCommand(Context.Groups.Select(x => x.Id).ToList());
 
         Func<Task> act = async () => await Action(command);
 
         await act.Should().ThrowAsync<GroupSemesterOutOfRangeException>();
+    }
+
+    [Fact]
+    public async void TransferGroupsToNextSemester_ShouldBe_GroupNotFoundException()
+    {
+        var command = new TransferGroupsToNextSemesterCommand([123]);
+
+        Func<Task> act = async () => await Action(command);
+
+        await act.Should().ThrowAsync<GroupNotFoundException>();
     }
 
     private async Task<Dictionary<Group, byte>> Arrange(int currentSemester)
@@ -68,16 +63,16 @@ public class TransferGroupsToNextSemester(DatabaseFixture databaseFixture) : Com
         return Context.Groups.ToDictionary(x => x, x => x.CurrentSemester);
     }
 
-    private async Task<List<int>> Action(TransferGroupsToNextSemesterCommand command)
+    private async Task<List<Group>> Action(TransferGroupsToNextSemesterCommand command)
     {
         var handler = new TransferGroupsToNextSemesterCommandHandler(Context);
 
         return await handler.Handle(command, CancellationToken.None);
     }
 
-    private void Assert(List<int> GroupsId, Dictionary<Group, byte> semesters)
+    private void Assert(List<Group> groups, Dictionary<Group, byte> semesters)
     {
-        foreach (var group in Context.Groups.Where(x => GroupsId.Contains(x.Id)))
+        foreach (var group in groups)
         {
             semesters[group].Should().Be(--group.CurrentSemester);
         }
