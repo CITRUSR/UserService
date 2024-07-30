@@ -13,10 +13,7 @@ public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture) : Commo
     {
         var courses = await Arrange(2);
 
-        var command = new TransferGroupsToNextCourseCommand
-        {
-            IdGroups = Context.Groups.Select(x => x.Id).ToList()
-        };
+        var command = new TransferGroupsToNextCourseCommand(Context.Groups.Select(x => x.Id).ToList());
 
         var groups = await Action(command);
 
@@ -28,14 +25,21 @@ public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture) : Commo
     {
         await Arrange(4);
 
-        var command = new TransferGroupsToNextCourseCommand
-        {
-            IdGroups = Context.Groups.Select(x => x.Id).ToList()
-        };
+        var command = new TransferGroupsToNextCourseCommand(Context.Groups.Select(x => x.Id).ToList());
 
         Func<Task> act = () => Action(command);
 
         await act.Should().ThrowAsync<GroupCourseOutOfRangeException>();
+    }
+
+    [Fact]
+    public async void TransferGroupsToNextCourse_ShouldBe_GroupNotFoundException()
+    {
+        var command = new TransferGroupsToNextCourseCommand([123]);
+
+        Func<Task> act = () => Action(command);
+
+        await act.Should().ThrowAsync<GroupNotFoundException>();
     }
 
     private async Task<Dictionary<Group, byte>> Arrange(int CurrentCourse)
