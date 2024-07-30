@@ -13,11 +13,15 @@ using UserService.Domain.Entities;
 
 namespace UserService.API.Services;
 
-public class GroupService(IMediator mediator, IMapper<Group, GroupModel> mapper)
+public class GroupService(
+    IMediator mediator,
+    IMapper<Group, GroupModel> mapper,
+    IMapper<Group, ChangeGroupResponseModel> changeGroupResponseMapper)
     : UserService.GroupService.GroupServiceBase
 {
     private readonly IMediator _mediator = mediator;
     private readonly IMapper<Group, GroupModel> _mapper = mapper;
+    private readonly IMapper<Group, ChangeGroupResponseModel> _changeGroupResponseMapper = changeGroupResponseMapper;
 
     public override async Task<CreateGroupResponse> CreateGroup(CreateGroupRequest request, ServerCallContext context)
     {
@@ -68,13 +72,7 @@ public class GroupService(IMediator mediator, IMapper<Group, GroupModel> mapper)
         {
             Groups =
             {
-                groups.Select(x => new GraduateGroupResponseModel
-                {
-                    Id = x.Id,
-                    CurrentSemester = x.CurrentSemester,
-                    SubGroup = x.SubGroup,
-                    Abbr = x.Speciality.Abbreavation,
-                })
+                groups.Select(x => _changeGroupResponseMapper.Map(x))
             },
         };
     }
@@ -82,32 +80,29 @@ public class GroupService(IMediator mediator, IMapper<Group, GroupModel> mapper)
     public override async Task<TransferGroupsToNextSemesterResponse> TransferGroupsToNextSemester(
         TransferGroupsToNextSemesterRequest request, ServerCallContext context)
     {
-        var command = new TransferGroupsToNextSemesterCommand
-        {
-            IdGroups = request.IdGroups.ToList(),
-        };
+        var command = new TransferGroupsToNextSemesterCommand(request.IdGroups.ToList());
 
-        var ids = await _mediator.Send(command);
+        var groups = await _mediator.Send(command);
 
         return new TransferGroupsToNextSemesterResponse
         {
-            IdGroups = { ids }
+            Groups = { groups.Select(x => _changeGroupResponseMapper.Map(x)) }
         };
     }
 
     public override async Task<TransferGroupsToNextCourseResponse> TransferGroupsToNextCourse(
         TransferGroupsToNextCourseRequest request, ServerCallContext context)
     {
-        var command = new TransferGroupsToNextCourseCommand
-        {
-            IdGroups = request.IdGroups.ToList(),
-        };
+        var command = new TransferGroupsToNextCourseCommand(request.IdGroups.ToList());
 
-        var ids = await _mediator.Send(command);
+        var groups = await _mediator.Send(command);
 
         return new TransferGroupsToNextCourseResponse
         {
-            IdGroups = { ids }
+            Groups =
+            {
+                groups.Select(x => _changeGroupResponseMapper.Map(x))
+            }
         };
     }
 

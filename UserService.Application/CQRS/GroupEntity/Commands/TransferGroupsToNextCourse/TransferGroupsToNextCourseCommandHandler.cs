@@ -7,30 +7,46 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 
 public class TransferGroupsToNextCourseCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<TransferGroupsToNextCourseCommand, List<int>>
+    : HandlerBase(dbContext), IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>>
 {
-    public async Task<List<int>> Handle(TransferGroupsToNextCourseCommand request, CancellationToken cancellationToken)
+    public async Task<List<Group>> Handle(TransferGroupsToNextCourseCommand request,
+        CancellationToken cancellationToken)
     {
-        var groups = await DbContext.Groups.ToListAsync(cancellationToken);
+        var groups = await DbContext.Groups.Where(x => request.IdGroups.Contains(x.Id))
+            .Include(x => x.Speciality)
+            .ToListAsync(cancellationToken);
 
-        List<int> invalidGroupsId = new List<int>();
-
-        if (request.IdGroups != null && request.IdGroups.Any())
+        if (groups.Count < request.IdGroups.Count)
         {
-            groups = groups.Where(x => request.IdGroups.Contains(x.Id)).ToList();
+            var notFoundGroups = groups.Where(x => !request.IdGroups.Contains(x.Id));
+            throw new GroupNotFoundException(notFoundGroups.Select(x => x.Id).ToArray());
         }
 
-        IncreaseCourse(groups, invalidGroupsId);
-
-        if (invalidGroupsId.Any())
+        try
         {
-            throw new GroupCourseOutOfRangeException(invalidGroupsId.ToArray());
+            await DbContext.BeginTransactionAsync();
+
+            List<Group> invalidGroups = [];
+
+            IncreaseCourse(groups, invalidGroups);
+
+            if (invalidGroups.Any())
+            {
+                throw new GroupCourseOutOfRangeException(invalidGroups.ToArray());
+            }
+
+            await DbContext.CommitTransactionAsync();
+        }
+        catch (Exception e)
+        {
+            await DbContext.RollbackTransactionAsync();
+            throw;
         }
 
-        return groups.Select(x => x.Id).ToList();
+        return groups;
     }
 
-    private void IncreaseCourse(List<Group> groups, List<int> invalidGroupsId)
+    private void IncreaseCourse(List<Group> groups, ICollection<Group> invalidGroups)
     {
         foreach (var group in groups)
         {
@@ -38,7 +54,7 @@ public class TransferGroupsToNextCourseCommandHandler(IAppDbContext dbContext)
 
             if (group.CurrentCourse + 1 > maxCourse)
             {
-                invalidGroupsId.Add(group.Id);
+                invalidGroups.Add(group);
             }
             else
             {
