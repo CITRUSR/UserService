@@ -21,7 +21,7 @@ public class GetStudentsQueryHandler(IAppDbContext dbContext)
                 x.FirstName.Contains(request.SearchString) ||
                 x.LastName.Contains(request.SearchString) ||
                 x.PatronymicName.Contains(request.SearchString) ||
-                $"{x.Group.CurrentCourse}-{x.Group.Speciality.Abbreavation}{x.Group.SubGroup}".Contains(
+                (x.Group.CurrentCourse + "-" + x.Group.Speciality.Abbreavation + x.Group.SubGroup).Contains(
                     request.SearchString));
         }
 
