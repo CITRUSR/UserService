@@ -16,7 +16,7 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext) : HandlerBase(dbCont
         if (String.IsNullOrWhiteSpace(request.SearchString) == false)
         {
             groups = groups.Where(x =>
-                $"{x.CurrentCourse}-{x.Speciality.Abbreavation}{x.SubGroup}".Contains(request.SearchString));
+                (x.CurrentCourse + "-" + x.Speciality.Abbreavation + x.SubGroup).Contains(request.SearchString));
         }
 
         groups = GetFilteredByGraduatedStatus(groups, request.GraduatedStatus);
