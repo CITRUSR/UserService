@@ -49,15 +49,15 @@ message GraduateGroupsRequest{
   google.protobuf.Timestamp GraduatedTime = 2;
 }
 
-message GraduateGroupResponseModel{
+message ChangeGroupResponseModel{
   int32 Id = 1;
   string Abbr = 2;
-  int32 CurrentSemester = 3;
+  int32 CurrentCourse = 3;
   int32 SubGroup = 4;
 }
 
 message GraduateGroupsResponse{
-  repeated GraduateGroupResponseModel groups = 1;
+  repeated ChangeGroupResponseModel groups = 1;
 }
 
 //If be empty then will be taking every group
@@ -66,16 +66,15 @@ message TransferGroupsToNextSemesterRequest{
 }
 
 message TransferGroupsToNextSemesterResponse{
-  repeated int32 IdGroups = 1;
+  repeated ChangeGroupResponseModel Groups = 1;
 }
 
-//If be empty then will be taking every group
 message TransferGroupsToNextCourseRequest{
   repeated int32 IdGroups = 1;
 }
 
 message TransferGroupsToNextCourseResponse{
-  repeated int32 IdGroups = 1;
+  repeated ChangeGroupResponseModel Groups = 1;
 }
 
 message DeleteGroupRequest{
