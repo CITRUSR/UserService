@@ -12,10 +12,13 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
             .WithOne(e => e.Group)
             .HasForeignKey(e => e.GroupId)
             .IsRequired();
-        
+
         builder.HasOne(e => e.Speciality)
             .WithMany(e => e.Groups)
             .HasForeignKey(e => e.SpecialityId)
             .IsRequired();
+
+        builder.Property(x => x.GraduatedAt).HasColumnType("timestamp");
+        builder.Property(x => x.StartedAt).HasColumnType("timestamp");
     }
 }
