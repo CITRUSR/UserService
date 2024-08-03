@@ -11,21 +11,11 @@ public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databa
     [Fact]
     public async void GraduateGroup_ShouldBe_Success()
     {
-        var students = Fixture.CreateMany<Student>(5);
-        var groups = Fixture.CreateMany<Group>();
-        foreach (var group in groups)
-        {
-            foreach (var student in students)
-            {
-                group.Students.Add(student);
-            }
-        }
-
-        await AddGroupsToContext(groups.ToArray());
+        await SeedDataForTests();
 
         DateTime graduatedTime = DateTime.Now;
 
-        var command = new GraduateGroupsCommand(groups.Select(x => x.Id).ToList(), graduatedTime);
+        var command = new GraduateGroupsCommand(Context.Groups.Select(x => x.Id).ToList(), graduatedTime);
         var handler = new GraduateGroupsCommandHandler(Context);
 
         var groupsRes = await handler.Handle(command, CancellationToken.None);
@@ -46,5 +36,41 @@ public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databa
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<GroupNotFoundException>();
+    }
+
+
+    [Fact]
+    public async void GraduateGroup_ShouldBe_GroupAlreadyGraduatedException()
+    {
+        await SeedDataForTests();
+
+        var group = Context.Groups.First();
+
+        group.GraduatedAt = DateTime.Now;
+
+        await Context.SaveChangesAsync(CancellationToken.None);
+
+        var command = new GraduateGroupsCommand(new List<int> { group.Id }, DateTime.Now);
+        var handler = new GraduateGroupsCommandHandler(Context);
+
+        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
+
+        await act.Should().ThrowAsync<GroupAlreadyGraduatedException>();
+    }
+
+    private async Task SeedDataForTests()
+    {
+        var students = Fixture.CreateMany<Student>(5);
+        var groups = Fixture.CreateMany<Group>(3);
+        foreach (var group in groups)
+        {
+            group.GraduatedAt = null;
+            foreach (var student in students)
+            {
+                group.Students.Add(student);
+            }
+        }
+
+        await AddGroupsToContext([.. groups]);
     }
 }

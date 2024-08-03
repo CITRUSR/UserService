@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Domain.Entities;
@@ -20,21 +21,56 @@ public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
             throw new GroupNotFoundException(notFoundGroups.Select(x => x.Id).ToArray());
         }
 
-        foreach (var group in groups)
+        try
         {
-            group.GraduatedAt = request.GraduatedTime;
+            await DbContext.BeginTransactionAsync();
+
+            if (!TryGraduateGroups(groups, request.GraduatedTime, out var invalidGroups))
+            {
+                throw new GroupAlreadyGraduatedException([.. invalidGroups]);
+            }
+
+            await DbContext.CommitTransactionAsync();
         }
+        catch (Exception e)
+        {
+            await DbContext.RollbackTransactionAsync();
+            throw;
+        }
+
+        return await groups.ToListAsync(cancellationToken);
+    }
+
+    private bool TryGraduateGroups(IEnumerable<Group> groups, DateTime graduatedTime, out List<Group> invalidGroups)
+    {
+        invalidGroups = new List<Group>();
 
         foreach (var group in groups)
         {
-            foreach (var student in group.Students)
+            if (group.GraduatedAt == null)
             {
-                student.DroppedOutAt ??= request.GraduatedTime;
+                group.GraduatedAt = graduatedTime;
+                DropOutStudents(group, graduatedTime);
+            }
+            else
+            {
+                invalidGroups.Add(group);
             }
         }
 
-        await DbContext.SaveChangesAsync(cancellationToken);
+        if (invalidGroups.Count != 0)
+        {
+            return false;
+        }
 
-        return await groups.ToListAsync(cancellationToken);
+        return true;
+    }
+
+    private void DropOutStudents(Group group, DateTime graduatedTime)
+    {
+        foreach (var student in group.Students)
+        {
+            student.DroppedOutAt ??= graduatedTime;
+        }
     }
 }
