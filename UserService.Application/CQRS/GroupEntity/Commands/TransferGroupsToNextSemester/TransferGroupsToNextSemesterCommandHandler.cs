@@ -26,13 +26,9 @@ public class TransferGroupsToNextSemesterCommandHandler(IAppDbContext dbContext)
         {
             await DbContext.BeginTransactionAsync();
 
-            List<Group> invalidGroups = new List<Group>();
-
-            IncreaseSemester(groups, invalidGroups);
-
-            if (invalidGroups.Any())
+            if (!TryIncreaseSemester(groups, out var invalidGroups))
             {
-                throw new GroupSemesterOutOfRangeException(invalidGroups.ToArray());
+                throw new GroupSemesterOutOfRangeException([.. invalidGroups]);
             }
 
             await DbContext.CommitTransactionAsync();
@@ -43,24 +39,32 @@ public class TransferGroupsToNextSemesterCommandHandler(IAppDbContext dbContext)
             throw;
         }
 
-
         return groups;
     }
 
-    private void IncreaseSemester(List<Group> groups, List<Group> invalidGroupsId)
+    private bool TryIncreaseSemester(List<Group> groups, out List<Group> invalidGroups)
     {
+        invalidGroups = [];
+
         foreach (var group in groups)
         {
             var maxSemester = Math.Ceiling(group.Speciality.DurationMonths / 6.0);
 
             if (group.CurrentSemester + 1 > maxSemester)
             {
-                invalidGroupsId.Add(group);
+                invalidGroups.Add(group);
             }
             else
             {
                 group.CurrentSemester++;
             }
         }
+
+        if (invalidGroups.Count != 0)
+        {
+            return false;
+        }
+
+        return true;
     }
 }
