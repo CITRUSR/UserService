@@ -26,13 +26,9 @@ public class TransferGroupsToNextCourseCommandHandler(IAppDbContext dbContext)
         {
             await DbContext.BeginTransactionAsync();
 
-            List<Group> invalidGroups = [];
-
-            IncreaseCourse(groups, invalidGroups);
-
-            if (invalidGroups.Any())
+            if (!TryIncreaseCourse(groups, out var invalidGroups))
             {
-                throw new GroupCourseOutOfRangeException(invalidGroups.ToArray());
+                throw new GroupCourseOutOfRangeException([.. invalidGroups]);
             }
 
             await DbContext.CommitTransactionAsync();
@@ -46,8 +42,10 @@ public class TransferGroupsToNextCourseCommandHandler(IAppDbContext dbContext)
         return groups;
     }
 
-    private void IncreaseCourse(List<Group> groups, ICollection<Group> invalidGroups)
+    private bool TryIncreaseCourse(List<Group> groups, out ICollection<Group> invalidGroups)
     {
+        invalidGroups = [];
+
         foreach (var group in groups)
         {
             var maxCourse = Math.Ceiling(group.Speciality.DurationMonths / 12.0);
@@ -61,5 +59,12 @@ public class TransferGroupsToNextCourseCommandHandler(IAppDbContext dbContext)
                 group.CurrentCourse++;
             }
         }
+
+        if (invalidGroups.Count != 0)
+        {
+            return false;
+        }
+
+        return true;
     }
 }
