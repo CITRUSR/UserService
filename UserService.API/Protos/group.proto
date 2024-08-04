@@ -41,7 +41,7 @@ message CreateGroupRequest{
 }
 
 message CreateGroupResponse{
-  int32 Id = 1;
+  ChangeGroupResponseModel Group = 1;
 }
 
 message GraduateGroupsRequest{
