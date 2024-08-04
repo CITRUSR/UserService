@@ -16,69 +16,86 @@ namespace UserService.API.Services;
 public class GroupService(
     IMediator mediator,
     IMapper<Group, GroupModel> mapper,
-    IMapper<Group, ChangeGroupResponseModel> changeGroupResponseMapper)
-    : UserService.GroupService.GroupServiceBase
+    IMapper<Group, ChangeGroupResponseModel> changeGroupResponseMapper
+) : UserService.GroupService.GroupServiceBase
 {
     private readonly IMediator _mediator = mediator;
     private readonly IMapper<Group, GroupModel> _mapper = mapper;
-    private readonly IMapper<Group, ChangeGroupResponseModel> _changeGroupResponseMapper = changeGroupResponseMapper;
+    private readonly IMapper<Group, ChangeGroupResponseModel> _changeGroupResponseMapper =
+        changeGroupResponseMapper;
 
-    public override async Task<CreateGroupResponse> CreateGroup(CreateGroupRequest request, ServerCallContext context)
+    public override async Task<CreateGroupResponse> CreateGroup(
+        CreateGroupRequest request,
+        ServerCallContext context
+    )
     {
-        var command = new CreateGroupCommand(request.SpecialityId, Guid.Parse(request.CuratorId),
+        var command = new CreateGroupCommand(
+            request.SpecialityId,
+            Guid.Parse(request.CuratorId),
             (byte)request.CurrentCourse,
-            (byte)request.CurrentSemester, (byte)request.SubGroup, request.StartedAt.ToDateTime());
+            (byte)request.CurrentSemester,
+            (byte)request.SubGroup,
+            request.StartedAt.ToDateTime()
+        );
 
-        var id = await _mediator.Send(command);
+        var group = await _mediator.Send(command);
 
-        return new CreateGroupResponse
-        {
-            Id = id,
-        };
+        return new CreateGroupResponse { Group = _changeGroupResponseMapper.Map(group) };
     }
 
-    public override async Task<DeleteGroupResponse> DeleteGroup(DeleteGroupRequest request, ServerCallContext context)
+    public override async Task<DeleteGroupResponse> DeleteGroup(
+        DeleteGroupRequest request,
+        ServerCallContext context
+    )
     {
         var command = new DeleteGroupCommand(request.Id);
 
         var id = await _mediator.Send(command);
 
-        return new DeleteGroupResponse
-        {
-            Id = id
-        };
+        return new DeleteGroupResponse { Id = id };
     }
 
-    public override async Task<GroupModel> EditGroup(EditGroupRequest request, ServerCallContext context)
+    public override async Task<GroupModel> EditGroup(
+        EditGroupRequest request,
+        ServerCallContext context
+    )
     {
-        var command = new EditGroupCommand(request.Id, request.SpecialityId, Guid.Parse(request.CuratorId),
+        var command = new EditGroupCommand(
+            request.Id,
+            request.SpecialityId,
+            Guid.Parse(request.CuratorId),
             (byte)request.CurrentCourse,
             (byte)request.CurrentSemester,
-            (byte)request.SubGroup);
+            (byte)request.SubGroup
+        );
 
         var group = await _mediator.Send(command);
 
         return _mapper.Map(group);
     }
 
-    public override async Task<GraduateGroupsResponse> GraduateGroups(GraduateGroupsRequest request,
-        ServerCallContext context)
+    public override async Task<GraduateGroupsResponse> GraduateGroups(
+        GraduateGroupsRequest request,
+        ServerCallContext context
+    )
     {
-        var command = new GraduateGroupsCommand(request.GroupsId.ToList(), request.GraduatedTime.ToDateTime());
+        var command = new GraduateGroupsCommand(
+            request.GroupsId.ToList(),
+            request.GraduatedTime.ToDateTime()
+        );
 
         var groups = await _mediator.Send(command);
 
         return new GraduateGroupsResponse
         {
-            Groups =
-            {
-                groups.Select(x => _changeGroupResponseMapper.Map(x))
-            },
+            Groups = { groups.Select(x => _changeGroupResponseMapper.Map(x)) },
         };
     }
 
     public override async Task<TransferGroupsToNextSemesterResponse> TransferGroupsToNextSemester(
-        TransferGroupsToNextSemesterRequest request, ServerCallContext context)
+        TransferGroupsToNextSemesterRequest request,
+        ServerCallContext context
+    )
     {
         var command = new TransferGroupsToNextSemesterCommand(request.IdGroups.ToList());
 
@@ -91,7 +108,9 @@ public class GroupService(
     }
 
     public override async Task<TransferGroupsToNextCourseResponse> TransferGroupsToNextCourse(
-        TransferGroupsToNextCourseRequest request, ServerCallContext context)
+        TransferGroupsToNextCourseRequest request,
+        ServerCallContext context
+    )
     {
         var command = new TransferGroupsToNextCourseCommand(request.IdGroups.ToList());
 
@@ -99,14 +118,14 @@ public class GroupService(
 
         return new TransferGroupsToNextCourseResponse
         {
-            Groups =
-            {
-                groups.Select(x => _changeGroupResponseMapper.Map(x))
-            }
+            Groups = { groups.Select(x => _changeGroupResponseMapper.Map(x)) }
         };
     }
 
-    public override async Task<GroupModel> GetGroupById(GetGroupByIdRequest request, ServerCallContext context)
+    public override async Task<GroupModel> GetGroupById(
+        GetGroupByIdRequest request,
+        ServerCallContext context
+    )
     {
         var query = new GetGroupByIdQuery(request.Id);
 
@@ -115,13 +134,17 @@ public class GroupService(
         return _mapper.Map(group);
     }
 
-    public override async Task<GetGroupsResponse> GetGroups(GetGroupsRequest request, ServerCallContext context)
+    public override async Task<GetGroupsResponse> GetGroups(
+        GetGroupsRequest request,
+        ServerCallContext context
+    )
     {
         var query = new GetGroupsQuery
         {
             PageSize = request.PageSize,
             Page = request.Page,
-            SortState = (Application.CQRS.GroupEntity.Queries.GetGroups.GroupSortState)request.SortState,
+            SortState = (Application.CQRS.GroupEntity.Queries.GetGroups.GroupSortState)
+                request.SortState,
             SearchString = request.SearchString,
         };
 

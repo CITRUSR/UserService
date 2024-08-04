@@ -17,12 +17,15 @@ public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseF
         await AddSpecialitiesToContext(speciality);
         await AddTeachersToContext(curator);
 
-        var command = Fixture.Build<CreateGroupCommand>().With(x => x.CuratorId, curator.Id)
-            .With(x => x.SpecialityId, speciality.Id).Create();
+        var command = Fixture
+            .Build<CreateGroupCommand>()
+            .With(x => x.CuratorId, curator.Id)
+            .With(x => x.SpecialityId, speciality.Id)
+            .Create();
 
         var handler = new CreateGroupCommandHandler(Context);
 
-        var groupId = await handler.Handle(command, CancellationToken.None);
+        var group = await handler.Handle(command, CancellationToken.None);
         Context.Groups.Should().HaveCount(1);
     }
 
@@ -33,7 +36,10 @@ public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseF
 
         await AddTeachersToContext(curator);
 
-        var command = Fixture.Build<CreateGroupCommand>().With(x => x.CuratorId, curator.Id).Create();
+        var command = Fixture
+            .Build<CreateGroupCommand>()
+            .With(x => x.CuratorId, curator.Id)
+            .Create();
 
         var handler = new CreateGroupCommandHandler(Context);
 
@@ -48,7 +54,10 @@ public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseF
 
         await AddSpecialitiesToContext(speciality);
 
-        var command = Fixture.Build<CreateGroupCommand>().With(x => x.SpecialityId, speciality.Id).Create();
+        var command = Fixture
+            .Build<CreateGroupCommand>()
+            .With(x => x.SpecialityId, speciality.Id)
+            .Create();
 
         var handler = new CreateGroupCommandHandler(Context);
 
