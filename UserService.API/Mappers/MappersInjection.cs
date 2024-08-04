@@ -9,7 +9,10 @@ public static class MappersInjection
         services.AddSingleton<IMapper<Student, StudentModel>, StudentMapper>();
         services.AddSingleton<IMapper<Group, GroupModel>, GroupMapper>();
         services.AddSingleton<IMapper<Speciality, SpecialityModel>, SpecialityMapper>();
-        services.AddSingleton<IMapper<Group, ChangeGroupResponseModel>, ChangeGroupResponseModelMapper>();
+        services.AddSingleton<
+            IMapper<Group, ChangeGroupResponseModel>,
+            ChangeGroupResponseModelMapper
+        >();
 
         return services;
     }

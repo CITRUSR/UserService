@@ -30,7 +30,11 @@
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "sh -c 'ps_isready -U postgres -d UsersDb'" ]
+      test:
+        [
+          "CMD-SHELL",
+          "sh -c 'ps_isready -U postgres -d UsersDb'"
+        ]
       interval: 10s
       timeout: 3s
       retries: 3

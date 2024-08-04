@@ -12,15 +12,27 @@ public class GetGroupsQueryHandlerCached(GetGroupsQueryHandler handler, ICacheSe
     private readonly GetGroupsQueryHandler _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
 
-    public async Task<PaginationList<Group>> Handle(GetGroupsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationList<Group>> Handle(
+        GetGroupsQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        if (request.Page <= CacheConstants.PagesForCaching &&
-            request is { SortState: GroupSortState.GroupAsc, GraduatedStatus: GroupGraduatedStatus.OnlyActive })
+        if (
+            request.Page <= CacheConstants.PagesForCaching
+            && request
+                is {
+                    SortState: GroupSortState.GroupAsc,
+                    GraduatedStatus: GroupGraduatedStatus.OnlyActive
+                }
+        )
         {
             var key = CacheKeys.GetEntities<Group>(request.Page, request.PageSize);
 
-            return await _cacheService.GetOrCreateAsync<PaginationList<Group>>(key,
-                async () => await _handler.Handle(request, cancellationToken), cancellationToken);
+            return await _cacheService.GetOrCreateAsync<PaginationList<Group>>(
+                key,
+                async () => await _handler.Handle(request, cancellationToken),
+                cancellationToken
+            );
         }
 
         return await _handler.Handle(request, cancellationToken);

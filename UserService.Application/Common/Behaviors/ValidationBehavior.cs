@@ -17,24 +17,30 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         _validators = validators;
     }
 
-
-    public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+    public Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken
+    )
     {
         var validationContext = new ValidationContext<TRequest>(request);
 
-        var failures = _validators.Select(x => x.Validate(validationContext))
+        var failures = _validators
+            .Select(x => x.Validate(validationContext))
             .SelectMany(x => x.Errors)
             .Where(failure => failure != null)
             .ToList();
 
         if (failures.Any())
         {
-            throw new RpcException(new Status(StatusCode.InvalidArgument,
-                JsonConvert.SerializeObject(new Error
-                {
-                    Erorrs = failures.Select(x => x.ErrorMessage)
-                })));
+            throw new RpcException(
+                new Status(
+                    StatusCode.InvalidArgument,
+                    JsonConvert.SerializeObject(
+                        new Error { Erorrs = failures.Select(x => x.ErrorMessage) }
+                    )
+                )
+            );
         }
 
         return next();

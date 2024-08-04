@@ -10,9 +10,7 @@ public class PaginationList<T>
     public int TotalCount { get; set; }
     public int MaxPage => Convert.ToInt32(Math.Ceiling((double)TotalCount / PageSize));
 
-    public PaginationList()
-    {
-    }
+    public PaginationList() { }
 
     private PaginationList(List<T> items, int page, int pageSize, int totalCount)
     {
@@ -22,7 +20,11 @@ public class PaginationList<T>
         TotalCount = totalCount;
     }
 
-    public static async Task<PaginationList<T>> CreateAsync(IQueryable<T> query, int page, int pageSize)
+    public static async Task<PaginationList<T>> CreateAsync(
+        IQueryable<T> query,
+        int page,
+        int pageSize
+    )
     {
         var totalCount = await query.CountAsync();
 

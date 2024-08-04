@@ -7,11 +7,15 @@ using UserService.Application.Common.Exceptions;
 namespace UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
 
 public class DeleteGroupCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<DeleteGroupCommand, int>
+    : HandlerBase(dbContext),
+        IRequestHandler<DeleteGroupCommand, int>
 {
     public async Task<int> Handle(DeleteGroupCommand request, CancellationToken cancellationToken)
     {
-        var group = await DbContext.Groups.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var group = await DbContext.Groups.FirstOrDefaultAsync(
+            x => x.Id == request.Id,
+            cancellationToken
+        );
 
         if (group == null)
         {

@@ -13,18 +13,18 @@ public class EditSpeciality(DatabaseFixture databaseFixture) : CommonTest(databa
     {
         var speciality = Fixture.Create<Speciality>();
 
-        var newSpeciality = Fixture.Build<Speciality>()
-            .With(x => x.Id, speciality.Id)
-            .Create();
+        var newSpeciality = Fixture.Build<Speciality>().With(x => x.Id, speciality.Id).Create();
 
         await AddSpecialitiesToContext(speciality);
 
-        var command = new EditSpecialityCommand(speciality.Id,
+        var command = new EditSpecialityCommand(
+            speciality.Id,
             newSpeciality.Name,
             newSpeciality.Abbreavation,
             newSpeciality.Cost,
             newSpeciality.DurationMonths,
-            newSpeciality.IsDeleted);
+            newSpeciality.IsDeleted
+        );
 
         var id = await Action(command);
 

@@ -8,7 +8,8 @@ public class SpecialityConfiguration : IEntityTypeConfiguration<Speciality>
 {
     public void Configure(EntityTypeBuilder<Speciality> builder)
     {
-        builder.HasMany(e => e.Groups)
+        builder
+            .HasMany(e => e.Groups)
             .WithOne(e => e.Speciality)
             .HasForeignKey(e => e.SpecialityId)
             .IsRequired();

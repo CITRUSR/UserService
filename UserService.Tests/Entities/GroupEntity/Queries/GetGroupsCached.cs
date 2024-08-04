@@ -12,24 +12,35 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
     [Fact]
     public async void GetGroupsCached_ShouldBe_SuccessWithoutCache_WithValidatedQuery()
     {
-        var groups =
-            await GetGroupsCachedWithValidatedQuery(1, GroupSortState.GroupAsc, GroupGraduatedStatus.OnlyActive);
+        var groups = await GetGroupsCachedWithValidatedQuery(
+            1,
+            GroupSortState.GroupAsc,
+            GroupGraduatedStatus.OnlyActive
+        );
 
-        var groupsFromCache =
-            await CacheService.GetObjectAsync<PaginationList<Group>>(CacheKeys.GetEntities<Group>(1, 10));
+        var groupsFromCache = await CacheService.GetObjectAsync<PaginationList<Group>>(
+            CacheKeys.GetEntities<Group>(1, 10)
+        );
 
         CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10)).Should().NotBeNull();
 
-        groupsFromCache.Items.Should().BeEquivalentTo(groups.Items, options => options.Excluding(x => x.Speciality)
-            .Excluding(x => x.Curator));
+        groupsFromCache
+            .Items.Should()
+            .BeEquivalentTo(
+                groups.Items,
+                options => options.Excluding(x => x.Speciality).Excluding(x => x.Curator)
+            );
         groupsFromCache.Should().BeEquivalentTo(groups, options => options.Excluding(x => x.Items));
     }
 
     [Fact]
     public async void GetGroupsCached_ShouldBe_SuccessWithoutCache_WithOutValidatedQuery()
     {
-        var groups =
-            await GetGroupsCachedWithValidatedQuery(1, GroupSortState.GroupDesc, GroupGraduatedStatus.OnlyActive);
+        var groups = await GetGroupsCachedWithValidatedQuery(
+            1,
+            GroupSortState.GroupDesc,
+            GroupGraduatedStatus.OnlyActive
+        );
 
         Context.Groups.Should().BeEquivalentTo(groups.Items);
 
@@ -53,18 +64,25 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
         await Action(query);
 
         var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10));
-        var groupsFromCache =
-            await CacheService.GetObjectAsync<PaginationList<Group>>(CacheKeys.GetEntities<Group>(1, 10));
+        var groupsFromCache = await CacheService.GetObjectAsync<PaginationList<Group>>(
+            CacheKeys.GetEntities<Group>(1, 10)
+        );
 
         cacheString.Should().NotBeNull();
-        groupsFromCache.Items.Should().BeEquivalentTo(groups.Items, options => options.Excluding(x => x.Speciality)
-            .Excluding(x => x.Curator));
+        groupsFromCache
+            .Items.Should()
+            .BeEquivalentTo(
+                groups.Items,
+                options => options.Excluding(x => x.Speciality).Excluding(x => x.Curator)
+            );
         groupsFromCache.Should().BeEquivalentTo(groups, options => options.Excluding(x => x.Items));
     }
 
-
-    private async Task<PaginationList<Group>> GetGroupsCachedWithValidatedQuery(int page, GroupSortState sortState,
-        GroupGraduatedStatus graduatedStatus)
+    private async Task<PaginationList<Group>> GetGroupsCachedWithValidatedQuery(
+        int page,
+        GroupSortState sortState,
+        GroupGraduatedStatus graduatedStatus
+    )
     {
         await SeedDataForTestsWithValidatedQueryForCaching();
         var query = CreateQuery(page: page, sortState: sortState, graduatedStatus: graduatedStatus);
@@ -90,23 +108,28 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
 
         for (int i = 0; i < count; i++)
         {
-            groups.Add(Fixture.Build<Group>()
-                .Without(x => x.Curator)
-                .Without(x => x.GraduatedAt)
-                .Without(x => x.Id)
-                .With(x => x.CuratorId, curatorId)
-                .With(x => x.Speciality, speciality)
-                .Create());
+            groups.Add(
+                Fixture
+                    .Build<Group>()
+                    .Without(x => x.Curator)
+                    .Without(x => x.GraduatedAt)
+                    .Without(x => x.Id)
+                    .With(x => x.CuratorId, curatorId)
+                    .With(x => x.Speciality, speciality)
+                    .Create()
+            );
         }
 
         return groups;
     }
 
-    private GetGroupsQuery CreateQuery(int page = 1,
+    private GetGroupsQuery CreateQuery(
+        int page = 1,
         int pageSize = 10,
         string searchString = "",
         GroupSortState sortState = GroupSortState.GroupAsc,
-        GroupGraduatedStatus graduatedStatus = GroupGraduatedStatus.OnlyActive)
+        GroupGraduatedStatus graduatedStatus = GroupGraduatedStatus.OnlyActive
+    )
     {
         return new GetGroupsQuery
         {
@@ -120,7 +143,10 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
 
     private async Task<PaginationList<Group>> Action(GetGroupsQuery query)
     {
-        var handler = new GetGroupsQueryHandlerCached(new GetGroupsQueryHandler(Context), CacheService);
+        var handler = new GetGroupsQueryHandlerCached(
+            new GetGroupsQueryHandler(Context),
+            CacheService
+        );
 
         return await handler.Handle(query, CancellationToken.None);
     }

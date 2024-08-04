@@ -9,4 +9,5 @@ public record EditGroupCommand(
     Guid CuratorId,
     byte CurrentCourse,
     byte CurrentSemester,
-    byte SubGroup) : IRequest<Group>;
+    byte SubGroup
+) : IRequest<Group>;

@@ -2,7 +2,11 @@
 
 public interface ICacheService
 {
-    Task<T> GetOrCreateAsync<T>(string cacheKey, Func<Task<T>> factory, CancellationToken cancellationToken = default)
+    Task<T> GetOrCreateAsync<T>(
+        string cacheKey,
+        Func<Task<T>> factory,
+        CancellationToken cancellationToken = default
+    )
         where T : class;
 
     Task<T?> GetObjectAsync<T>(string cacheKey, CancellationToken cancellationToken = default)
@@ -15,6 +19,10 @@ public interface ICacheService
 
     Task RemoveAsync(string cacheKey, CancellationToken cancellationToken = default);
 
-    Task RemovePagesWithObjectAsync<T, K>(K id, Func<T, K, bool> pred, CancellationToken cancellationToken = default)
+    Task RemovePagesWithObjectAsync<T, K>(
+        K id,
+        Func<T, K, bool> pred,
+        CancellationToken cancellationToken = default
+    )
         where T : class;
 }

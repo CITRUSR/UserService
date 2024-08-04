@@ -7,12 +7,18 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 
 public class CreateStudentCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<CreateStudentCommand, Guid>
+    : HandlerBase(dbContext),
+        IRequestHandler<CreateStudentCommand, Guid>
 {
-    public async Task<Guid> Handle(CreateStudentCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(
+        CreateStudentCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var group = await DbContext.Groups.FindAsync(new object?[] { request.GroupId, cancellationToken },
-            cancellationToken: cancellationToken);
+        var group = await DbContext.Groups.FindAsync(
+            new object?[] { request.GroupId, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (group == null)
         {

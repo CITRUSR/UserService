@@ -91,8 +91,10 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         await SeedDataForTests();
 
-        var studentExc = Context.Students.OrderBy(s => s.Group.CurrentSemester)
-            .ThenBy(s => s.Group.Speciality.Abbreavation).ThenBy(s => s.Group.SubGroup);
+        var studentExc = Context
+            .Students.OrderBy(s => s.Group.CurrentSemester)
+            .ThenBy(s => s.Group.Speciality.Abbreavation)
+            .ThenBy(s => s.Group.SubGroup);
 
         var query = CreateQuery(sortState: SortState.GroupAsc);
 
@@ -106,8 +108,10 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         await SeedDataForTests();
 
-        var studentExc = Context.Students.OrderByDescending(s => s.Group.CurrentSemester)
-            .ThenBy(s => s.Group.Speciality.Abbreavation).ThenBy(s => s.Group.SubGroup);
+        var studentExc = Context
+            .Students.OrderByDescending(s => s.Group.CurrentSemester)
+            .ThenBy(s => s.Group.Speciality.Abbreavation)
+            .ThenBy(s => s.Group.SubGroup);
 
         var query = CreateQuery(sortState: SortState.GroupDesc);
 
@@ -176,11 +180,19 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
     [Fact]
     public async void GetSpecialities_ShouldBe_SuccessWithSearchStringWithGroup()
     {
-        await TestSearchString("2-H", 2, student => student.Group.Speciality.Abbreavation == "H" &&
-                                                    student.Group.CurrentCourse == 2);
+        await TestSearchString(
+            "2-H",
+            2,
+            student =>
+                student.Group.Speciality.Abbreavation == "H" && student.Group.CurrentCourse == 2
+        );
     }
 
-    private async Task TestSearchString(string searchString, int expectedCount, Func<Student, bool> predicate)
+    private async Task TestSearchString(
+        string searchString,
+        int expectedCount,
+        Func<Student, bool> predicate
+    )
     {
         await SeedDataForSearchStringTests();
 
@@ -194,21 +206,22 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
 
     private async Task SeedDataForSearchStringTests()
     {
-        var speciality = Fixture.Build<Speciality>()
-            .With(x => x.Abbreavation, "H")
-            .Create();
+        var speciality = Fixture.Build<Speciality>().With(x => x.Abbreavation, "H").Create();
 
-        var group1 = Fixture.Build<Group>()
+        var group1 = Fixture
+            .Build<Group>()
             .With(x => x.Speciality, speciality)
             .With(x => x.CurrentCourse, 2)
             .Create();
 
-        var studentA = Fixture.Build<Student>()
+        var studentA = Fixture
+            .Build<Student>()
             .With(x => x.FirstName, "AAA")
             .With(x => x.LastName, "BBB")
             .With(x => x.Group, group1)
             .Create();
-        var studentB = Fixture.Build<Student>()
+        var studentB = Fixture
+            .Build<Student>()
             .With(x => x.FirstName, "CCC")
             .With(x => x.LastName, "DDD")
             .With(x => x.PatronymicName, "GGG")
@@ -220,12 +233,14 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
 
     private async Task<(Student, Student)> SeedDataForTests()
     {
-        var studentA = Fixture.Build<Student>()
+        var studentA = Fixture
+            .Build<Student>()
             .With(x => x.FirstName, "AAA")
             .With(x => x.LastName, "AAA")
             .With(x => x.DroppedOutAt, DateTime.Now)
             .Create();
-        var studentB = Fixture.Build<Student>()
+        var studentB = Fixture
+            .Build<Student>()
             .With(x => x.FirstName, "BBB")
             .With(x => x.LastName, "BBB")
             .Without(x => x.DroppedOutAt)
@@ -236,9 +251,13 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
         return (studentA, studentB);
     }
 
-    private GetStudentsQuery CreateQuery(int page = 1, int pageSize = 10, string searchString = "",
+    private GetStudentsQuery CreateQuery(
+        int page = 1,
+        int pageSize = 10,
+        string searchString = "",
         SortState sortState = SortState.LastNameAsc,
-        StudentDroppedOutStatus droppedOutStatus = StudentDroppedOutStatus.All)
+        StudentDroppedOutStatus droppedOutStatus = StudentDroppedOutStatus.All
+    )
     {
         return new GetStudentsQuery
         {

@@ -6,20 +6,28 @@ using UserService.Application.Common.Exceptions;
 namespace UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
 
 public class DeleteStudentCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<DeleteStudentCommand, Guid>
+    : HandlerBase(dbContext),
+        IRequestHandler<DeleteStudentCommand, Guid>
 {
-    public async Task<Guid> Handle(DeleteStudentCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(
+        DeleteStudentCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var student = await DbContext.Students.FindAsync(new object?[] { request.Id, cancellationToken },
-            cancellationToken: cancellationToken);
+        var student = await DbContext.Students.FindAsync(
+            new object?[] { request.Id, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (student == null)
         {
             throw new StudentNotFoundException(request.Id);
         }
 
-        var group = await DbContext.Groups.FindAsync(new object?[] { student.GroupId, cancellationToken },
-            cancellationToken: cancellationToken);
+        var group = await DbContext.Groups.FindAsync(
+            new object?[] { student.GroupId, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         group?.Students.Remove(student);
 

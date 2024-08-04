@@ -12,9 +12,8 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Group> Groups { get; set; }
     public DbSet<Speciality> Specialities { get; set; }
 
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

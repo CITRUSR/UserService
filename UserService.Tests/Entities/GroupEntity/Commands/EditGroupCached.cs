@@ -15,7 +15,8 @@ public class EditGroupCached(DatabaseFixture databaseFixture) : RedisTest(databa
 
         await CacheService.SetObjectAsync(CacheKeys.ById<Group, int>(oldGroup.Id), oldGroup);
 
-        var newGroup = Fixture.Build<Group>()
+        var newGroup = Fixture
+            .Build<Group>()
             .With(x => x.Id, oldGroup.Id)
             .Without(x => x.Speciality)
             .Without(x => x.Curator)
@@ -23,12 +24,20 @@ public class EditGroupCached(DatabaseFixture databaseFixture) : RedisTest(databa
             .With(x => x.SpecialityId, specialityId)
             .Create();
 
-        var command = new EditGroupCommand(newGroup.Id, newGroup.SpecialityId, newGroup.CuratorId,
-            newGroup.CurrentCourse, newGroup.CurrentSemester, newGroup.SubGroup);
+        var command = new EditGroupCommand(
+            newGroup.Id,
+            newGroup.SpecialityId,
+            newGroup.CuratorId,
+            newGroup.CurrentCourse,
+            newGroup.CurrentSemester,
+            newGroup.SubGroup
+        );
 
         var group = await Action(command);
 
-        var groupFromCache = await CacheService.GetObjectAsync<Group>(CacheKeys.ById<Group, int>(oldGroup.Id));
+        var groupFromCache = await CacheService.GetObjectAsync<Group>(
+            CacheKeys.ById<Group, int>(oldGroup.Id)
+        );
 
         Context.Groups.FirstOrDefault(x => x.Id == oldGroup.Id).Should().BeEquivalentTo(group);
         groupFromCache.Should().BeEquivalentTo(groupFromCache);
@@ -36,7 +45,8 @@ public class EditGroupCached(DatabaseFixture databaseFixture) : RedisTest(databa
 
     private async Task<(Guid curatorId, int SpecialityId, Group oldGroup)> SeedDataForTests()
     {
-        var oldGroup = Fixture.Build<Group>()
+        var oldGroup = Fixture
+            .Build<Group>()
             .Without(x => x.Curator)
             .Without(x => x.Speciality)
             .Create();
@@ -57,7 +67,10 @@ public class EditGroupCached(DatabaseFixture databaseFixture) : RedisTest(databa
 
     private async Task<Group> Action(EditGroupCommand command)
     {
-        var handler = new EditGroupCommandHandlerCached(new EditGroupCommandHandler(Context), CacheService);
+        var handler = new EditGroupCommandHandlerCached(
+            new EditGroupCommandHandler(Context),
+            CacheService
+        );
 
         return await handler.Handle(command, CancellationToken.None);
     }

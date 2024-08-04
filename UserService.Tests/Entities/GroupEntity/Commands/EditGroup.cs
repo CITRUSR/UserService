@@ -16,7 +16,8 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
 
         var oldGroup = Fixture.Create<Group>();
 
-        var newGroup = Fixture.Build<Group>()
+        var newGroup = Fixture
+            .Build<Group>()
             .With(x => x.CuratorId, curator.Id)
             .With(x => x.SpecialityId, speciality.Id)
             .With(x => x.Id, oldGroup.Id)
@@ -30,8 +31,14 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
         await AddTeachersToContext(curator);
         await AddGroupsToContext(oldGroup);
 
-        var command = new EditGroupCommand(newGroup.Id, speciality.Id, curator.Id, newGroup.CurrentCourse,
-            newGroup.CurrentSemester, newGroup.SubGroup);
+        var command = new EditGroupCommand(
+            newGroup.Id,
+            speciality.Id,
+            curator.Id,
+            newGroup.CurrentCourse,
+            newGroup.CurrentSemester,
+            newGroup.SubGroup
+        );
 
         var group = await Action(command);
 
@@ -55,9 +62,7 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
 
         await AddGroupsToContext(group);
 
-        var command = Fixture.Build<EditGroupCommand>()
-            .With(x => x.Id, group.Id)
-            .Create();
+        var command = Fixture.Build<EditGroupCommand>().With(x => x.Id, group.Id).Create();
 
         Func<Task> act = async () => await Action(command);
 
@@ -74,7 +79,8 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
         await AddGroupsToContext(group);
         await AddSpecialitiesToContext(speciality);
 
-        var command = Fixture.Build<EditGroupCommand>()
+        var command = Fixture
+            .Build<EditGroupCommand>()
             .With(x => x.Id, group.Id)
             .With(x => x.SpecialityId, speciality.Id)
             .Create();

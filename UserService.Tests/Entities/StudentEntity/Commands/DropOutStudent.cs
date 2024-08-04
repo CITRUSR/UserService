@@ -21,7 +21,10 @@ public class DropOutStudent(DatabaseFixture databaseFixture) : CommonTest(databa
 
         await handler.Handle(command, CancellationToken.None);
 
-        Context.Students.FirstOrDefault(x => x.Id == student.Id).DroppedOutAt.Should().Be(command.DroppedOutTime);
+        Context
+            .Students.FirstOrDefault(x => x.Id == student.Id)
+            .DroppedOutAt.Should()
+            .Be(command.DroppedOutTime);
     }
 
     [Fact]

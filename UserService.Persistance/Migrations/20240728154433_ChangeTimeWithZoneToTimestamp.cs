@@ -18,7 +18,8 @@ namespace UserService.Persistance.Migrations
                 nullable: true,
                 oldClrType: typeof(DateTime),
                 oldType: "timestamp with time zone",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DroppedOutAt",
@@ -27,7 +28,8 @@ namespace UserService.Persistance.Migrations
                 nullable: true,
                 oldClrType: typeof(DateTime),
                 oldType: "timestamp with time zone",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "StartedAt",
@@ -35,7 +37,8 @@ namespace UserService.Persistance.Migrations
                 type: "timestamp",
                 nullable: false,
                 oldClrType: typeof(DateTime),
-                oldType: "timestamp with time zone");
+                oldType: "timestamp with time zone"
+            );
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "GraduatedAt",
@@ -44,7 +47,8 @@ namespace UserService.Persistance.Migrations
                 nullable: true,
                 oldClrType: typeof(DateTime),
                 oldType: "timestamp with time zone",
-                oldNullable: true);
+                oldNullable: true
+            );
         }
 
         /// <inheritdoc />
@@ -57,7 +61,8 @@ namespace UserService.Persistance.Migrations
                 nullable: true,
                 oldClrType: typeof(DateTime),
                 oldType: "timestamp",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DroppedOutAt",
@@ -66,7 +71,8 @@ namespace UserService.Persistance.Migrations
                 nullable: true,
                 oldClrType: typeof(DateTime),
                 oldType: "timestamp",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "StartedAt",
@@ -74,7 +80,8 @@ namespace UserService.Persistance.Migrations
                 type: "timestamp with time zone",
                 nullable: false,
                 oldClrType: typeof(DateTime),
-                oldType: "timestamp");
+                oldType: "timestamp"
+            );
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "GraduatedAt",
@@ -83,7 +90,8 @@ namespace UserService.Persistance.Migrations
                 nullable: true,
                 oldClrType: typeof(DateTime),
                 oldType: "timestamp",
-                oldNullable: true);
+                oldNullable: true
+            );
         }
     }
 }

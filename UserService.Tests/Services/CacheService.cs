@@ -97,12 +97,16 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
         var key = CacheKeys.GetEntities<Group>(pageNumber, 10);
         var paginationList = await CacheService.GetObjectAsync<PaginationList<Group>>(key);
 
-        await CacheService.RemovePagesWithObjectAsync<Group, int>(paginationList.Items[0].Id,
-            (group, i) => group.Id == i);
+        await CacheService.RemovePagesWithObjectAsync<Group, int>(
+            paginationList.Items[0].Id,
+            (group, i) => group.Id == i
+        );
 
         for (int i = pageNumber; i < CacheConstants.PagesForCaching; i++)
         {
-            var CacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(i, 10));
+            var CacheString = await CacheService.GetStringAsync(
+                CacheKeys.GetEntities<Group>(i, 10)
+            );
             CacheString.Should().BeNull();
         }
     }

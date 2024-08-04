@@ -7,12 +7,16 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 
 public class TransferGroupsToNextCourseCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>>
+    : HandlerBase(dbContext),
+        IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>>
 {
-    public async Task<List<Group>> Handle(TransferGroupsToNextCourseCommand request,
-        CancellationToken cancellationToken)
+    public async Task<List<Group>> Handle(
+        TransferGroupsToNextCourseCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var groups = await DbContext.Groups.Where(x => request.IdGroups.Contains(x.Id))
+        var groups = await DbContext
+            .Groups.Where(x => request.IdGroups.Contains(x.Id))
             .Include(x => x.Speciality)
             .ToListAsync(cancellationToken);
 

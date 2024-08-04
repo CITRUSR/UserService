@@ -23,12 +23,17 @@ public class GetGroupByIdCached(DatabaseFixture databaseFixture) : RedisTest(dat
         var query = new GetGroupByIdQuery(group.Id);
 
         var groupRes = await Action(query);
-        var groupFromCache = await CacheService.GetObjectAsync<Group>(CacheKeys.ById<Group, int>(group.Id));
+        var groupFromCache = await CacheService.GetObjectAsync<Group>(
+            CacheKeys.ById<Group, int>(group.Id)
+        );
 
         Context.Groups.Find(groupRes.Id).Should().BeEquivalentTo(group);
-        groupFromCache.Should()
-            .BeEquivalentTo(group, options => options.Excluding(x => x.Curator)
-                .Excluding(x => x.Speciality));
+        groupFromCache
+            .Should()
+            .BeEquivalentTo(
+                group,
+                options => options.Excluding(x => x.Curator).Excluding(x => x.Speciality)
+            );
     }
 
     [Fact]
@@ -41,7 +46,9 @@ public class GetGroupByIdCached(DatabaseFixture databaseFixture) : RedisTest(dat
         var query = new GetGroupByIdQuery(group.Id);
 
         var groupRes = await Action(query);
-        var groupFromCache = await CacheService.GetObjectAsync<Group>(CacheKeys.ById<Group, int>(group.Id));
+        var groupFromCache = await CacheService.GetObjectAsync<Group>(
+            CacheKeys.ById<Group, int>(group.Id)
+        );
 
         groupRes.Should().BeEquivalentTo(group);
         groupFromCache.Should().BeEquivalentTo(group);
@@ -49,7 +56,8 @@ public class GetGroupByIdCached(DatabaseFixture databaseFixture) : RedisTest(dat
 
     private Group CreateGroup(Guid curatorId, int specialityId)
     {
-        return Fixture.Build<Group>()
+        return Fixture
+            .Build<Group>()
             .Without(x => x.Curator)
             .Without(x => x.Speciality)
             .With(x => x.SpecialityId, specialityId)
@@ -59,7 +67,10 @@ public class GetGroupByIdCached(DatabaseFixture databaseFixture) : RedisTest(dat
 
     private async Task<Group> Action(GetGroupByIdQuery query)
     {
-        var handler = new GetGroupByIdQueryHandlerCached(new GetGroupByIdQueryHandler(Context), CacheService);
+        var handler = new GetGroupByIdQueryHandlerCached(
+            new GetGroupByIdQueryHandler(Context),
+            CacheService
+        );
 
         return await handler.Handle(query, CancellationToken.None);
     }

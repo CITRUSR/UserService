@@ -180,7 +180,11 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
         await TestSearchString("CC", 1, speciality => speciality.Abbreavation == "CCC");
     }
 
-    private async Task TestSearchString(string searchString, int expectedCount, Func<Speciality, bool> predicate)
+    private async Task TestSearchString(
+        string searchString,
+        int expectedCount,
+        Func<Speciality, bool> predicate
+    )
     {
         var (speciality1, speciality2, query) = await SeedDataForSearchStringTests(searchString);
         var specialities = await Action(query);
@@ -189,13 +193,17 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
         specialities.Items.Should().ContainSingle(speciality => predicate(speciality));
     }
 
-    private async Task<(Speciality, Speciality, GetSpecialitiesQuery)> SeedDataForSearchStringTests(string searchString)
+    private async Task<(Speciality, Speciality, GetSpecialitiesQuery)> SeedDataForSearchStringTests(
+        string searchString
+    )
     {
-        Speciality specialityA = Fixture.Build<Speciality>()
+        Speciality specialityA = Fixture
+            .Build<Speciality>()
             .With(x => x.Name, "AAA")
             .With(x => x.Abbreavation, "CCC")
             .Create();
-        Speciality specialityB = Fixture.Build<Speciality>()
+        Speciality specialityB = Fixture
+            .Build<Speciality>()
             .With(x => x.Name, "BBB")
             .With(x => x.Abbreavation, "DDD")
             .Create();
@@ -209,13 +217,9 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
 
     private async Task<(Speciality, Speciality)> SeedDataForDeletedStatusTests()
     {
-        var specialityA = Fixture.Build<Speciality>()
-            .With(x => x.IsDeleted, true)
-            .Create();
+        var specialityA = Fixture.Build<Speciality>().With(x => x.IsDeleted, true).Create();
 
-        var specialityB = Fixture.Build<Speciality>()
-            .With(x => x.IsDeleted, false)
-            .Create();
+        var specialityB = Fixture.Build<Speciality>().With(x => x.IsDeleted, false).Create();
 
         await AddSpecialitiesToContext([specialityA, specialityB]);
 
@@ -224,10 +228,12 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
 
     private async Task<(Speciality, Speciality)> SeedDataForDurationMonthsTests()
     {
-        Speciality specialityA = Fixture.Build<Speciality>()
+        Speciality specialityA = Fixture
+            .Build<Speciality>()
             .With(x => x.DurationMonths, 1)
             .Create();
-        Speciality specialityB = Fixture.Build<Speciality>()
+        Speciality specialityB = Fixture
+            .Build<Speciality>()
             .With(x => x.DurationMonths, 2)
             .Create();
 
@@ -237,12 +243,8 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
 
     private async Task<(Speciality, Speciality)> SeedDataForCostTests()
     {
-        Speciality specialityA = Fixture.Build<Speciality>()
-            .With(x => x.Cost, 1)
-            .Create();
-        Speciality specialityB = Fixture.Build<Speciality>()
-            .With(x => x.Cost, 2)
-            .Create();
+        Speciality specialityA = Fixture.Build<Speciality>().With(x => x.Cost, 1).Create();
+        Speciality specialityB = Fixture.Build<Speciality>().With(x => x.Cost, 2).Create();
 
         await AddSpecialitiesToContext([specialityA, specialityB]);
         return (specialityA, specialityB);
@@ -250,10 +252,12 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
 
     private async Task<(Speciality, Speciality)> SeedDataForAbbrTests()
     {
-        Speciality specialityA = Fixture.Build<Speciality>()
+        Speciality specialityA = Fixture
+            .Build<Speciality>()
             .With(x => x.Abbreavation, "ABC")
             .Create();
-        Speciality specialityB = Fixture.Build<Speciality>()
+        Speciality specialityB = Fixture
+            .Build<Speciality>()
             .With(x => x.Abbreavation, "BBC")
             .Create();
 
@@ -263,12 +267,8 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
 
     private async Task<(Speciality, Speciality)> SeedDataForNameTests()
     {
-        Speciality specialityA = Fixture.Build<Speciality>()
-            .With(x => x.Name, "ABC")
-            .Create();
-        Speciality specialityB = Fixture.Build<Speciality>()
-            .With(x => x.Name, "BBC")
-            .Create();
+        Speciality specialityA = Fixture.Build<Speciality>().With(x => x.Name, "ABC").Create();
+        Speciality specialityB = Fixture.Build<Speciality>().With(x => x.Name, "BBC").Create();
 
         await AddSpecialitiesToContext([specialityA, specialityB]);
         return (specialityA, specialityB);
@@ -281,9 +281,13 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
         await AddSpecialitiesToContext(specialities.ToArray());
     }
 
-    private GetSpecialitiesQuery CreateQuery(int page = 1, int pageSize = 10, string searchString = "",
+    private GetSpecialitiesQuery CreateQuery(
+        int page = 1,
+        int pageSize = 10,
+        string searchString = "",
         SpecialitySortState sortState = SpecialitySortState.NameAsc,
-        SpecialityDeletedStatus deletedStatus = SpecialityDeletedStatus.All)
+        SpecialityDeletedStatus deletedStatus = SpecialityDeletedStatus.All
+    )
     {
         return new GetSpecialitiesQuery
         {

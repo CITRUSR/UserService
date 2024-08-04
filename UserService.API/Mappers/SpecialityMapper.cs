@@ -7,11 +7,7 @@ public class SpecialityMapper : IMapper<Speciality, SpecialityModel>
     public SpecialityModel Map(Speciality from)
     {
         CustomTypes.DecimalValue constDec = from.Cost;
-        var cost = new DecimalValue
-        {
-            Units = constDec.Units,
-            Nanos = constDec.Nanos
-        };
+        var cost = new DecimalValue { Units = constDec.Units, Nanos = constDec.Nanos };
         return new SpecialityModel
         {
             Id = from.Id,

@@ -6,12 +6,18 @@ using UserService.Application.Common.Exceptions;
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpeciality;
 
 public class SoftDeleteSpecialityCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<SoftDeleteSpecialityCommand, int>
+    : HandlerBase(dbContext),
+        IRequestHandler<SoftDeleteSpecialityCommand, int>
 {
-    public async Task<int> Handle(SoftDeleteSpecialityCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(
+        SoftDeleteSpecialityCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var speciality = await DbContext.Specialities.FindAsync(new object?[] { request.Id, cancellationToken },
-            cancellationToken: cancellationToken);
+        var speciality = await DbContext.Specialities.FindAsync(
+            new object?[] { request.Id, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (speciality == null)
         {

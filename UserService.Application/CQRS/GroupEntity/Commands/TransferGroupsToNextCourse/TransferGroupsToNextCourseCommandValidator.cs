@@ -2,7 +2,8 @@
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 
-public class TransferGroupsToNextCourseCommandValidator : AbstractValidator<TransferGroupsToNextCourseCommand>
+public class TransferGroupsToNextCourseCommandValidator
+    : AbstractValidator<TransferGroupsToNextCourseCommand>
 {
     public TransferGroupsToNextCourseCommandValidator()
     {

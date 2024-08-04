@@ -9,7 +9,8 @@ public class CreateTeacher(DatabaseFixture databaseFixture) : CommonTest(databas
     [Fact]
     public async void CreateTeacher_ShouldBe_Success()
     {
-        var command = Fixture.Build<CreateTeacherCommand>()
+        var command = Fixture
+            .Build<CreateTeacherCommand>()
             .With(x => x.FirstName, "asadas")
             .With(x => x.LastName, "asadas")
             .With(x => x.PatronymicName, "asadas")

@@ -6,14 +6,17 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture)
+    : CommonTest(databaseFixture)
 {
     [Fact]
     public async void TransferGroupsToNextCourse_ShouldBe_SuccessWithList()
     {
         var courses = await Arrange(2);
 
-        var command = new TransferGroupsToNextCourseCommand(Context.Groups.Select(x => x.Id).ToList());
+        var command = new TransferGroupsToNextCourseCommand(
+            Context.Groups.Select(x => x.Id).ToList()
+        );
 
         var groups = await Action(command);
 
@@ -25,7 +28,9 @@ public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture) : Commo
     {
         await Arrange(4);
 
-        var command = new TransferGroupsToNextCourseCommand(Context.Groups.Select(x => x.Id).ToList());
+        var command = new TransferGroupsToNextCourseCommand(
+            Context.Groups.Select(x => x.Id).ToList()
+        );
 
         Func<Task> act = () => Action(command);
 
@@ -44,16 +49,16 @@ public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture) : Commo
 
     private async Task<Dictionary<Group, byte>> Arrange(int CurrentCourse)
     {
-        var speciality = Fixture.Build<Speciality>()
-            .With(x => x.DurationMonths, 46)
-            .Create();
+        var speciality = Fixture.Build<Speciality>().With(x => x.DurationMonths, 46).Create();
 
-        var group1 = Fixture.Build<Group>()
+        var group1 = Fixture
+            .Build<Group>()
             .With(x => x.CurrentCourse, CurrentCourse)
             .With(x => x.Speciality, speciality)
             .Create();
 
-        var group2 = Fixture.Build<Group>()
+        var group2 = Fixture
+            .Build<Group>()
             .With(x => x.CurrentCourse, CurrentCourse)
             .With(x => x.Speciality, speciality)
             .Create();

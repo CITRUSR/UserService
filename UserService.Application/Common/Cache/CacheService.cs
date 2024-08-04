@@ -14,8 +14,12 @@ public class CacheService(IDistributedCache cache) : ICacheService
         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
     };
 
-    public async Task<T> GetOrCreateAsync<T>(string cacheKey, Func<Task<T>> factory,
-        CancellationToken cancellationToken = default) where T : class
+    public async Task<T> GetOrCreateAsync<T>(
+        string cacheKey,
+        Func<Task<T>> factory,
+        CancellationToken cancellationToken = default
+    )
+        where T : class
     {
         string? cachedString = await _cache.GetStringAsync(cacheKey, cancellationToken);
 
@@ -31,7 +35,10 @@ public class CacheService(IDistributedCache cache) : ICacheService
         return value;
     }
 
-    public async Task<T?> GetObjectAsync<T>(string cacheKey, CancellationToken cancellationToken = default)
+    public async Task<T?> GetObjectAsync<T>(
+        string cacheKey,
+        CancellationToken cancellationToken = default
+    )
         where T : class
     {
         var objectString = await _cache.GetStringAsync(cacheKey, cancellationToken);
@@ -44,16 +51,27 @@ public class CacheService(IDistributedCache cache) : ICacheService
         return JsonConvert.DeserializeObject<T>(objectString, _settings);
     }
 
-    public Task<string?> GetStringAsync(string cacheKey, CancellationToken cancellationToken = default)
+    public Task<string?> GetStringAsync(
+        string cacheKey,
+        CancellationToken cancellationToken = default
+    )
     {
         return _cache.GetStringAsync(cacheKey, cancellationToken);
     }
 
-    public async Task SetObjectAsync<T>(string cacheKey, T value, CancellationToken cancellationToken = default)
+    public async Task SetObjectAsync<T>(
+        string cacheKey,
+        T value,
+        CancellationToken cancellationToken = default
+    )
         where T : class
     {
         var t = JsonConvert.SerializeObject(value, _settings);
-        await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(value, _settings), cancellationToken);
+        await _cache.SetStringAsync(
+            cacheKey,
+            JsonConvert.SerializeObject(value, _settings),
+            cancellationToken
+        );
     }
 
     public async Task RemoveAsync(string cacheKey, CancellationToken cancellationToken = default)
@@ -61,12 +79,19 @@ public class CacheService(IDistributedCache cache) : ICacheService
         await _cache.RemoveAsync(cacheKey, cancellationToken);
     }
 
-    public async Task RemovePagesWithObjectAsync<T, K>(K id, Func<T, K, bool> pred,
-        CancellationToken cancellationToken = default) where T : class
+    public async Task RemovePagesWithObjectAsync<T, K>(
+        K id,
+        Func<T, K, bool> pred,
+        CancellationToken cancellationToken = default
+    )
+        where T : class
     {
         for (int i = 1; i <= CacheConstants.PagesForCaching; i++)
         {
-            var page = await GetObjectAsync<PaginationList<T>>(CacheKeys.GetEntities<T>(i, 10), cancellationToken);
+            var page = await GetObjectAsync<PaginationList<T>>(
+                CacheKeys.GetEntities<T>(i, 10),
+                cancellationToken
+            );
 
             if (page == null)
             {

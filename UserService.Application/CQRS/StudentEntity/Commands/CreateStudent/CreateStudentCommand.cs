@@ -7,4 +7,5 @@ public record CreateStudentCommand(
     string FirstName,
     string LastName,
     string? PatronymicName,
-    int GroupId) : IRequest<Guid>;
+    int GroupId
+) : IRequest<Guid>;

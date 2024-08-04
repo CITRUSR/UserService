@@ -8,7 +8,8 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
 {
     public void Configure(EntityTypeBuilder<Student> builder)
     {
-        builder.HasOne(e => e.Group)
+        builder
+            .HasOne(e => e.Group)
             .WithMany(e => e.Students)
             .HasForeignKey(e => e.GroupId)
             .IsRequired();

@@ -7,8 +7,8 @@ namespace UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
 
 public class DeleteGroupCommandHandlerCached(
     DeleteGroupCommandHandler handler,
-    ICacheService cacheService)
-    : IRequestHandler<DeleteGroupCommand, int>
+    ICacheService cacheService
+) : IRequestHandler<DeleteGroupCommand, int>
 {
     private readonly DeleteGroupCommandHandler _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
@@ -21,8 +21,11 @@ public class DeleteGroupCommandHandlerCached(
 
         await _cacheService.RemoveAsync(key, cancellationToken);
 
-        await _cacheService.RemovePagesWithObjectAsync<Group, int>(request.Id, (group, i) => group.Id == i,
-            cancellationToken);
+        await _cacheService.RemovePagesWithObjectAsync<Group, int>(
+            request.Id,
+            (group, i) => group.Id == i,
+            cancellationToken
+        );
 
         return id;
     }

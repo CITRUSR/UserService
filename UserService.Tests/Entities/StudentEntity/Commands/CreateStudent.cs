@@ -15,7 +15,8 @@ public class CreateStudent(DatabaseFixture databaseFixture) : CommonTest(databas
 
         await AddGroupsToContext(group);
 
-        var command = Fixture.Build<CreateStudentCommand>()
+        var command = Fixture
+            .Build<CreateStudentCommand>()
             .With(x => x.GroupId, group.Id)
             .With(x => x.FirstName, "ASDASDASFASGAS")
             .With(x => x.LastName, "ASDASDASGAS")

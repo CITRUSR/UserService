@@ -9,7 +9,8 @@ public class CreateSpeciality(DatabaseFixture databaseFixture) : CommonTest(data
     [Fact]
     public async void CreateSpeciality_ShouldBe_Success()
     {
-        var command = Fixture.Build<CreateSpecialityCommand>()
+        var command = Fixture
+            .Build<CreateSpecialityCommand>()
             .With(x => x.Abbreavation, "ASDASAS")
             .Create();
 

@@ -15,7 +15,10 @@ public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databa
 
         DateTime graduatedTime = DateTime.Now;
 
-        var command = new GraduateGroupsCommand(Context.Groups.Select(x => x.Id).ToList(), graduatedTime);
+        var command = new GraduateGroupsCommand(
+            Context.Groups.Select(x => x.Id).ToList(),
+            graduatedTime
+        );
         var handler = new GraduateGroupsCommandHandler(Context);
 
         var groupsRes = await handler.Handle(command, CancellationToken.None);
@@ -37,7 +40,6 @@ public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databa
 
         await act.Should().ThrowAsync<GroupNotFoundException>();
     }
-
 
     [Fact]
     public async void GraduateGroup_ShouldBe_GroupAlreadyGraduatedException()
