@@ -6,13 +6,17 @@ using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 
-public class TransferGroupsToNextSemesterCommandHandler(IAppDbContext dbContext) : HandlerBase(dbContext),
-    IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>
+public class TransferGroupsToNextSemesterCommandHandler(IAppDbContext dbContext)
+    : HandlerBase(dbContext),
+        IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>
 {
-    public async Task<List<Group>> Handle(TransferGroupsToNextSemesterCommand request,
-        CancellationToken cancellationToken)
+    public async Task<List<Group>> Handle(
+        TransferGroupsToNextSemesterCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var groups = await DbContext.Groups.Where(x => request.IdGroups.Contains(x.Id))
+        var groups = await DbContext
+            .Groups.Where(x => request.IdGroups.Contains(x.Id))
             .Include(x => x.Speciality)
             .ToListAsync(cancellationToken);
 
