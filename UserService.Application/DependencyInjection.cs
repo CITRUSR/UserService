@@ -8,6 +8,7 @@ using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
+using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 using UserService.Domain.Entities;
@@ -18,7 +19,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())
+        );
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
@@ -33,9 +36,25 @@ public static class DependencyInjection
 
     private static void DecorateHandlersToCacheVersion(IServiceCollection services)
     {
-        services.Decorate<IRequestHandler<GetGroupByIdQuery, Group>, GetGroupByIdQueryHandlerCached>();
-        services.Decorate<IRequestHandler<GetGroupsQuery, PaginationList<Group>>, GetGroupsQueryHandlerCached>();
-        services.Decorate<IRequestHandler<DeleteGroupCommand, int>, DeleteGroupCommandHandlerCached>();
-        services.Decorate<IRequestHandler<EditGroupCommand, Group>, EditGroupCommandHandlerCached>();
+        services.Decorate<
+            IRequestHandler<GetGroupByIdQuery, Group>,
+            GetGroupByIdQueryHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<GetGroupsQuery, PaginationList<Group>>,
+            GetGroupsQueryHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<DeleteGroupCommand, int>,
+            DeleteGroupCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<EditGroupCommand, Group>,
+            EditGroupCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<GraduateGroupsCommand, List<Group>>,
+            GraduateGroupsCommandHandlerCached
+        >();
     }
 }

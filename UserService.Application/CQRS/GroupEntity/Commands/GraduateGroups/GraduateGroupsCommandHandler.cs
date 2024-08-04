@@ -8,11 +8,16 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
 
 public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<GraduateGroupsCommand, List<Group>>
+    : HandlerBase(dbContext),
+        IRequestHandler<GraduateGroupsCommand, List<Group>>
 {
-    public async Task<List<Group>> Handle(GraduateGroupsCommand request, CancellationToken cancellationToken)
+    public async Task<List<Group>> Handle(
+        GraduateGroupsCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var groups = DbContext.Groups.Where(x => request.GroupsId.Contains(x.Id))
+        var groups = DbContext
+            .Groups.Where(x => request.GroupsId.Contains(x.Id))
             .Include(x => x.Speciality);
 
         if (groups.Count() < request.GroupsId.Count)
@@ -41,7 +46,11 @@ public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
         return await groups.ToListAsync(cancellationToken);
     }
 
-    private bool TryGraduateGroups(IEnumerable<Group> groups, DateTime graduatedTime, out List<Group> invalidGroups)
+    private bool TryGraduateGroups(
+        IEnumerable<Group> groups,
+        DateTime graduatedTime,
+        out List<Group> invalidGroups
+    )
     {
         invalidGroups = new List<Group>();
 
