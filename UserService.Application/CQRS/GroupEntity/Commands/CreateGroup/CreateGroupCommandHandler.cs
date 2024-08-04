@@ -1,25 +1,31 @@
 ﻿using MediatR;
 using Serilog;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 
 public class CreateGroupCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<CreateGroupCommand, int>
+    : HandlerBase(dbContext),
+        IRequestHandler<CreateGroupCommand, Group>
 {
-    public async Task<int> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
+    public async Task<Group> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
     {
         var speciality = await DbContext.Specialities.FindAsync(
-            new object?[] { request.SpecialityId, cancellationToken }, cancellationToken: cancellationToken);
+            new object?[] { request.SpecialityId, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (speciality == null)
         {
             throw new SpecialityNotFoundException(request.SpecialityId);
         }
 
-        var curator = await DbContext.Teachers.FindAsync(new object?[] { request.CuratorId, cancellationToken },
-            cancellationToken: cancellationToken);
+        var curator = await DbContext.Teachers.FindAsync(
+            new object?[] { request.CuratorId, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (curator == null)
         {
@@ -34,6 +40,7 @@ public class CreateGroupCommandHandler(IAppDbContext dbContext)
             StartedAt = request.StartedAt,
             SubGroup = request.SubGroup,
             CurrentSemester = request.CurrentSemester,
+            Speciality = speciality,
         };
 
         await DbContext.Groups.AddAsync(group, cancellationToken);
@@ -41,6 +48,6 @@ public class CreateGroupCommandHandler(IAppDbContext dbContext)
 
         Log.Information($"The group with id:{group.Id} is created");
 
-        return group.Id;
+        return group;
     }
 }

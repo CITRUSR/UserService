@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 
@@ -8,4 +9,5 @@ public record EditGroupCommand(
     Guid CuratorId,
     byte CurrentCourse,
     byte CurrentSemester,
-    byte SubGroup) : IRequest<int>;
+    byte SubGroup
+) : IRequest<Group>;

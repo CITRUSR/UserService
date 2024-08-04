@@ -1,25 +1,31 @@
 ﻿using MediatR;
 using Serilog;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 
 public class EditStudentCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<EditStudentCommand, Guid>
+    : HandlerBase(dbContext),
+        IRequestHandler<EditStudentCommand, Guid>
 {
     public async Task<Guid> Handle(EditStudentCommand request, CancellationToken cancellationToken)
     {
-        var student = await DbContext.Students.FindAsync(new object?[] { request.Id, cancellationToken },
-            cancellationToken: cancellationToken);
+        var student = await DbContext.Students.FindAsync(
+            new object?[] { request.Id, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (student == null)
         {
             throw new StudentNotFoundException(request.Id);
         }
 
-        var newGroup = await DbContext.Groups.FindAsync(new object?[] { request.GroupId, cancellationToken },
-            cancellationToken: cancellationToken);
+        var newGroup = await DbContext.Groups.FindAsync(
+            new object?[] { request.GroupId, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (newGroup == null)
         {
@@ -38,8 +44,10 @@ public class EditStudentCommandHandler(IAppDbContext dbContext)
             DroppedOutAt = student.DroppedOutAt,
         };
 
-        var oldGroup = await DbContext.Groups.FindAsync(new object?[] { student.GroupId, cancellationToken },
-            cancellationToken: cancellationToken);
+        var oldGroup = await DbContext.Groups.FindAsync(
+            new object?[] { student.GroupId, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         oldGroup?.Students.Remove(student);
 
@@ -54,7 +62,9 @@ public class EditStudentCommandHandler(IAppDbContext dbContext)
         await DbContext.SaveChangesAsync(cancellationToken);
 
         Log.Information(
-            $"The student with Id:{student.Id} is edit." + "Old state: {@oldStudent}. New state: {@student}");
+            $"The student with Id:{student.Id} is edit."
+                + "Old state: {@oldStudent}. New state: {@student}"
+        );
 
         return student.Id;
     }

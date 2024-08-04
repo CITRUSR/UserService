@@ -22,7 +22,7 @@ message CreateStudentRequest{
   string FirstName = 2;
   string LastName = 3;
   google.protobuf.StringValue PatronymicName = 4;
-  sint32 GroupId = 5;
+  int32 GroupId = 5;
 }
 
 message CreateStudentResponse{

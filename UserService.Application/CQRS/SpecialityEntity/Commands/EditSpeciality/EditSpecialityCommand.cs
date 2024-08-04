@@ -8,4 +8,5 @@ public record EditSpecialityCommand(
     string Abbrevation,
     Decimal Cost,
     byte DurationMonths,
-    bool IsDeleted) : IRequest<int>;
+    bool IsDeleted
+) : IRequest<int>;

@@ -1,12 +1,17 @@
 ﻿using MediatR;
+using UserService.Application.Abstraction;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.TeacherEntity.Commands.CreateTeacher;
 
 public class CreateTeacherCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<CreateTeacherCommand, Guid>
+    : HandlerBase(dbContext),
+        IRequestHandler<CreateTeacherCommand, Guid>
 {
-    public async Task<Guid> Handle(CreateTeacherCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(
+        CreateTeacherCommand request,
+        CancellationToken cancellationToken
+    )
     {
         //Todo: check for null room when schedule service be ready
         var teacher = new Teacher

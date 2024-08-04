@@ -10,8 +10,8 @@ import "google/protobuf/wrappers.proto";
 service GroupService{
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
   rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse);
-  rpc EditGroup (EditGroupRequest) returns (EditGroupResponse);
-  rpc GraduateGroup (GraduateGroupRequest) returns (GraduateGroupResponse);
+  rpc EditGroup (EditGroupRequest) returns (GroupModel);
+  rpc GraduateGroups (GraduateGroupsRequest) returns (GraduateGroupsResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
   rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);
   rpc GetGroupById (GetGroupByIdRequest) returns (GroupModel);
@@ -41,16 +41,23 @@ message CreateGroupRequest{
 }
 
 message CreateGroupResponse{
-  int32 Id = 1;
+  ChangeGroupResponseModel Group = 1;
 }
 
-message GraduateGroupRequest{
-  int32 Id = 1;
+message GraduateGroupsRequest{
+  repeated int32 GroupsId = 1;
   google.protobuf.Timestamp GraduatedTime = 2;
 }
 
-message GraduateGroupResponse{
+message ChangeGroupResponseModel{
   int32 Id = 1;
+  string Abbr = 2;
+  int32 CurrentCourse = 3;
+  int32 SubGroup = 4;
+}
+
+message GraduateGroupsResponse{
+  repeated ChangeGroupResponseModel groups = 1;
 }
 
 //If be empty then will be taking every group
@@ -59,16 +66,15 @@ message TransferGroupsToNextSemesterRequest{
 }
 
 message TransferGroupsToNextSemesterResponse{
-  repeated int32 IdGroups = 1;
+  repeated ChangeGroupResponseModel Groups = 1;
 }
 
-//If be empty then will be taking every group
 message TransferGroupsToNextCourseRequest{
   repeated int32 IdGroups = 1;
 }
 
 message TransferGroupsToNextCourseResponse{
-  repeated int32 IdGroups = 1;
+  repeated ChangeGroupResponseModel Groups = 1;
 }
 
 message DeleteGroupRequest{
@@ -86,10 +92,6 @@ message EditGroupRequest{
   uint32 CurrentCourse = 4;
   uint32 CurrentSemester = 5;
   uint32 SubGroup = 6;
-}
-
-message EditGroupResponse{
-  int32 Id = 1;
 }
 
 message GetGroupByIdRequest{

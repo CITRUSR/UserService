@@ -1,22 +1,28 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 
-public class GetGroupsQueryHandler(IAppDbContext dbContext) : HandlerBase(dbContext),
-    IRequestHandler<GetGroupsQuery, PaginationList<Group>>
+public class GetGroupsQueryHandler(IAppDbContext dbContext)
+    : HandlerBase(dbContext),
+        IRequestHandler<GetGroupsQuery, PaginationList<Group>>
 {
-    public async Task<PaginationList<Group>> Handle(GetGroupsQuery request,
-        CancellationToken cancellationToken)
+    public async Task<PaginationList<Group>> Handle(
+        GetGroupsQuery request,
+        CancellationToken cancellationToken
+    )
     {
         IQueryable<Group> groups = DbContext.Groups;
 
         if (String.IsNullOrWhiteSpace(request.SearchString) == false)
         {
             groups = groups.Where(x =>
-                $"{x.CurrentCourse}-{x.Speciality.Abbreavation}{x.SubGroup}".Contains(request.SearchString));
+                (x.CurrentCourse + "-" + x.Speciality.Abbreavation + x.SubGroup).Contains(
+                    request.SearchString
+                )
+            );
         }
 
         groups = GetFilteredByGraduatedStatus(groups, request.GraduatedStatus);
@@ -26,8 +32,10 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext) : HandlerBase(dbCont
         return await PaginationList<Group>.CreateAsync(groups, request.Page, request.PageSize);
     }
 
-    private IQueryable<Group> GetFilteredByGraduatedStatus(IQueryable<Group> groups,
-        GroupGraduatedStatus graduatedStatus)
+    private IQueryable<Group> GetFilteredByGraduatedStatus(
+        IQueryable<Group> groups,
+        GroupGraduatedStatus graduatedStatus
+    )
     {
         groups = graduatedStatus switch
         {
@@ -39,16 +47,23 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext) : HandlerBase(dbCont
         return groups;
     }
 
-    private IQueryable<Group> GetSortedBySortState(IQueryable<Group> groups, GroupSortState sortState)
+    private IQueryable<Group> GetSortedBySortState(
+        IQueryable<Group> groups,
+        GroupSortState sortState
+    )
     {
         groups = sortState switch
         {
-            GroupSortState.GroupAsc => groups.OrderBy(x => x.CurrentCourse)
-                .ThenBy(x => x.Speciality.Abbreavation)
-                .ThenBy(x => x.SubGroup),
-            GroupSortState.GroupDesc => groups.OrderByDescending(x => x.CurrentCourse)
-                .ThenBy(x => x.Speciality.Abbreavation)
-                .ThenBy(x => x.SubGroup),
+            GroupSortState.GroupAsc
+                => groups
+                    .OrderBy(x => x.CurrentCourse)
+                    .ThenBy(x => x.Speciality.Abbreavation)
+                    .ThenBy(x => x.SubGroup),
+            GroupSortState.GroupDesc
+                => groups
+                    .OrderByDescending(x => x.CurrentCourse)
+                    .ThenBy(x => x.Speciality.Abbreavation)
+                    .ThenBy(x => x.SubGroup),
         };
 
         return groups;

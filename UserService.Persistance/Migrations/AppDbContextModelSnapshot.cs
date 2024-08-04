@@ -40,13 +40,13 @@ namespace UserService.Persistance.Migrations
                         .HasColumnType("smallint");
 
                     b.Property<DateTime?>("GraduatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("SpecialityId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("StartedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<byte>("SubGroup")
                         .HasColumnType("smallint");
@@ -57,7 +57,7 @@ namespace UserService.Persistance.Migrations
 
                     b.HasIndex("SpecialityId");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.Speciality", b =>
@@ -89,7 +89,7 @@ namespace UserService.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Specialities", (string)null);
+                    b.ToTable("Specialities");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.Student", b =>
@@ -100,7 +100,7 @@ namespace UserService.Persistance.Migrations
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime?>("DroppedOutAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -128,7 +128,7 @@ namespace UserService.Persistance.Migrations
 
                     b.HasIndex("SsoId");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.Teacher", b =>
@@ -139,7 +139,7 @@ namespace UserService.Persistance.Migrations
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime?>("FiredAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -165,7 +165,7 @@ namespace UserService.Persistance.Migrations
 
                     b.HasIndex("SsoId");
 
-                    b.ToTable("Teachers", (string)null);
+                    b.ToTable("Teachers");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.Group", b =>

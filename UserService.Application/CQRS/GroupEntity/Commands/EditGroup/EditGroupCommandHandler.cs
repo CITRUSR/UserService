@@ -1,17 +1,22 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 
 public class EditGroupCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<EditGroupCommand, int>
+    : HandlerBase(dbContext),
+        IRequestHandler<EditGroupCommand, Group>
 {
-    public async Task<int> Handle(EditGroupCommand request, CancellationToken cancellationToken)
+    public async Task<Group> Handle(EditGroupCommand request, CancellationToken cancellationToken)
     {
-        var group = await DbContext.Groups.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var group = await DbContext.Groups.FirstOrDefaultAsync(
+            x => x.Id == request.Id,
+            cancellationToken
+        );
 
         if (group == null)
         {
@@ -19,15 +24,19 @@ public class EditGroupCommandHandler(IAppDbContext dbContext)
         }
 
         var speciality = await DbContext.Specialities.FindAsync(
-            new object?[] { request.SpecialityId, cancellationToken }, cancellationToken: cancellationToken);
+            new object?[] { request.SpecialityId, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (speciality == null)
         {
             throw new SpecialityNotFoundException(request.SpecialityId);
         }
 
-        var curator = await DbContext.Teachers.FindAsync(new object?[] { request.CuratorId, cancellationToken },
-            cancellationToken: cancellationToken);
+        var curator = await DbContext.Teachers.FindAsync(
+            new object?[] { request.CuratorId, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (curator == null)
         {
@@ -54,8 +63,11 @@ public class EditGroupCommandHandler(IAppDbContext dbContext)
 
         await DbContext.SaveChangesAsync(cancellationToken);
 
-        Log.Information($"The group with id:{request.Id} is updated" + "old state:{@oldGroup} new state:{@group}");
+        Log.Information(
+            $"The group with id:{request.Id} is updated"
+                + "old state:{@oldGroup} new state:{@group}"
+        );
 
-        return request.Id;
+        return group;
     }
 }

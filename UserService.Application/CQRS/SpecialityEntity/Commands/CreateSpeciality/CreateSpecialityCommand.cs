@@ -6,4 +6,5 @@ public record CreateSpecialityCommand(
     string Name,
     string Abbreavation,
     Decimal Cost,
-    byte DurationMonths) : IRequest<int>;
+    byte DurationMonths
+) : IRequest<int>;

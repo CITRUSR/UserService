@@ -1,16 +1,23 @@
 ﻿using MediatR;
 using Serilog;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
 
 public class DropOutStudentCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<DropOutStudentCommand, Guid>
+    : HandlerBase(dbContext),
+        IRequestHandler<DropOutStudentCommand, Guid>
 {
-    public async Task<Guid> Handle(DropOutStudentCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(
+        DropOutStudentCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var student = await DbContext.Students.FindAsync(new object?[] { request.Id, cancellationToken },
-            cancellationToken: cancellationToken);
+        var student = await DbContext.Students.FindAsync(
+            new object?[] { request.Id, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (student == null)
         {

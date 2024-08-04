@@ -1,16 +1,23 @@
 ﻿using MediatR;
 using Serilog;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
 
 public class DeleteSpecialityCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<DeleteSpecialityCommand, int>
+    : HandlerBase(dbContext),
+        IRequestHandler<DeleteSpecialityCommand, int>
 {
-    public async Task<int> Handle(DeleteSpecialityCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(
+        DeleteSpecialityCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var speciality = await DbContext.Specialities.FindAsync(new object?[] { request.Id, cancellationToken },
-            cancellationToken: cancellationToken);
+        var speciality = await DbContext.Specialities.FindAsync(
+            new object?[] { request.Id, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (speciality == null)
         {

@@ -1,12 +1,17 @@
 ﻿using MediatR;
+using UserService.Application.Abstraction;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 
 public class CreateSpecialityCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<CreateSpecialityCommand, int>
+    : HandlerBase(dbContext),
+        IRequestHandler<CreateSpecialityCommand, int>
 {
-    public async Task<int> Handle(CreateSpecialityCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(
+        CreateSpecialityCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var speciality = new Speciality()
         {

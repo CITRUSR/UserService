@@ -16,10 +16,22 @@ namespace UserService.Persistance.Migrations
                 name: "Specialities",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    Abbreavation = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    Id = table
+                        .Column<int>(type: "integer", nullable: false)
+                        .Annotation(
+                            "Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
+                        ),
+                    Name = table.Column<string>(
+                        type: "character varying(256)",
+                        maxLength: 256,
+                        nullable: false
+                    ),
+                    Abbreavation = table.Column<string>(
+                        type: "character varying(10)",
+                        maxLength: 10,
+                        nullable: false
+                    ),
                     Cost = table.Column<decimal>(type: "numeric", nullable: false),
                     DurationMonths = table.Column<byte>(type: "smallint", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
@@ -27,38 +39,69 @@ namespace UserService.Persistance.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Specialities", x => x.Id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Teachers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Id = table.Column<Guid>(
+                        type: "uuid",
+                        nullable: false,
+                        defaultValueSql: "gen_random_uuid()"
+                    ),
                     SsoId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    LastName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    PatronymicName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    FirstName = table.Column<string>(
+                        type: "character varying(32)",
+                        maxLength: 32,
+                        nullable: false
+                    ),
+                    LastName = table.Column<string>(
+                        type: "character varying(32)",
+                        maxLength: 32,
+                        nullable: false
+                    ),
+                    PatronymicName = table.Column<string>(
+                        type: "character varying(32)",
+                        maxLength: 32,
+                        nullable: true
+                    ),
                     RoomId = table.Column<short>(type: "smallint", nullable: false),
-                    FiredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    FiredAt = table.Column<DateTime>(
+                        type: "timestamp with time zone",
+                        nullable: true
+                    )
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Teachers", x => x.Id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Groups",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table
+                        .Column<int>(type: "integer", nullable: false)
+                        .Annotation(
+                            "Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
+                        ),
                     SpecialityId = table.Column<int>(type: "integer", nullable: false),
                     CuratorId = table.Column<Guid>(type: "uuid", nullable: false),
                     CurrentCourse = table.Column<byte>(type: "smallint", nullable: false),
                     CurrentSemester = table.Column<byte>(type: "smallint", nullable: false),
                     SubGroup = table.Column<byte>(type: "smallint", nullable: false),
-                    StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    GraduatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    StartedAt = table.Column<DateTime>(
+                        type: "timestamp with time zone",
+                        nullable: false
+                    ),
+                    GraduatedAt = table.Column<DateTime>(
+                        type: "timestamp with time zone",
+                        nullable: true
+                    )
                 },
                 constraints: table =>
                 {
@@ -68,26 +111,48 @@ namespace UserService.Persistance.Migrations
                         column: x => x.SpecialityId,
                         principalTable: "Specialities",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade
+                    );
                     table.ForeignKey(
                         name: "FK_Groups_Teachers_CuratorId",
                         column: x => x.CuratorId,
                         principalTable: "Teachers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Students",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Id = table.Column<Guid>(
+                        type: "uuid",
+                        nullable: false,
+                        defaultValueSql: "gen_random_uuid()"
+                    ),
                     SsoId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    LastName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    PatronymicName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    FirstName = table.Column<string>(
+                        type: "character varying(32)",
+                        maxLength: 32,
+                        nullable: false
+                    ),
+                    LastName = table.Column<string>(
+                        type: "character varying(32)",
+                        maxLength: 32,
+                        nullable: false
+                    ),
+                    PatronymicName = table.Column<string>(
+                        type: "character varying(32)",
+                        maxLength: 32,
+                        nullable: true
+                    ),
                     GroupId = table.Column<int>(type: "integer", nullable: false),
-                    DroppedOutAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    DroppedOutAt = table.Column<DateTime>(
+                        type: "timestamp with time zone",
+                        nullable: true
+                    )
                 },
                 constraints: table =>
                 {
@@ -97,49 +162,52 @@ namespace UserService.Persistance.Migrations
                         column: x => x.GroupId,
                         principalTable: "Groups",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Groups_CuratorId",
                 table: "Groups",
-                column: "CuratorId");
+                column: "CuratorId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Groups_SpecialityId",
                 table: "Groups",
-                column: "SpecialityId");
+                column: "SpecialityId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_GroupId",
                 table: "Students",
-                column: "GroupId");
+                column: "GroupId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_SsoId",
                 table: "Students",
-                column: "SsoId");
+                column: "SsoId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Teachers_SsoId",
                 table: "Teachers",
-                column: "SsoId");
+                column: "SsoId"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Students");
+            migrationBuilder.DropTable(name: "Students");
 
-            migrationBuilder.DropTable(
-                name: "Groups");
+            migrationBuilder.DropTable(name: "Groups");
 
-            migrationBuilder.DropTable(
-                name: "Specialities");
+            migrationBuilder.DropTable(name: "Specialities");
 
-            migrationBuilder.DropTable(
-                name: "Teachers");
+            migrationBuilder.DropTable(name: "Teachers");
         }
     }
 }

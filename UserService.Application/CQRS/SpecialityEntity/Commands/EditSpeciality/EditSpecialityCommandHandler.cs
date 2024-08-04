@@ -1,15 +1,22 @@
 ﻿using MediatR;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 
 public class EditSpecialityCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext), IRequestHandler<EditSpecialityCommand, int>
+    : HandlerBase(dbContext),
+        IRequestHandler<EditSpecialityCommand, int>
 {
-    public async Task<int> Handle(EditSpecialityCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(
+        EditSpecialityCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var speciality = await DbContext.Specialities.FindAsync(new object?[] { request.Id, cancellationToken },
-            cancellationToken: cancellationToken);
+        var speciality = await DbContext.Specialities.FindAsync(
+            new object?[] { request.Id, cancellationToken },
+            cancellationToken: cancellationToken
+        );
 
         if (speciality == null)
         {
