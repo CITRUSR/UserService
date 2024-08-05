@@ -8,14 +8,14 @@ namespace UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
 public class DeleteGroupCommandHandlerCached(
     DeleteGroupCommandHandler handler,
     ICacheService cacheService
-) : IRequestHandler<DeleteGroupCommand, int>
+) : IRequestHandler<DeleteGroupCommand, Group>
 {
     private readonly DeleteGroupCommandHandler _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
 
-    public async Task<int> Handle(DeleteGroupCommand request, CancellationToken cancellationToken)
+    public async Task<Group> Handle(DeleteGroupCommand request, CancellationToken cancellationToken)
     {
-        var id = await _handler.Handle(request, cancellationToken);
+        var group = await _handler.Handle(request, cancellationToken);
 
         var key = CacheKeys.ById<Group, int>(request.Id);
 
@@ -27,6 +27,6 @@ public class DeleteGroupCommandHandlerCached(
             cancellationToken
         );
 
-        return id;
+        return group;
     }
 }

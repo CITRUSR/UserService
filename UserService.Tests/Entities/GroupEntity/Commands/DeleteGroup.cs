@@ -18,7 +18,7 @@ public class DeleteGroup(DatabaseFixture databaseFixture) : CommonTest(databaseF
         var command = new DeleteGroupCommand(group.Id);
         var handler = new DeleteGroupCommandHandler(Context);
 
-        var id = await handler.Handle(command, CancellationToken.None);
+        await handler.Handle(command, CancellationToken.None);
         Context.Groups.Should().BeEmpty();
     }
 
