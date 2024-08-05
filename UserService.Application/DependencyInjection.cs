@@ -48,7 +48,7 @@ public static class DependencyInjection
             GetGroupsQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<DeleteGroupCommand, int>,
+            IRequestHandler<DeleteGroupCommand, Group>,
             DeleteGroupCommandHandlerCached
         >();
         services.Decorate<
