@@ -14,6 +14,7 @@ using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCour
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
+using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
 using UserService.Domain.Entities;
 
@@ -76,6 +77,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<GetSpecialityByIdQuery, Speciality>,
             GetSpecialityByIdQueryHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>>,
+            GetSpecialitiesQueryHandlerCached
         >();
     }
 }
