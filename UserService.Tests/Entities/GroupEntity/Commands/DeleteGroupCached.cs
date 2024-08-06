@@ -24,13 +24,13 @@ public class DeleteGroupCached(DatabaseFixture databaseFixture) : RedisTest(data
             CacheService
         );
 
-        var id = await handler.Handle(command, CancellationToken.None);
+        var groupRes = await handler.Handle(command, CancellationToken.None);
 
         var groupFromCache = await CacheService.GetStringAsync(
             CacheKeys.ById<Group, int>(group.Id)
         );
 
-        Context.Groups.Find(id).Should().BeNull();
+        Context.Groups.Find(groupRes.Id).Should().BeNull();
         groupFromCache.Should().BeNull();
     }
 }
