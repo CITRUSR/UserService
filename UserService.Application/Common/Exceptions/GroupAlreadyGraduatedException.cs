@@ -1,5 +1,5 @@
-using System.Text.Json;
 using Grpc.Core;
+using Newtonsoft.Json;
 using UserService.Application.Common.Errors;
 using UserService.Domain.Entities;
 
@@ -11,7 +11,7 @@ public class GroupAlreadyGraduatedException : RpcException
         : base(
             new Status(
                 StatusCode.Aborted,
-                JsonSerializer.Serialize(
+                JsonConvert.SerializeObject(
                     new Error
                     {
                         Erorrs =
