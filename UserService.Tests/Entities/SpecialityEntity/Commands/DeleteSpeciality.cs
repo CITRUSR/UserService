@@ -11,28 +11,30 @@ public class DeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(data
     [Fact]
     public async void DeleteSpeciality_ShouldBe_Success()
     {
-        var speciality = Fixture.Create<Speciality>();
+        var specialities = Fixture.CreateMany<Speciality>(3);
 
-        await AddSpecialitiesToContext(speciality);
+        await AddSpecialitiesToContext([.. specialities]);
 
-        var command = new DeleteSpecialityCommand(speciality.Id);
+        var command = new DeleteSpecialityCommand(specialities.Select(x => x.Id).ToList());
 
-        var id = await Action(command);
+        var specialitiesRes = await Action(command);
 
-        Context.Specialities.FirstOrDefault(x => x.Id == id).Should().BeNull();
+        var t = Context.Specialities;
+
+        Context.Specialities.Should().BeEmpty();
     }
 
     [Fact]
     public async void DeleteSpeciality_ShouldBe_SpecialityNotFoundException()
     {
-        var command = new DeleteSpecialityCommand(123);
+        var command = new DeleteSpecialityCommand([1123, 123]);
 
         Func<Task> act = async () => await Action(command);
 
         await act.Should().ThrowAsync<SpecialityNotFoundException>();
     }
 
-    private async Task<int> Action(DeleteSpecialityCommand command)
+    private async Task<List<Speciality>> Action(DeleteSpecialityCommand command)
     {
         var handler = new DeleteSpecialityCommandHandler(Context);
 

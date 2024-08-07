@@ -41,11 +41,22 @@ public class SpecialityService(IMediator mediator, IMapper<Speciality, Specialit
         ServerCallContext context
     )
     {
-        var command = new DeleteSpecialityCommand(request.Id);
+        var command = new DeleteSpecialityCommand([.. request.Ids]);
 
-        var id = await _mediator.Send(command);
+        var specialities = await _mediator.Send(command);
 
-        return new DeleteSpecialityResponse { Id = id, };
+        return new DeleteSpecialityResponse
+        {
+            Specialities =
+            {
+                specialities.Select(x => new SpecialityViewModel
+                {
+                    Id = x.Id,
+                    Abbreviation = x.Abbreavation,
+                    Name = x.Name
+                })
+            },
+        };
     }
 
     public override async Task<SpecialityModel> GetSpecialityById(
