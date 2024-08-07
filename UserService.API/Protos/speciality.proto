@@ -32,6 +32,12 @@ message SpecialityModel{
   bool IsDeleted = 6;
 }
 
+message SpecialityViewModel{
+  int32 Id = 1;
+  string Name = 2;
+  string Abbreviation = 3;
+}
+
 message CreateSpecialityRequest{
   string Name = 1;
   string Abbreavation = 2;
@@ -44,11 +50,11 @@ message CreateSpecialityResponse{
 }
 
 message DeleteSpecialityRequest{
-  int32 Id = 1;
+  repeated int32 Ids = 1;
 }
 
 message DeleteSpecialityResponse{
-  int32 Id = 1;
+  repeated SpecialityViewModel specialities = 1;
 }
 
 message SoftDeleteSpecialityRequest{

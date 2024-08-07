@@ -1,34 +1,50 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
 
 public class DeleteSpecialityCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<DeleteSpecialityCommand, int>
+        IRequestHandler<DeleteSpecialityCommand, List<Speciality>>
 {
-    public async Task<int> Handle(
+    public async Task<List<Speciality>> Handle(
         DeleteSpecialityCommand request,
         CancellationToken cancellationToken
     )
     {
-        var speciality = await DbContext.Specialities.FindAsync(
-            new object?[] { request.Id, cancellationToken },
-            cancellationToken: cancellationToken
-        );
+        var specialities = await DbContext
+            .Specialities.Where(x => request.SpecialitiesId.Contains(x.Id))
+            .ToListAsync(cancellationToken);
 
-        if (speciality == null)
+        if (specialities.Count != request.SpecialitiesId.Count)
         {
-            throw new SpecialityNotFoundException(request.Id);
+            var notFoundIds = request.SpecialitiesId.Except(specialities.Select(x => x.Id));
+
+            throw new SpecialityNotFoundException([.. notFoundIds]);
         }
 
-        DbContext.Specialities.Remove(speciality);
-        await DbContext.SaveChangesAsync(cancellationToken);
+        try
+        {
+            DbContext.Specialities.RemoveRange(specialities);
 
-        Log.Information($"The speciality with id:{request.Id} is deleted");
+            await DbContext.SaveChangesAsync(cancellationToken);
 
-        return request.Id;
+            await DbContext.CommitTransactionAsync();
+        }
+        catch (Exception ex)
+        {
+            await DbContext.RollbackTransactionAsync();
+            throw;
+        }
+
+        Log.Information(
+            $"The specialities with id:{string.Join(", ", request.SpecialitiesId)} is deleted"
+        );
+
+        return specialities;
     }
 }
