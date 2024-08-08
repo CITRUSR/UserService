@@ -51,15 +51,7 @@ public class SpecialityService(
 
         return new DeleteSpecialityResponse
         {
-            Specialities =
-            {
-                specialities.Select(x => new SpecialityViewModel
-                {
-                    Id = x.Id,
-                    Abbreviation = x.Abbreavation,
-                    Name = x.Name
-                })
-            },
+            Specialities = { specialities.Select(x => _mapperViewModel.Map(x)) },
         };
     }
 
