@@ -9,10 +9,10 @@ namespace UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpeci
 
 public class SoftDeleteSpecialitiesCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<SoftDeleteSpecialityCommand, List<Speciality>>
+        IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>
 {
     public async Task<List<Speciality>> Handle(
-        SoftDeleteSpecialityCommand request,
+        SoftDeleteSpecialitiesCommand request,
         CancellationToken cancellationToken
     )
     {

@@ -15,7 +15,7 @@ public class SoftDeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(
 
         await AddSpecialitiesToContext([.. specialities]);
 
-        var command = new SoftDeleteSpecialityCommand(specialities.Select(x => x.Id).ToList());
+        var command = new SoftDeleteSpecialitiesCommand(specialities.Select(x => x.Id).ToList());
 
         var specialitiesRes = await Action(command);
 
@@ -30,14 +30,14 @@ public class SoftDeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(
     [Fact]
     public async void SoftDeleteSpeciality_ShouldBe_SpecialityNotFoundException()
     {
-        var command = new SoftDeleteSpecialityCommand([123, 1232]);
+        var command = new SoftDeleteSpecialitiesCommand([123, 1232]);
 
         Func<Task> act = async () => await Action(command);
 
         await act.Should().ThrowAsync<SpecialityNotFoundException>();
     }
 
-    private async Task<List<Speciality>> Action(SoftDeleteSpecialityCommand command)
+    private async Task<List<Speciality>> Action(SoftDeleteSpecialitiesCommand command)
     {
         var handler = new SoftDeleteSpecialitiesCommandHandler(Context);
 

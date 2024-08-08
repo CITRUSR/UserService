@@ -99,7 +99,7 @@ public class SpecialityService(
         ServerCallContext context
     )
     {
-        var command = new SoftDeleteSpecialityCommand([.. request.Ids]);
+        var command = new SoftDeleteSpecialitiesCommand([.. request.Ids]);
 
         var specialities = await _mediator.Send(command);
 
