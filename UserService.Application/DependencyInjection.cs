@@ -15,6 +15,7 @@ using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSeme
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
 using UserService.Domain.Entities;
@@ -86,6 +87,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<DeleteSpecialityCommand, List<Speciality>>,
             DeleteSpecialityCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>,
+            SoftDeleteSpecialitiesCommandHandlerCached
         >();
     }
 }
