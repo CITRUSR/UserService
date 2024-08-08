@@ -9,7 +9,7 @@ import "google/protobuf/wrappers.proto";
 service SpecialityService{
   rpc CreateSpeciality(CreateSpecialityRequest) returns (CreateSpecialityResponse);
   rpc DeleteSpeciality(DeleteSpecialityRequest) returns (DeleteSpecialityResponse);
-  rpc SoftDeleteSpeciality(SoftDeleteSpecialityRequest) returns (SoftDeleteSpecialityResponse);
+  rpc SoftDeleteSpecialities(SoftDeleteSpecialitiesRequest) returns (SoftDeleteSpecialitiesResponse);
   rpc EditSpeciality(EditSpecialityRequest) returns (EditSpecialityResponse);
   rpc GetSpecialityById(GetSpecialityByIdRequest) returns (SpecialityModel);
   rpc GetSpecialities(GetSpecialitiesRequest) returns (GetSpecialitiesResponse);
@@ -57,12 +57,12 @@ message DeleteSpecialityResponse{
   repeated SpecialityViewModel specialities = 1;
 }
 
-message SoftDeleteSpecialityRequest{
-  int32 Id = 1;
+message SoftDeleteSpecialitiesRequest{
+  repeated int32 Ids = 1;
 }
 
-message SoftDeleteSpecialityResponse{
-  int32 Id = 1;
+message SoftDeleteSpecialitiesResponse{
+  repeated SpecialityViewModel Specialities = 1;
 }
 
 message EditSpecialityRequest{
