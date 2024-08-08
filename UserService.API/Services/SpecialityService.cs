@@ -35,9 +35,9 @@ public class SpecialityService(
             (byte)request.DurationMonths
         );
 
-        var id = await _mediator.Send(command);
+        var speciality = await _mediator.Send(command);
 
-        return new CreateSpecialityResponse { Id = id, };
+        return new CreateSpecialityResponse { Speciality = _mapperViewModel.Map(speciality), };
     }
 
     public override async Task<DeleteSpecialityResponse> DeleteSpeciality(

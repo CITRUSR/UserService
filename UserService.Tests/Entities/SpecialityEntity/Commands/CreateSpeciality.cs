@@ -16,8 +16,8 @@ public class CreateSpeciality(DatabaseFixture databaseFixture) : CommonTest(data
 
         var handler = new CreateSpecialityCommandHandler(Context);
 
-        var id = await handler.Handle(command, CancellationToken.None);
+        var speciality = await handler.Handle(command, CancellationToken.None);
 
-        Context.Specialities.FindAsync(id).Should().NotBeNull();
+        Context.Specialities.FindAsync(speciality.Id).Should().NotBeNull();
     }
 }
