@@ -14,6 +14,7 @@ using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCour
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
+using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
@@ -96,6 +97,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<EditSpecialityCommand, Speciality>,
             EditSpecialityCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<CreateSpecialityCommand, Speciality>,
+            CreateSpecialityCommandHandlerCached
         >();
     }
 }
