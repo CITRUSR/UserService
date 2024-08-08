@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Domain.Entities;
 
@@ -6,9 +7,9 @@ namespace UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpecialit
 
 public class CreateSpecialityCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<CreateSpecialityCommand, int>
+        IRequestHandler<CreateSpecialityCommand, Speciality>
 {
-    public async Task<int> Handle(
+    public async Task<Speciality> Handle(
         CreateSpecialityCommand request,
         CancellationToken cancellationToken
     )
@@ -24,6 +25,8 @@ public class CreateSpecialityCommandHandler(IAppDbContext dbContext)
         await DbContext.Specialities.AddAsync(speciality, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
 
-        return speciality.Id;
+        Log.Information($"The speciality with id{speciality.Id} is created");
+
+        return speciality;
     }
 }

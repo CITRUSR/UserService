@@ -46,7 +46,7 @@ message CreateSpecialityRequest{
 }
 
 message CreateSpecialityResponse{
-  int32 Id = 1;
+  SpecialityViewModel Speciality = 1;
 }
 
 message DeleteSpecialityRequest{
