@@ -125,8 +125,8 @@ public class SpecialityService(
             request.IsDeleted
         );
 
-        var id = await _mediator.Send(command);
+        var speciality = await _mediator.Send(command);
 
-        return new EditSpecialityResponse { Id = id, };
+        return new EditSpecialityResponse { Speciality = _mapper.Map(speciality) };
     }
 }

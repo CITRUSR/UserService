@@ -75,7 +75,7 @@ message EditSpecialityRequest{
 }
 
 message EditSpecialityResponse{
-  int32 Id = 1;
+  SpecialityModel Speciality = 1;
 }
 
 message GetSpecialityByIdRequest{
