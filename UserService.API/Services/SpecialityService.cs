@@ -4,18 +4,22 @@ using UserService.API.Mappers;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
-using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
 using UserService.Domain.Entities;
 
 namespace UserService.API.Services;
 
-public class SpecialityService(IMediator mediator, IMapper<Speciality, SpecialityModel> mapper)
-    : UserService.SpecialityService.SpecialityServiceBase
+public class SpecialityService(
+    IMediator mediator,
+    IMapper<Speciality, SpecialityModel> mapper,
+    IMapper<Speciality, SpecialityViewModel> mapperViewModel
+) : UserService.SpecialityService.SpecialityServiceBase
 {
     private readonly IMediator _mediator = mediator;
     private readonly IMapper<Speciality, SpecialityModel> _mapper = mapper;
+    private readonly IMapper<Speciality, SpecialityViewModel> _mapperViewModel = mapperViewModel;
 
     public override async Task<CreateSpecialityResponse> CreateSpeciality(
         CreateSpecialityRequest request,
@@ -98,16 +102,19 @@ public class SpecialityService(IMediator mediator, IMapper<Speciality, Specialit
         };
     }
 
-    public override async Task<SoftDeleteSpecialityResponse> SoftDeleteSpeciality(
-        SoftDeleteSpecialityRequest request,
+    public override async Task<SoftDeleteSpecialitiesResponse> SoftDeleteSpecialities(
+        SoftDeleteSpecialitiesRequest request,
         ServerCallContext context
     )
     {
-        var command = new SoftDeleteSpecialityCommand(request.Id);
+        var command = new SoftDeleteSpecialityCommand([.. request.Ids]);
 
-        var id = await _mediator.Send(command);
+        var specialities = await _mediator.Send(command);
 
-        return new SoftDeleteSpecialityResponse { Id = id, };
+        return new SoftDeleteSpecialitiesResponse
+        {
+            Specialities = { specialities.Select(x => _mapperViewModel.Map(x)) },
+        };
     }
 
     public override async Task<EditSpecialityResponse> EditSpeciality(

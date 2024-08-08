@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using UserService.Application.Common.Exceptions;
-using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
@@ -11,30 +11,35 @@ public class SoftDeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(
     [Fact]
     public async void SoftDeleteSpeciality_ShouldBe_Success()
     {
-        var speciality = Fixture.Create<Speciality>();
+        var specialities = Fixture.CreateMany<Speciality>(3);
 
-        await AddSpecialitiesToContext(speciality);
+        await AddSpecialitiesToContext([.. specialities]);
 
-        var command = new SoftDeleteSpecialityCommand(speciality.Id);
+        var command = new SoftDeleteSpecialityCommand(specialities.Select(x => x.Id).ToList());
 
-        var id = await Action(command);
+        var specialitiesRes = await Action(command);
 
-        Context.Specialities.Find(id).IsDeleted.Should().BeTrue();
+        foreach (var speciality in Context.Specialities)
+        {
+            {
+                speciality.IsDeleted.Should().BeTrue();
+            }
+        }
     }
 
     [Fact]
     public async void SoftDeleteSpeciality_ShouldBe_SpecialityNotFoundException()
     {
-        var command = new SoftDeleteSpecialityCommand(123);
+        var command = new SoftDeleteSpecialityCommand([123, 1232]);
 
         Func<Task> act = async () => await Action(command);
 
         await act.Should().ThrowAsync<SpecialityNotFoundException>();
     }
 
-    private async Task<int> Action(SoftDeleteSpecialityCommand command)
+    private async Task<List<Speciality>> Action(SoftDeleteSpecialityCommand command)
     {
-        var handler = new SoftDeleteSpecialityCommandHandler(Context);
+        var handler = new SoftDeleteSpecialitiesCommandHandler(Context);
 
         return await handler.Handle(command, CancellationToken.None);
     }
