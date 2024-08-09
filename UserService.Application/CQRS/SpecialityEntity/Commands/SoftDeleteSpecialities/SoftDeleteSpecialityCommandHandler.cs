@@ -5,14 +5,14 @@ using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Domain.Entities;
 
-namespace UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
+namespace UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 
-public class DeleteSpecialityCommandHandler(IAppDbContext dbContext)
+public class SoftDeleteSpecialitiesCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<DeleteSpecialityCommand, List<Speciality>>
+        IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>
 {
     public async Task<List<Speciality>> Handle(
-        DeleteSpecialityCommand request,
+        SoftDeleteSpecialitiesCommand request,
         CancellationToken cancellationToken
     )
     {
@@ -29,7 +29,10 @@ public class DeleteSpecialityCommandHandler(IAppDbContext dbContext)
 
         try
         {
-            DbContext.Specialities.RemoveRange(specialities);
+            foreach (var speciality in specialities)
+            {
+                speciality.IsDeleted = true;
+            }
 
             await DbContext.SaveChangesAsync(cancellationToken);
 
@@ -42,7 +45,7 @@ public class DeleteSpecialityCommandHandler(IAppDbContext dbContext)
         }
 
         Log.Information(
-            $"The specialities with id:{string.Join(", ", request.SpecialitiesId)} is deleted"
+            $"The specialities with id:{String.Join(", ", request.SpecialitiesId)} are soft deleted"
         );
 
         return specialities;

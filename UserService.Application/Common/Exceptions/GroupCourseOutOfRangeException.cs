@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using Grpc.Core;
+﻿using Grpc.Core;
+using Newtonsoft.Json;
 using UserService.Application.Common.Errors;
 using UserService.Domain.Entities;
 
@@ -11,7 +11,7 @@ public class GroupCourseOutOfRangeException : RpcException
         : base(
             new Status(
                 StatusCode.OutOfRange,
-                JsonSerializer.Serialize(
+                JsonConvert.SerializeObject(
                     new Error
                     {
                         Erorrs =

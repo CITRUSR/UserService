@@ -50,9 +50,9 @@ public class GroupService(
     {
         var command = new DeleteGroupCommand(request.Id);
 
-        var id = await _mediator.Send(command);
+        var group = await _mediator.Send(command);
 
-        return new DeleteGroupResponse { Id = id };
+        return new DeleteGroupResponse { Group = _changeGroupResponseMapper.Map(group) };
     }
 
     public override async Task<GroupModel> EditGroup(

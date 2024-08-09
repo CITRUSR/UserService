@@ -26,9 +26,9 @@ public class EditSpeciality(DatabaseFixture databaseFixture) : CommonTest(databa
             newSpeciality.IsDeleted
         );
 
-        var id = await Action(command);
+        var specialityRes = await Action(command);
 
-        Context.Specialities.Find(id).Should().BeEquivalentTo(newSpeciality);
+        Context.Specialities.Find(specialityRes.Id).Should().BeEquivalentTo(newSpeciality);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class EditSpeciality(DatabaseFixture databaseFixture) : CommonTest(databa
         await act.Should().ThrowAsync<SpecialityNotFoundException>();
     }
 
-    private async Task<int> Action(EditSpecialityCommand command)
+    private async Task<Speciality> Action(EditSpecialityCommand command)
     {
         var handler = new EditSpecialityCommandHandler(Context);
 

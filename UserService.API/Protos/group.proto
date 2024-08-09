@@ -82,7 +82,7 @@ message DeleteGroupRequest{
 }
 
 message DeleteGroupResponse{
-  int32 Id = 1;
+  ChangeGroupResponseModel Group = 1;
 }
 
 message EditGroupRequest{

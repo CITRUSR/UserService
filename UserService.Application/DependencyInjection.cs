@@ -14,6 +14,12 @@ using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCour
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
+using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
+using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
+using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
 using UserService.Domain.Entities;
 
 namespace UserService.Application;
@@ -48,7 +54,7 @@ public static class DependencyInjection
             GetGroupsQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<DeleteGroupCommand, int>,
+            IRequestHandler<DeleteGroupCommand, Group>,
             DeleteGroupCommandHandlerCached
         >();
         services.Decorate<
@@ -70,6 +76,31 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<CreateGroupCommand, Group>,
             CreateGroupCommandHandlerCached
+        >();
+
+        services.Decorate<
+            IRequestHandler<GetSpecialityByIdQuery, Speciality>,
+            GetSpecialityByIdQueryHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>>,
+            GetSpecialitiesQueryHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<DeleteSpecialityCommand, List<Speciality>>,
+            DeleteSpecialityCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>,
+            SoftDeleteSpecialitiesCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<EditSpecialityCommand, Speciality>,
+            EditSpecialityCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<CreateSpecialityCommand, Speciality>,
+            CreateSpecialityCommandHandlerCached
         >();
     }
 }

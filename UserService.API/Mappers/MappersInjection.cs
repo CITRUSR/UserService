@@ -13,6 +13,10 @@ public static class MappersInjection
             IMapper<Group, ChangeGroupResponseModel>,
             ChangeGroupResponseModelMapper
         >();
+        services.AddSingleton<
+            IMapper<Speciality, SpecialityViewModel>,
+            SpeicalityViewModelMapper
+        >();
 
         return services;
     }

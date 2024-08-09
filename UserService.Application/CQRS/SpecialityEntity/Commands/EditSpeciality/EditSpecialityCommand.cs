@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 
@@ -9,4 +10,4 @@ public record EditSpecialityCommand(
     Decimal Cost,
     byte DurationMonths,
     bool IsDeleted
-) : IRequest<int>;
+) : IRequest<Speciality>;
