@@ -80,9 +80,7 @@ public class SpecialityService(
             SortState =
                 (Application.CQRS.SpecialityEntity.Queries.GetSpecialities.SpecialitySortState)
                     request.SortState,
-            DeletedStatus =
-                (Application.CQRS.SpecialityEntity.Queries.GetSpecialities.SpecialityDeletedStatus)
-                    request.DeletedStatus,
+            DeletedStatus = (UserService.Application.Enums.DeletedStatus)request.DeletedStatus,
         };
 
         var specialities = await _mediator.Send(query);

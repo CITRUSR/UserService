@@ -2,6 +2,7 @@ using FluentAssertions;
 using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
@@ -105,7 +106,7 @@ public class GetSpecialitiesCached(DatabaseFixture databaseFixture) : RedisTest(
         int pageSize = 10,
         string searchString = "",
         SpecialitySortState sortState = SpecialitySortState.NameAsc,
-        SpecialityDeletedStatus deletedStatus = SpecialityDeletedStatus.OnlyActive
+        DeletedStatus deletedStatus = DeletedStatus.OnlyActive
     )
     {
         return new GetSpecialitiesQuery

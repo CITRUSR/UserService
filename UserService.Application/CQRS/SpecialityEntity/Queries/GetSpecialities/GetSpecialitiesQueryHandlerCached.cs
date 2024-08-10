@@ -3,6 +3,7 @@ using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
@@ -25,7 +26,7 @@ public class GetSpecialitiesQueryHandlerCached(
             && request
                 is {
                     SortState: SpecialitySortState.NameAsc,
-                    DeletedStatus: SpecialityDeletedStatus.OnlyActive
+                    DeletedStatus: DeletedStatus.OnlyActive
                 }
         )
         {
