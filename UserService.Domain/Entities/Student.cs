@@ -25,4 +25,5 @@ public class Student
     [Required]
     public int GroupId { get; set; }
     public DateTime? DroppedOutAt { get; set; } = null;
+    public bool IsDeleted { get; set; } = false;
 }

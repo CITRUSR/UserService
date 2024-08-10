@@ -34,6 +34,7 @@ public class Group
     public DateTime StartedAt { get; set; }
     public ICollection<Student> Students { get; } = new List<Student>();
     public DateTime? GraduatedAt { get; set; }
+    public bool IsDeleted { get; set; } = false;
 
     public override string ToString()
     {
