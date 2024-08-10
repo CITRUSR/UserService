@@ -93,7 +93,7 @@ enum SpecialitySortState{
   DurationMonthsDesc = 7;
 }
 
-enum SpecialityDeletedStatus{
+enum DeletedStatus{
   All = 0;
   OnlyDeleted = 1;
   OnlyActive = 2;
@@ -104,7 +104,7 @@ message GetSpecialitiesRequest{
   int32 Page = 2;
   int32 PageSize = 3;
   SpecialitySortState SortState = 4;
-  SpecialityDeletedStatus DeletedStatus = 5;
+  DeletedStatus DeletedStatus = 5;
 }
 
 message GetSpecialitiesResponse{

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
@@ -135,7 +136,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     {
         await SeedDataForDeletedStatusTests();
 
-        var query = CreateQuery(deletedStatus: SpecialityDeletedStatus.All);
+        var query = CreateQuery(deletedStatus: DeletedStatus.All);
 
         var specialities = await Action(query);
 
@@ -147,7 +148,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     {
         var (speciality1, speciality2) = await SeedDataForDeletedStatusTests();
 
-        var query = CreateQuery(deletedStatus: SpecialityDeletedStatus.OnlyDeleted);
+        var query = CreateQuery(deletedStatus: DeletedStatus.OnlyDeleted);
 
         var specialities = await Action(query);
 
@@ -160,7 +161,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     {
         var (speciality1, speciality2) = await SeedDataForDeletedStatusTests();
 
-        var query = CreateQuery(deletedStatus: SpecialityDeletedStatus.OnlyActive);
+        var query = CreateQuery(deletedStatus: DeletedStatus.OnlyActive);
 
         var specialities = await Action(query);
 
@@ -286,7 +287,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
         int pageSize = 10,
         string searchString = "",
         SpecialitySortState sortState = SpecialitySortState.NameAsc,
-        SpecialityDeletedStatus deletedStatus = SpecialityDeletedStatus.All
+        DeletedStatus deletedStatus = DeletedStatus.All
     )
     {
         return new GetSpecialitiesQuery

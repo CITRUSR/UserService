@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
@@ -37,14 +38,14 @@ public class GetSpecialitiesQueryHandler(IAppDbContext dbContext)
 
     private IQueryable<Speciality> GetFilteredByDeletedStatus(
         IQueryable<Speciality> specialities,
-        SpecialityDeletedStatus deletedStatus
+        DeletedStatus deletedStatus
     )
     {
         specialities = deletedStatus switch
         {
-            SpecialityDeletedStatus.All => specialities,
-            SpecialityDeletedStatus.OnlyDeleted => specialities.Where(x => x.IsDeleted == true),
-            SpecialityDeletedStatus.OnlyActive => specialities.Where(x => x.IsDeleted == false),
+            DeletedStatus.All => specialities,
+            DeletedStatus.OnlyDeleted => specialities.Where(x => x.IsDeleted == true),
+            DeletedStatus.OnlyActive => specialities.Where(x => x.IsDeleted == false),
         };
 
         return specialities;
