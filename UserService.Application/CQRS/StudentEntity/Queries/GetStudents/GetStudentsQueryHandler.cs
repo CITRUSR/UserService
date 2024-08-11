@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
@@ -15,6 +16,8 @@ public class GetStudentsQueryHandler(IAppDbContext dbContext)
     )
     {
         IQueryable<Student> students = DbContext.Students;
+
+        students = GetFilteredByDeletedStatus(students, request.DeletedStatus);
 
         students = GetFilteredByDroppedOutStatus(students, request.DroppedOutStatus);
 
@@ -45,6 +48,21 @@ public class GetStudentsQueryHandler(IAppDbContext dbContext)
             StudentDroppedOutStatus.All => students,
             StudentDroppedOutStatus.OnlyDroppedOut => students.Where(x => x.DroppedOutAt != null),
             StudentDroppedOutStatus.OnlyActive => students.Where(x => x.DroppedOutAt == null),
+        };
+
+        return students;
+    }
+
+    private IQueryable<Student> GetFilteredByDeletedStatus(
+        IQueryable<Student> students,
+        DeletedStatus deletedStatus
+    )
+    {
+        students = deletedStatus switch
+        {
+            DeletedStatus.All => students,
+            DeletedStatus.OnlyDeleted => students.Where(x => x.IsDeleted == true),
+            DeletedStatus.OnlyActive => students.Where(x => x.IsDeleted == false),
         };
 
         return students;

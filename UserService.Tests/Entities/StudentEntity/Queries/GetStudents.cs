@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
@@ -160,6 +161,44 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
     }
 
     [Fact]
+    public async void GetStudents_ShouldBe_SuccessWithDeletedStatus_OnlyActive()
+    {
+        var (specialityA, specialityB) = await SeedDataForTests();
+
+        var query = CreateQuery(deletedStatus: DeletedStatus.OnlyActive);
+
+        var specialities = await Action(query);
+
+        specialities.Items.Should().HaveCount(1);
+        specialities.Items[0].Should().BeEquivalentTo(specialityB);
+    }
+
+    [Fact]
+    public async void GetStudents_ShouldBe_SuccessWithDeletedStatus_OnlyDeleted()
+    {
+        var (specialityA, specialityB) = await SeedDataForTests();
+
+        var query = CreateQuery(deletedStatus: DeletedStatus.OnlyDeleted);
+
+        var specialities = await Action(query);
+
+        specialities.Items.Should().HaveCount(1);
+        specialities.Items[0].Should().BeEquivalentTo(specialityA);
+    }
+
+    [Fact]
+    public async void GetStudents_ShouldBe_SuccessWithDeletedStatus_All()
+    {
+        var (specialityA, specialityB) = await SeedDataForTests();
+
+        var query = CreateQuery(deletedStatus: DeletedStatus.All);
+
+        var specialities = await Action(query);
+
+        specialities.Items.Should().HaveCount(2);
+    }
+
+    [Fact]
     public async void GetSpecialities_ShouldBe_SuccessWithSearchStringWithFirstName()
     {
         await TestSearchString("AA", 1, student => student.FirstName == "AAA");
@@ -238,12 +277,14 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             .With(x => x.FirstName, "AAA")
             .With(x => x.LastName, "AAA")
             .With(x => x.DroppedOutAt, DateTime.Now)
+            .With(x => x.IsDeleted, true)
             .Create();
         var studentB = Fixture
             .Build<Student>()
             .With(x => x.FirstName, "BBB")
             .With(x => x.LastName, "BBB")
             .Without(x => x.DroppedOutAt)
+            .Without(x => x.IsDeleted)
             .Create();
 
         await AddStudentsToContext([studentA, studentB]);
@@ -256,7 +297,8 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
         int pageSize = 10,
         string searchString = "",
         SortState sortState = SortState.LastNameAsc,
-        StudentDroppedOutStatus droppedOutStatus = StudentDroppedOutStatus.All
+        StudentDroppedOutStatus droppedOutStatus = StudentDroppedOutStatus.All,
+        DeletedStatus deletedStatus = DeletedStatus.All
     )
     {
         return new GetStudentsQuery
@@ -266,6 +308,7 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             SearchString = searchString,
             SortState = sortState,
             DroppedOutStatus = droppedOutStatus,
+            DeletedStatus = deletedStatus,
         };
     }
 

@@ -6,6 +6,7 @@ package Student;
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
+import "Protos/shared.proto";
 
 service StudentService{
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
@@ -71,11 +72,19 @@ enum SortState{
   GroupDesc = 5;
 }
 
+enum DroppedOutStatus{
+  All = 0;
+  OnlyDroppedOut = 1;
+  OnlyActive = 2;
+}
+
 message GetStudentsRequest{
   google.protobuf.StringValue SearchString = 1;
   int32 Page = 2;
   int32 PageSize = 3;
   SortState SortState = 4;
+  DroppedOutStatus DroppedOutStatus = 5;
+  DeletedStatus DeletedStatus = 6;
 }
 
 message GetStudentsResponse{

@@ -117,6 +117,8 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
             SearchString = request.SearchString,
             SortState = (Application.CQRS.StudentEntity.Queries.GetStudents.SortState)
                 request.SortState,
+            DroppedOutStatus = (StudentDroppedOutStatus)request.DroppedOutStatus,
+            DeletedStatus = (Application.Enums.DeletedStatus)request.DeletedStatus,
         };
 
         var students = await _mediator.Send(query);
