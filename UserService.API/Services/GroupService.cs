@@ -66,7 +66,8 @@ public class GroupService(
             Guid.Parse(request.CuratorId),
             (byte)request.CurrentCourse,
             (byte)request.CurrentSemester,
-            (byte)request.SubGroup
+            (byte)request.SubGroup,
+            request.IsDeleted
         );
 
         var group = await _mediator.Send(command);

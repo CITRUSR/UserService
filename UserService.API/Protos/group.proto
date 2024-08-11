@@ -94,6 +94,7 @@ message EditGroupRequest{
   uint32 CurrentCourse = 4;
   uint32 CurrentSemester = 5;
   uint32 SubGroup = 6;
+  bool IsDeleted = 7;
 }
 
 message GetGroupByIdRequest{

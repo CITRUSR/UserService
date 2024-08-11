@@ -53,6 +53,7 @@ public class EditGroupCommandHandler(IAppDbContext dbContext)
             SubGroup = group.SubGroup,
             StartedAt = group.StartedAt,
             GraduatedAt = group.GraduatedAt,
+            IsDeleted = group.IsDeleted,
         };
 
         group.CuratorId = request.CuratorId;
@@ -60,6 +61,7 @@ public class EditGroupCommandHandler(IAppDbContext dbContext)
         group.SubGroup = request.SubGroup;
         group.CurrentSemester = request.CurrentSemester;
         group.CurrentCourse = request.CurrentCourse;
+        group.IsDeleted = request.IsDeleted;
 
         await DbContext.SaveChangesAsync(cancellationToken);
 

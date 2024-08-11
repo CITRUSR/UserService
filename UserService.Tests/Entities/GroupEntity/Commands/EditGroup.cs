@@ -37,7 +37,8 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
             curator.Id,
             newGroup.CurrentCourse,
             newGroup.CurrentSemester,
-            newGroup.SubGroup
+            newGroup.SubGroup,
+            newGroup.IsDeleted
         );
 
         var group = await Action(command);
