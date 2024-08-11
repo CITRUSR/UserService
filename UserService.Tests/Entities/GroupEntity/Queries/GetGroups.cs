@@ -1,12 +1,13 @@
 ﻿using FluentAssertions;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Queries
 {
-    public class GetGroupsTests(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+    public class GetGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
     {
         [Fact]
         public async void GetGroups_ShouldBe_SuccessWithPageSize()
@@ -86,6 +87,39 @@ namespace UserService.Tests.Entities.GroupEntity.Queries
         }
 
         [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithIsDeletedStatus_OnlyActive()
+        {
+            var (group1, group2, query) = await SeedDataForIsDeletedStatusTests(
+                DeletedStatus.OnlyActive
+            );
+            var groups = await ExecuteQuery(query);
+
+            groups.Items.Should().HaveCount(1);
+            groups.Items[0].Should().BeEquivalentTo(group2);
+        }
+
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithIsDeletedStatus_OnlyDeleted()
+        {
+            var (group1, group2, query) = await SeedDataForIsDeletedStatusTests(
+                DeletedStatus.OnlyDeleted
+            );
+            var groups = await ExecuteQuery(query);
+
+            groups.Items.Should().HaveCount(1);
+            groups.Items[0].Should().BeEquivalentTo(group1);
+        }
+
+        [Fact]
+        public async void GetGroups_ShouldBe_SuccessWithIsDeletedStatus_All()
+        {
+            var (group1, group2, query) = await SeedDataForIsDeletedStatusTests(DeletedStatus.All);
+            var groups = await ExecuteQuery(query);
+
+            groups.Items.Should().HaveCount(2);
+        }
+
+        [Fact]
         public async void GetGroups_ShouldBe_SuccessWithSearchStringByAbbr()
         {
             await TestSearchString("AA", 1, group => group.Speciality.Abbreavation == "AAA");
@@ -155,6 +189,17 @@ namespace UserService.Tests.Entities.GroupEntity.Queries
             return (group1, group2, query);
         }
 
+        private async Task<(Group, Group, GetGroupsQuery)> SeedDataForIsDeletedStatusTests(
+            DeletedStatus deletedStatus
+        )
+        {
+            var (group1, group2) = CreateGroupsWithDeletedStatus();
+            await AddGroupsToContext(group1, group2);
+
+            var query = CreateQuery(deletedStatus: deletedStatus);
+            return (group1, group2, query);
+        }
+
         private async Task<PaginationList<Group>> ExecuteQuery(GetGroupsQuery query)
         {
             var handler = new GetGroupsQueryHandler(Context);
@@ -166,7 +211,8 @@ namespace UserService.Tests.Entities.GroupEntity.Queries
             int page = 1,
             string searchString = "",
             GroupSortState sortState = GroupSortState.GroupDesc,
-            GroupGraduatedStatus graduatedStatus = GroupGraduatedStatus.All
+            GroupGraduatedStatus graduatedStatus = GroupGraduatedStatus.All,
+            DeletedStatus deletedStatus = DeletedStatus.All
         )
         {
             return new GetGroupsQuery
@@ -176,6 +222,7 @@ namespace UserService.Tests.Entities.GroupEntity.Queries
                 SearchString = searchString,
                 SortState = sortState,
                 GraduatedStatus = graduatedStatus,
+                DeletedStatus = deletedStatus,
             };
         }
 
@@ -204,6 +251,14 @@ namespace UserService.Tests.Entities.GroupEntity.Queries
         {
             var group1 = Fixture.Build<Group>().With(x => x.GraduatedAt, DateTime.Now).Create();
             var group2 = Fixture.Build<Group>().Without(x => x.GraduatedAt).Create();
+
+            return (group1, group2);
+        }
+
+        private (Group, Group) CreateGroupsWithDeletedStatus()
+        {
+            var group1 = Fixture.Build<Group>().With(x => x.IsDeleted, true).Create();
+            var group2 = Fixture.Build<Group>().Without(x => x.IsDeleted).Create();
 
             return (group1, group2);
         }

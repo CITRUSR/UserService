@@ -6,6 +6,7 @@ package Group;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
+import "Protos/shared.proto";
 
 service GroupService{
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
@@ -29,6 +30,7 @@ message GroupModel{
   google.protobuf.Timestamp StartedAt = 7;
   google.protobuf.Timestamp GraduatedAt = 8;
   bool IsGraduated = 9;
+  bool IsDeleted = 10;
 }
 
 message CreateGroupRequest{
@@ -108,6 +110,7 @@ message GetGroupsRequest{
   int32 Page = 2;
   int32 PageSize = 3;
   GroupSortState SortState = 4;
+  DeletedStatus DeletedStatus = 5;
 }
 
 message GetGroupsResponse{
