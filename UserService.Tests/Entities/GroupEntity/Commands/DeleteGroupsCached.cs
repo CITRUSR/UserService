@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using UserService.Application.Common.Cache;
-using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
+using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 using UserService.Domain.Entities;
 using UserService.Tests.Common;
 

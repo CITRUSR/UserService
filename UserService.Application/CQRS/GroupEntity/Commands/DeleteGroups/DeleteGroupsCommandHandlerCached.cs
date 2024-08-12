@@ -3,7 +3,7 @@ using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Domain.Entities;
 
-namespace UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
+namespace UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 
 public class DeleteGroupsCommandHandlerCached(
     DeleteGroupsCommandHandler handler,
