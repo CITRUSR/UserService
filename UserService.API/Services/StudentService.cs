@@ -73,12 +73,13 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
             request.FirstName,
             request.LastName,
             request.PatronymicName,
-            request.GroupId
+            request.GroupId,
+            request.IsDeleted
         );
 
-        var id = await _mediator.Send(command);
+        var student = await _mediator.Send(command);
 
-        return new EditStudentResponse { Id = id.ToString(), };
+        return new EditStudentResponse { Student = _mapper.Map(student), };
     }
 
     public override async Task<StudentModel> GetStudentById(

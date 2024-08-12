@@ -18,6 +18,18 @@ service StudentService{
   rpc GetStudents(GetStudentsRequest) returns (GetStudentsResponse);
 }
 
+//If isDropped true then student has DroppedTime else doesn't have DroppedTime(equals null)
+message StudentModel{
+  string Id = 1;
+  string SsoId = 2;
+  string FistName = 3;
+  string LastName = 4;
+  google.protobuf.StringValue PatronymicName = 5;
+  int32  GroupId = 6;
+  google.protobuf.Timestamp DroppedTime = 7;
+  bool IsDropped = 8;
+}
+
 message CreateStudentRequest{
   string SsoId = 1;
   string FirstName = 2;
@@ -53,10 +65,11 @@ message EditStudentRequest{
   string LastName = 3;
   google.protobuf.StringValue PatronymicName = 4;
   int32 GroupId = 5;
+  bool IsDeleted = 6;
 }
 
 message EditStudentResponse{
-  string Id = 1;
+  StudentModel Student = 1;
 }
 
 message GetStudentByIdRequest{
@@ -90,18 +103,6 @@ message GetStudentsRequest{
 message GetStudentsResponse{
   repeated StudentModel Students = 1;
   int32 LastPage = 2;
-}
-
-//If isDropped true then student has DroppedTime else doesn't have DroppedTime(equals null)
-message StudentModel{
-  string Id = 1;
-  string SsoId = 2;
-  string FistName = 3;
-  string LastName = 4;
-  google.protobuf.StringValue PatronymicName = 5;
-  int32  GroupId = 6;
-  google.protobuf.Timestamp DroppedTime = 7;
-  bool IsDropped = 8;
 }
 
 message GetStudentBySsoIdRequest{
