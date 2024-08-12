@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.GroupEntity.Queries;
 public class GetGroupByIdCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void GetGroupByIdCached_ShouldBe_SuccessWithoutCache()
+    public async Task GetGroupByIdCached_ShouldBe_SuccessWithoutCache()
     {
         var speciality = Fixture.Create<Speciality>();
         var curator = Fixture.Create<Teacher>();
@@ -37,7 +37,7 @@ public class GetGroupByIdCached(DatabaseFixture databaseFixture) : RedisTest(dat
     }
 
     [Fact]
-    public async void GetGroupByIdCached_ShouldBe_SuccessWithCache()
+    public async Task GetGroupByIdCached_ShouldBe_SuccessWithCache()
     {
         var group = CreateGroup(Guid.NewGuid(), 123);
 

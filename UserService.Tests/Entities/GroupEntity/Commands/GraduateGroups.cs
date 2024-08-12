@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.GroupEntity.Commands;
 public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void GraduateGroup_ShouldBe_Success()
+    public async Task GraduateGroup_ShouldBe_Success()
     {
         await SeedDataForTests();
 
@@ -31,7 +31,7 @@ public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databa
     }
 
     [Fact]
-    public async void GraduateGroup_ShouldBe_GroupNotFoundException()
+    public async Task GraduateGroup_ShouldBe_GroupNotFoundException()
     {
         var command = new GraduateGroupsCommand(new List<int> { 12 }, DateTime.Now);
         var handler = new GraduateGroupsCommandHandler(Context);
@@ -42,7 +42,7 @@ public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databa
     }
 
     [Fact]
-    public async void GraduateGroup_ShouldBe_GroupAlreadyGraduatedException()
+    public async Task GraduateGroup_ShouldBe_GroupAlreadyGraduatedException()
     {
         await SeedDataForTests();
 

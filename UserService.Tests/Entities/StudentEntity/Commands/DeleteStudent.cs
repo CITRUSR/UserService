@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.StudentEntity.Commands;
 public class DeleteStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void DeleteStudent_ShouldBe_Success()
+    public async Task DeleteStudent_ShouldBe_Success()
     {
         var group = Fixture.Create<Group>();
 
@@ -30,7 +30,7 @@ public class DeleteStudent(DatabaseFixture databaseFixture) : CommonTest(databas
     }
 
     [Fact]
-    public async void DeleteStudent_ShouldBe_NotFoundException()
+    public async Task DeleteStudent_ShouldBe_NotFoundException()
     {
         var student = Fixture.Create<Student>();
 

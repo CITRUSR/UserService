@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.StudentEntity.Commands;
 public class DropOutStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void DropOutStudent_ShouldBe_Success()
+    public async Task DropOutStudent_ShouldBe_Success()
     {
         var student = Fixture.Create<Student>();
         student.DroppedOutAt = null;
@@ -28,7 +28,7 @@ public class DropOutStudent(DatabaseFixture databaseFixture) : CommonTest(databa
     }
 
     [Fact]
-    public async void DropOutStudent_ShouldBe_NotFoundException()
+    public async Task DropOutStudent_ShouldBe_NotFoundException()
     {
         var student = Fixture.Create<Student>();
 

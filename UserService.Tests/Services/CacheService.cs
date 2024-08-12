@@ -9,7 +9,7 @@ namespace UserService.Tests.Services;
 public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void CacheService_GetStringAsync_ShouldBe_Success()
+    public async Task CacheService_GetStringAsync_ShouldBe_Success()
     {
         string testString = "12345A";
 
@@ -20,7 +20,7 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     }
 
     [Fact]
-    public async void CacheService_SetObjectAsync_ShouldBe_Success()
+    public async Task CacheService_SetObjectAsync_ShouldBe_Success()
     {
         var speciality = Fixture.Create<Speciality>();
 
@@ -34,7 +34,7 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     }
 
     [Fact]
-    public async void CacheService_GetObjectAsync_ShouldBe_Success()
+    public async Task CacheService_GetObjectAsync_ShouldBe_Success()
     {
         var speciality = Fixture.Create<Speciality>();
 
@@ -46,7 +46,7 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     }
 
     [Fact]
-    public async void CacheService_RemoveAsync_ShouldBe_Success()
+    public async Task CacheService_RemoveAsync_ShouldBe_Success()
     {
         var speciality = Fixture.Create<Speciality>();
 
@@ -60,7 +60,7 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     }
 
     [Fact]
-    public async void CacheService_GetOrCreate_ShouldBe_SuccessWithGet()
+    public async Task CacheService_GetOrCreate_ShouldBe_SuccessWithGet()
     {
         await CacheService.SetObjectAsync("test", "test");
 
@@ -70,7 +70,7 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     }
 
     [Fact]
-    public async void CacheService_GetOrCreate_ShouldBe_SuccessWithCreate()
+    public async Task CacheService_GetOrCreate_ShouldBe_SuccessWithCreate()
     {
         var specialityRes = await CacheService.GetOrCreateAsync("test", async () => "test");
 
@@ -79,7 +79,7 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     }
 
     [Fact]
-    public async void CacheService_RemovePagesWithObjectAsync_ShouldBe_Success()
+    public async Task CacheService_RemovePagesWithObjectAsync_ShouldBe_Success()
     {
         await RemoveObjectFromPage(1);
         await RemoveObjectFromPage(2);

@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.GroupEntity.Commands;
 public class DeleteGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void DeleteGroups_ShouldBe_Success()
+    public async Task DeleteGroups_ShouldBe_Success()
     {
         var groups = Fixture.CreateMany<Group>(3);
 
@@ -23,7 +23,7 @@ public class DeleteGroups(DatabaseFixture databaseFixture) : CommonTest(database
     }
 
     [Fact]
-    public async void DeleteGroups_ShouldBe_GroupNotFoundException()
+    public async Task DeleteGroups_ShouldBe_GroupNotFoundException()
     {
         var command = new DeleteGroupsCommand([123, 12312]);
         var handler = new DeleteGroupsCommandHandler(Context);

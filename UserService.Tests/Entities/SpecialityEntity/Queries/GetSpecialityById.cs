@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Queries;
 public class GetSpecialityById(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void GetSpecialityById_ShouldBe_Success()
+    public async Task GetSpecialityById_ShouldBe_Success()
     {
         var speciality = Fixture.Create<Speciality>();
 
@@ -23,7 +23,7 @@ public class GetSpecialityById(DatabaseFixture databaseFixture) : CommonTest(dat
     }
 
     [Fact]
-    public async void GetSpecialityById_ShouldBe_SpecialityNotFoundException()
+    public async Task GetSpecialityById_ShouldBe_SpecialityNotFoundException()
     {
         var query = new GetSpecialityByIdQuery(123);
 

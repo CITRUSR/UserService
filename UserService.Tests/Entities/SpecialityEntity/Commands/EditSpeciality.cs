@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 public class EditSpeciality(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void EditSpeciality_ShouldBe_Success()
+    public async Task EditSpeciality_ShouldBe_Success()
     {
         var speciality = Fixture.Create<Speciality>();
 
@@ -32,7 +32,7 @@ public class EditSpeciality(DatabaseFixture databaseFixture) : CommonTest(databa
     }
 
     [Fact]
-    public async void EditSpeciality_ShouldBe_SpecialityNotFoundException()
+    public async Task EditSpeciality_ShouldBe_SpecialityNotFoundException()
     {
         var command = Fixture.Create<EditSpecialityCommand>();
 

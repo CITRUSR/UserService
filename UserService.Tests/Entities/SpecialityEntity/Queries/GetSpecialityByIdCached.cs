@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Queries;
 public class GetSpecialityByIdCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void GetSpecialityById_ShouldBe_Success_WithoutCache()
+    public async Task GetSpecialityById_ShouldBe_Success_WithoutCache()
     {
         var speciality = Fixture.Create<Speciality>();
 

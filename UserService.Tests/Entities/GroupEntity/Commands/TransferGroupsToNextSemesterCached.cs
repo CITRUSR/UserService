@@ -10,7 +10,7 @@ public class TransferGroupsToNextSemesterCached(DatabaseFixture databaseFixture)
     : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void TransferGroupsToNextSemesterCached_ShouldBe_Success()
+    public async Task TransferGroupsToNextSemesterCached_ShouldBe_Success()
     {
         var group = Fixture.Build<Group>().With(x => x.CurrentSemester, 2).Create();
 

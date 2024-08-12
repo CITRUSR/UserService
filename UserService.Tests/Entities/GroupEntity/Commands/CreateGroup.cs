@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.GroupEntity.Commands;
 public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void CreateGroup_ShouldBe_Success()
+    public async Task CreateGroup_ShouldBe_Success()
     {
         var speciality = Fixture.Create<Speciality>();
         var curator = Fixture.Create<Teacher>();
@@ -30,7 +30,7 @@ public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseF
     }
 
     [Fact]
-    public async void CreateGroup_ShouldBe_SpecialityNotFoundException()
+    public async Task CreateGroup_ShouldBe_SpecialityNotFoundException()
     {
         var curator = Fixture.Create<Teacher>();
 
@@ -48,7 +48,7 @@ public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseF
     }
 
     [Fact]
-    public async void CreateGroup_ShouldBe_TeacherNotFoundException()
+    public async Task CreateGroup_ShouldBe_TeacherNotFoundException()
     {
         var speciality = Fixture.Create<Speciality>();
 

@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.GroupEntity.Queries;
 public class GetGroupById(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void GetGroupById_ShouldBe_Success()
+    public async Task GetGroupById_ShouldBe_Success()
     {
         var group = Fixture.Create<Group>();
 
@@ -23,7 +23,7 @@ public class GetGroupById(DatabaseFixture databaseFixture) : CommonTest(database
     }
 
     [Fact]
-    public async void GetGroupById_ShouldBe_GroupNotFoundException()
+    public async Task GetGroupById_ShouldBe_GroupNotFoundException()
     {
         var query = Fixture.Create<GetGroupByIdQuery>();
 

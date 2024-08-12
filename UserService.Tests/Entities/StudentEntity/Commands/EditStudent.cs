@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.StudentEntity.Commands;
 public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void EditStudent_ShouldBe_Success()
+    public async Task EditStudent_ShouldBe_Success()
     {
         int oldGroupId = 12;
 
@@ -58,7 +58,7 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
     }
 
     [Fact]
-    public async void EditStudent_ShouldBe_StudentNotFoundException()
+    public async Task EditStudent_ShouldBe_StudentNotFoundException()
     {
         var oldStudent = Fixture.Create<Student>();
 
@@ -72,7 +72,7 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
     }
 
     [Fact]
-    public async void EditStudent_ShouldBe_GroupNotFoundException()
+    public async Task EditStudent_ShouldBe_GroupNotFoundException()
     {
         var oldStudent = Fixture.Create<Student>();
 

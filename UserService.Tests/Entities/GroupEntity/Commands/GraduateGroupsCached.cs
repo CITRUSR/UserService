@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.GroupEntity.Commands;
 public class GraduateGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void GraduateGroupsCached_ShouldBe_Success()
+    public async Task GraduateGroupsCached_ShouldBe_Success()
     {
         var group = Fixture.Build<Group>().Without(x => x.GraduatedAt).Create();
 

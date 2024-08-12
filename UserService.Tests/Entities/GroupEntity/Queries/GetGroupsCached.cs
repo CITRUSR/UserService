@@ -11,7 +11,7 @@ namespace UserService.Tests.Entities.GroupEntity.Queries;
 public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void GetGroupsCached_ShouldBe_SuccessWithoutCache_WithValidatedQuery()
+    public async Task GetGroupsCached_ShouldBe_SuccessWithoutCache_WithValidatedQuery()
     {
         var groups = await GetGroupsCachedWithValidatedQuery(
             1,
@@ -36,7 +36,7 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
     }
 
     [Fact]
-    public async void GetGroupsCached_ShouldBe_SuccessWithoutCache_WithOutValidatedQuery()
+    public async Task GetGroupsCached_ShouldBe_SuccessWithoutCache_WithOutValidatedQuery()
     {
         var groups = await GetGroupsCachedWithValidatedQuery(
             1,
@@ -50,7 +50,7 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
     }
 
     [Fact]
-    public async void GetGroupsCached_ShouldBe_SuccessWithCache()
+    public async Task GetGroupsCached_ShouldBe_SuccessWithCache()
     {
         await SeedDataForTestsWithValidatedQueryForCaching();
 
