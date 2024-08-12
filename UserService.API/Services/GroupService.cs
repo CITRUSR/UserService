@@ -43,16 +43,19 @@ public class GroupService(
         return new CreateGroupResponse { Group = _changeGroupResponseMapper.Map(group) };
     }
 
-    public override async Task<DeleteGroupResponse> DeleteGroup(
-        DeleteGroupRequest request,
+    public override async Task<DeleteGroupsResponse> DeleteGroups(
+        DeleteGroupsRequest request,
         ServerCallContext context
     )
     {
-        var command = new DeleteGroupCommand(request.Id);
+        var command = new DeleteGroupsCommand([.. request.Ids]);
 
-        var group = await _mediator.Send(command);
+        var groups = await _mediator.Send(command);
 
-        return new DeleteGroupResponse { Group = _changeGroupResponseMapper.Map(group) };
+        return new DeleteGroupsResponse
+        {
+            Group = { groups.Select(x => _changeGroupResponseMapper.Map(x)) }
+        };
     }
 
     public override async Task<GroupModel> EditGroup(

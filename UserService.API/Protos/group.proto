@@ -10,7 +10,7 @@ import "Protos/shared.proto";
 
 service GroupService{
   rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
-  rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse);
+  rpc DeleteGroups (DeleteGroupsRequest) returns (DeleteGroupsResponse);
   rpc EditGroup (EditGroupRequest) returns (GroupModel);
   rpc GraduateGroups (GraduateGroupsRequest) returns (GraduateGroupsResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
@@ -79,12 +79,12 @@ message TransferGroupsToNextCourseResponse{
   repeated ChangeGroupResponseModel Groups = 1;
 }
 
-message DeleteGroupRequest{
-  int32 Id = 1;
+message DeleteGroupsRequest{
+  repeated int32 Ids = 1;
 }
 
-message DeleteGroupResponse{
-  ChangeGroupResponseModel Group = 1;
+message DeleteGroupsResponse{
+  repeated ChangeGroupResponseModel Group = 1;
 }
 
 message EditGroupRequest{

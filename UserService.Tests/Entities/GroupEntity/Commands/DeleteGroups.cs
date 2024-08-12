@@ -6,27 +6,27 @@ using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class DeleteGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class DeleteGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void DeleteGroup_ShouldBe_Success()
+    public async void DeleteGroups_ShouldBe_Success()
     {
-        var group = Fixture.Create<Group>();
+        var groups = Fixture.CreateMany<Group>(3);
 
-        await AddGroupsToContext(group);
+        await AddGroupsToContext([.. groups]);
 
-        var command = new DeleteGroupCommand(group.Id);
-        var handler = new DeleteGroupCommandHandler(Context);
+        var command = new DeleteGroupsCommand(groups.Select(x => x.Id).ToList());
+        var handler = new DeleteGroupsCommandHandler(Context);
 
         await handler.Handle(command, CancellationToken.None);
         Context.Groups.Should().BeEmpty();
     }
 
     [Fact]
-    public async void DeleteGroup_ShouldBe_GroupNotFoundException()
+    public async void DeleteGroups_ShouldBe_GroupNotFoundException()
     {
-        var command = new DeleteGroupCommand(123);
-        var handler = new DeleteGroupCommandHandler(Context);
+        var command = new DeleteGroupsCommand([123, 12312]);
+        var handler = new DeleteGroupsCommandHandler(Context);
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
