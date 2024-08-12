@@ -69,7 +69,8 @@ public class GroupService(
             Guid.Parse(request.CuratorId),
             (byte)request.CurrentCourse,
             (byte)request.CurrentSemester,
-            (byte)request.SubGroup
+            (byte)request.SubGroup,
+            request.IsDeleted
         );
 
         var group = await _mediator.Send(command);
@@ -149,6 +150,7 @@ public class GroupService(
             SortState = (Application.CQRS.GroupEntity.Queries.GetGroups.GroupSortState)
                 request.SortState,
             SearchString = request.SearchString,
+            DeletedStatus = (Application.Enums.DeletedStatus)request.DeletedStatus,
         };
 
         var groups = await _mediator.Send(query);

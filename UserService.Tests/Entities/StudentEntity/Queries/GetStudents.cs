@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
@@ -9,176 +10,117 @@ namespace UserService.Tests.Entities.StudentEntity.Queries;
 public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithPageSize()
+    public async Task GetStudents_ShouldBe_SuccessWithPageSize()
     {
-        var students = Fixture.CreateMany<Student>(12);
-
-        await AddStudentsToContext(students.ToArray());
-
-        var query = CreateQuery();
-
-        var studentsRes = await Action(query);
-
-        studentsRes.Items.Should().HaveCount(10);
-        studentsRes.MaxPage.Should().Be(2);
+        await TestPagination(pageSize: 10, expectedCount: 10, expectedMaxPage: 2);
     }
 
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithPageNumber()
+    public async Task GetStudents_ShouldBe_SuccessWithPageNumber()
     {
-        var students = Fixture.CreateMany<Student>(12);
-
-        await AddStudentsToContext(students.ToArray());
-
-        var query = CreateQuery(page: 2);
-
-        var studentsRes = await Action(query);
-
-        studentsRes.Items.Should().HaveCount(2);
-        studentsRes.MaxPage.Should().Be(2);
+        await TestPagination(page: 2, expectedCount: 2, expectedMaxPage: 2);
     }
 
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithFiltrationByNameAsc()
+    public async Task GetStudents_ShouldBe_SuccessWithFiltrationByNameAsc()
     {
-        var (studentA, studentB) = await SeedDataForTests();
-
-        var query = CreateQuery();
-
-        var students = await Action(query);
-
-        students.Items.Should().BeEquivalentTo([studentA, studentB]);
+        await TestFiltration(SortState.FistNameAsc, (studentA, studentB) => [studentA, studentB]);
     }
 
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithFiltrationByNameDesc()
+    public async Task GetStudents_ShouldBe_SuccessWithFiltrationByNameDesc()
     {
-        var (studentA, studentB) = await SeedDataForTests();
-
-        var query = CreateQuery(sortState: SortState.FirstNameDesc);
-
-        var students = await Action(query);
-
-        students.Items.Should().BeEquivalentTo([studentB, studentA]);
+        await TestFiltration(SortState.FirstNameDesc, (studentA, studentB) => [studentB, studentA]);
     }
 
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithFiltrationByLastNameAsc()
+    public async Task GetStudents_ShouldBe_SuccessWithFiltrationByLastNameAsc()
     {
-        var (studentA, studentB) = await SeedDataForTests();
-
-        var query = CreateQuery(sortState: SortState.FistNameAsc);
-
-        var students = await Action(query);
-
-        students.Items.Should().BeEquivalentTo([studentA, studentB]);
+        await TestFiltration(SortState.LastNameAsc, (studentA, studentB) => [studentA, studentB]);
     }
 
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithFiltrationByLastNameDesc()
+    public async Task GetStudents_ShouldBe_SuccessWithFiltrationByLastNameDesc()
     {
-        var (studentA, studentB) = await SeedDataForTests();
-
-        var query = CreateQuery(sortState: SortState.LastNameDesc);
-
-        var students = await Action(query);
-
-        students.Items.Should().BeEquivalentTo([studentB, studentA]);
+        await TestFiltration(SortState.LastNameDesc, (studentA, studentB) => [studentB, studentA]);
     }
 
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithFiltrationByGroupAsc()
+    public async Task GetStudents_ShouldBe_SuccessWithFiltrationByGroupAsc()
     {
-        await SeedDataForTests();
-
-        var studentExc = Context
-            .Students.OrderBy(s => s.Group.CurrentSemester)
-            .ThenBy(s => s.Group.Speciality.Abbreavation)
-            .ThenBy(s => s.Group.SubGroup);
-
-        var query = CreateQuery(sortState: SortState.GroupAsc);
-
-        var students = await Action(query);
-
-        students.Items.Should().BeEquivalentTo(studentExc, options => options.WithStrictOrdering());
+        await TestGroupFiltration(SortState.GroupAsc, true);
     }
 
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithFiltrationByGroupDesc()
+    public async Task GetStudents_ShouldBe_SuccessWithFiltrationByGroupDesc()
     {
-        await SeedDataForTests();
-
-        var studentExc = Context
-            .Students.OrderByDescending(s => s.Group.CurrentSemester)
-            .ThenBy(s => s.Group.Speciality.Abbreavation)
-            .ThenBy(s => s.Group.SubGroup);
-
-        var query = CreateQuery(sortState: SortState.GroupDesc);
-
-        var students = await Action(query);
-
-        students.Items.Should().BeEquivalentTo(studentExc, options => options.WithStrictOrdering());
+        await TestGroupFiltration(SortState.GroupDesc, false);
     }
 
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithDroppedOutStatus_All()
+    public async Task GetStudents_ShouldBe_SuccessWithDroppedOutStatus_All()
     {
-        var (specialityA, specialityB) = await SeedDataForTests();
-
-        var query = CreateQuery();
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(2);
-        specialities.Items.Should().BeEquivalentTo([specialityA, specialityB]);
+        await TestDroppedOutStatus(StudentDroppedOutStatus.All, 2);
     }
 
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithDroppedOutStatus_OnlyDroppedOut()
+    public async Task GetStudents_ShouldBe_SuccessWithDroppedOutStatus_OnlyDroppedOut()
     {
-        var (specialityA, specialityB) = await SeedDataForTests();
-
-        var query = CreateQuery(droppedOutStatus: StudentDroppedOutStatus.OnlyDroppedOut);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(1);
-        specialities.Items[0].Should().BeEquivalentTo(specialityA);
+        await TestDroppedOutStatus(
+            StudentDroppedOutStatus.OnlyDroppedOut,
+            1,
+            (studentA, studentB) => studentA
+        );
     }
 
     [Fact]
-    public async void GetStudents_ShouldBe_SuccessWithDroppedOutStatus_OnlyActive()
+    public async Task GetStudents_ShouldBe_SuccessWithDroppedOutStatus_OnlyActive()
     {
-        var (specialityA, specialityB) = await SeedDataForTests();
-
-        var query = CreateQuery(droppedOutStatus: StudentDroppedOutStatus.OnlyActive);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(1);
-        specialities.Items[0].Should().BeEquivalentTo(specialityB);
+        await TestDroppedOutStatus(
+            StudentDroppedOutStatus.OnlyActive,
+            1,
+            (studentA, studentB) => studentB
+        );
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringWithFirstName()
+    public async Task GetStudents_ShouldBe_SuccessWithDeletedStatus_OnlyActive()
+    {
+        await TestDeletedStatus(DeletedStatus.OnlyActive, 1, (studentA, studentB) => studentB);
+    }
+
+    [Fact]
+    public async Task GetStudents_ShouldBe_SuccessWithDeletedStatus_OnlyDeleted()
+    {
+        await TestDeletedStatus(DeletedStatus.OnlyDeleted, 1, (studentA, studentB) => studentA);
+    }
+
+    [Fact]
+    public async Task GetStudents_ShouldBe_SuccessWithDeletedStatus_All()
+    {
+        await TestDeletedStatus(DeletedStatus.All, 2);
+    }
+
+    [Fact]
+    public async Task GetSpecialities_ShouldBe_SuccessWithSearchStringWithFirstName()
     {
         await TestSearchString("AA", 1, student => student.FirstName == "AAA");
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringWithLastName()
+    public async Task GetSpecialities_ShouldBe_SuccessWithSearchStringWithLastName()
     {
         await TestSearchString("BB", 1, student => student.LastName == "BBB");
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringWithPatronymicName()
+    public async Task GetSpecialities_ShouldBe_SuccessWithSearchStringWithPatronymicName()
     {
         await TestSearchString("GG", 1, student => student.PatronymicName == "GGG");
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringWithGroup()
+    public async Task GetSpecialities_ShouldBe_SuccessWithSearchStringWithGroup()
     {
         await TestSearchString(
             "2-H",
@@ -186,6 +128,100 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             student =>
                 student.Group.Speciality.Abbreavation == "H" && student.Group.CurrentCourse == 2
         );
+    }
+
+    private async Task TestPagination(
+        int pageSize = 10,
+        int page = 1,
+        int expectedCount = 10,
+        int expectedMaxPage = 1
+    )
+    {
+        var students = Fixture.CreateMany<Student>(12);
+        await AddStudentsToContext(students.ToArray());
+
+        var query = CreateQuery(page: page, pageSize: pageSize);
+        var studentsRes = await Action(query);
+
+        studentsRes.Items.Should().HaveCount(expectedCount);
+        studentsRes.MaxPage.Should().Be(expectedMaxPage);
+    }
+
+    private async Task TestFiltration(
+        SortState sortState,
+        Func<Student, Student, Student[]> expectedOrder
+    )
+    {
+        var (studentA, studentB) = await SeedDataForTests();
+
+        var query = CreateQuery(sortState: sortState);
+        var students = await Action(query);
+
+        students.Items.Should().BeEquivalentTo(expectedOrder(studentA, studentB));
+    }
+
+    private async Task TestGroupFiltration(SortState sortState, bool isAsc)
+    {
+        await SeedDataForTests();
+
+        var studentExc = isAsc
+            ? Context
+                .Students.OrderBy(s => s.Group.CurrentSemester)
+                .ThenBy(s => s.Group.Speciality.Abbreavation)
+                .ThenBy(s => s.Group.SubGroup)
+            : Context
+                .Students.OrderByDescending(s => s.Group.CurrentSemester)
+                .ThenBy(s => s.Group.Speciality.Abbreavation)
+                .ThenBy(s => s.Group.SubGroup);
+
+        var query = CreateQuery(sortState: sortState);
+        var students = await Action(query);
+
+        students.Items.Should().BeEquivalentTo(studentExc, options => options.WithStrictOrdering());
+    }
+
+    private async Task TestDroppedOutStatus(
+        StudentDroppedOutStatus status,
+        int expectedCount,
+        Func<Student, Student, Student> expectedStudent = null
+    )
+    {
+        var (specialityA, specialityB) = await SeedDataForTests();
+
+        var query = CreateQuery(droppedOutStatus: status);
+        var specialities = await Action(query);
+
+        specialities.Items.Should().HaveCount(expectedCount);
+
+        if (expectedStudent != null)
+        {
+            specialities
+                .Items[0]
+                .Should()
+                .BeEquivalentTo(expectedStudent(specialityA, specialityB));
+        }
+    }
+
+    private async Task TestDeletedStatus(
+        DeletedStatus status,
+        int expectedCount,
+        Func<Student, Student, Student> expectedStudent = null
+    )
+    {
+        var (specialityA, specialityB) = await SeedDataForTests();
+
+        var query = CreateQuery(deletedStatus: status);
+        var specialities = await Action(query);
+
+        specialities.Items.Should().HaveCount(expectedCount);
+
+        if (expectedStudent != null)
+        {
+            specialities
+                .Items[0]
+                .Should()
+                .BeEquivalentTo(expectedStudent(specialityA, specialityB));
+        }
     }
 
     private async Task TestSearchString(
@@ -197,7 +233,6 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
         await SeedDataForSearchStringTests();
 
         var query = CreateQuery(searchString: searchString);
-
         var students = await Action(query);
 
         students.Items.Should().HaveCount(expectedCount);
@@ -220,6 +255,7 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             .With(x => x.LastName, "BBB")
             .With(x => x.Group, group1)
             .Create();
+
         var studentB = Fixture
             .Build<Student>()
             .With(x => x.FirstName, "CCC")
@@ -228,7 +264,7 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             .With(x => x.Group, group1)
             .Create();
 
-        await AddStudentsToContext([studentA, studentB]);
+        await AddStudentsToContext(new[] { studentA, studentB });
     }
 
     private async Task<(Student, Student)> SeedDataForTests()
@@ -238,15 +274,18 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             .With(x => x.FirstName, "AAA")
             .With(x => x.LastName, "AAA")
             .With(x => x.DroppedOutAt, DateTime.Now)
+            .With(x => x.IsDeleted, true)
             .Create();
+
         var studentB = Fixture
             .Build<Student>()
             .With(x => x.FirstName, "BBB")
             .With(x => x.LastName, "BBB")
             .Without(x => x.DroppedOutAt)
+            .Without(x => x.IsDeleted)
             .Create();
 
-        await AddStudentsToContext([studentA, studentB]);
+        await AddStudentsToContext(new[] { studentA, studentB });
 
         return (studentA, studentB);
     }
@@ -256,7 +295,8 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
         int pageSize = 10,
         string searchString = "",
         SortState sortState = SortState.LastNameAsc,
-        StudentDroppedOutStatus droppedOutStatus = StudentDroppedOutStatus.All
+        StudentDroppedOutStatus droppedOutStatus = StudentDroppedOutStatus.All,
+        DeletedStatus deletedStatus = DeletedStatus.All
     )
     {
         return new GetStudentsQuery
@@ -266,6 +306,7 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             SearchString = searchString,
             SortState = sortState,
             DroppedOutStatus = droppedOutStatus,
+            DeletedStatus = deletedStatus,
         };
     }
 

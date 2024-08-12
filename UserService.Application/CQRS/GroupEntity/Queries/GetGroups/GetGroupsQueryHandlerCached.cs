@@ -2,6 +2,7 @@
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
@@ -22,7 +23,8 @@ public class GetGroupsQueryHandlerCached(GetGroupsQueryHandler handler, ICacheSe
             && request
                 is {
                     SortState: GroupSortState.GroupAsc,
-                    GraduatedStatus: GroupGraduatedStatus.OnlyActive
+                    GraduatedStatus: GroupGraduatedStatus.OnlyActive,
+                    DeletedStatus: DeletedStatus.OnlyActive
                 }
         )
         {

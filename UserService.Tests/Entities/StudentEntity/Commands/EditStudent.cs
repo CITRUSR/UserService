@@ -37,12 +37,11 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
             newStudent.FirstName,
             newStudent.LastName,
             newStudent.PatronymicName,
-            newStudent.GroupId
+            newStudent.GroupId,
+            newStudent.IsDeleted
         );
 
-        var handler = new EditStudentCommandHandler(Context);
-
-        await handler.Handle(command, CancellationToken.None);
+        await Action(command);
 
         Context
             .Students.FirstOrDefault(x => x.Id == oldStudent.Id)
@@ -59,16 +58,16 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
     }
 
     [Fact]
-    public async void EditStudent_ShouldBe_UserNotFoundException()
+    public async void EditStudent_ShouldBe_StudentNotFoundException()
     {
         var oldStudent = Fixture.Create<Student>();
 
         await AddStudentsToContext(oldStudent);
 
         var command = Fixture.Create<EditStudentCommand>();
-        var handler = new EditStudentCommandHandler(Context);
 
-        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
+        Func<Task> act = async () => await Action(command);
+
         await act.Should().ThrowAsync<StudentNotFoundException>();
     }
 
@@ -80,10 +79,16 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
         await AddStudentsToContext(oldStudent);
 
         var command = Fixture.Build<EditStudentCommand>().With(x => x.Id, oldStudent.Id).Create();
-        var handler = new EditStudentCommandHandler(Context);
 
-        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
+        Func<Task> act = async () => await Action(command);
 
         await act.Should().ThrowAsync<GroupNotFoundException>();
+    }
+
+    public async Task<Student> Action(EditStudentCommand command)
+    {
+        var handler = new EditStudentCommandHandler(Context);
+
+        return await handler.Handle(command, CancellationToken.None);
     }
 }
