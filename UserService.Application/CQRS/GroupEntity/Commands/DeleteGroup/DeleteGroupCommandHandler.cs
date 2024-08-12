@@ -7,26 +7,44 @@ using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
 
-public class DeleteGroupCommandHandler(IAppDbContext dbContext)
+public class DeleteGroupsCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<DeleteGroupCommand, Group>
+        IRequestHandler<DeleteGroupsCommand, List<Group>>
 {
-    public async Task<Group> Handle(DeleteGroupCommand request, CancellationToken cancellationToken)
+    public async Task<List<Group>> Handle(
+        DeleteGroupsCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var group = await DbContext
+        var groups = await DbContext
             .Groups.Include(x => x.Speciality)
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            .Where(x => request.Ids.Contains(x.Id))
+            .ToListAsync(cancellationToken);
 
-        if (group == null)
+        if (groups.Count != request.Ids.Count)
         {
-            throw new GroupNotFoundException(request.Id);
+            var notFoundIds = request.Ids.Except(groups.Select(x => x.Id));
+
+            throw new GroupNotFoundException([.. notFoundIds]);
         }
 
-        DbContext.Groups.Remove(group);
-        await DbContext.SaveChangesAsync(cancellationToken);
+        try
+        {
+            DbContext.Groups.RemoveRange(groups);
 
-        Log.Information($"The group {group.ToString()} is deleted");
+            await DbContext.SaveChangesAsync(cancellationToken);
 
-        return group;
+            await DbContext.CommitTransactionAsync();
+        }
+        catch (Exception ex)
+        {
+            await DbContext.RollbackTransactionAsync();
+
+            throw;
+        }
+
+        Log.Information($"The groups with id:{string.Join(", ", request.Ids)} are deleted");
+
+        return groups;
     }
 }

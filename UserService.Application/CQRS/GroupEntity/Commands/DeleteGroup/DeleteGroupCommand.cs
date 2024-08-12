@@ -3,4 +3,4 @@ using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
 
-public record DeleteGroupCommand(int Id) : IRequest<Group>;
+public record DeleteGroupsCommand(List<int> Ids) : IRequest<List<Group>>;
