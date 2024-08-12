@@ -5,6 +5,7 @@ option csharp_namespace = "UserService";
 package Speciality;
 
 import "google/protobuf/wrappers.proto";
+import "Protos/shared.proto";
 
 service SpecialityService{
   rpc CreateSpeciality(CreateSpecialityRequest) returns (CreateSpecialityResponse);
@@ -91,12 +92,6 @@ enum SpecialitySortState{
   CostDesc = 5;
   DurationMonthsAsc = 6;
   DurationMonthsDesc = 7;
-}
-
-enum DeletedStatus{
-  All = 0;
-  OnlyDeleted = 1;
-  OnlyActive = 2;
 }
 
 message GetSpecialitiesRequest{

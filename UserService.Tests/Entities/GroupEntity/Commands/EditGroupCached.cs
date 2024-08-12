@@ -30,7 +30,8 @@ public class EditGroupCached(DatabaseFixture databaseFixture) : RedisTest(databa
             newGroup.CuratorId,
             newGroup.CurrentCourse,
             newGroup.CurrentSemester,
-            newGroup.SubGroup
+            newGroup.SubGroup,
+            newGroup.IsDeleted
         );
 
         var group = await Action(command);

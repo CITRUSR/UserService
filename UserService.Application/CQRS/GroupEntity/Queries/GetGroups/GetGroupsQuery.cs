@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using UserService.Application.Common.Paging;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
@@ -11,4 +12,5 @@ public class GetGroupsQuery : IRequest<PaginationList<Group>>
     public int PageSize { get; set; } = 10;
     public GroupSortState SortState { get; set; } = GroupSortState.GroupAsc;
     public GroupGraduatedStatus GraduatedStatus { get; set; } = GroupGraduatedStatus.OnlyActive;
+    public DeletedStatus DeletedStatus { get; set; } = DeletedStatus.OnlyActive;
 }

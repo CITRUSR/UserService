@@ -73,12 +73,13 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
             request.FirstName,
             request.LastName,
             request.PatronymicName,
-            request.GroupId
+            request.GroupId,
+            request.IsDeleted
         );
 
-        var id = await _mediator.Send(command);
+        var student = await _mediator.Send(command);
 
-        return new EditStudentResponse { Id = id.ToString(), };
+        return new EditStudentResponse { Student = _mapper.Map(student), };
     }
 
     public override async Task<StudentModel> GetStudentById(
@@ -117,6 +118,8 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
             SearchString = request.SearchString,
             SortState = (Application.CQRS.StudentEntity.Queries.GetStudents.SortState)
                 request.SortState,
+            DroppedOutStatus = (StudentDroppedOutStatus)request.DroppedOutStatus,
+            DeletedStatus = (Application.Enums.DeletedStatus)request.DeletedStatus,
         };
 
         var students = await _mediator.Send(query);

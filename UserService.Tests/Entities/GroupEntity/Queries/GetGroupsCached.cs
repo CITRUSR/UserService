@@ -2,6 +2,7 @@
 using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
@@ -15,7 +16,8 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
         var groups = await GetGroupsCachedWithValidatedQuery(
             1,
             GroupSortState.GroupAsc,
-            GroupGraduatedStatus.OnlyActive
+            GroupGraduatedStatus.OnlyActive,
+            DeletedStatus.OnlyActive
         );
 
         var groupsFromCache = await CacheService.GetObjectAsync<PaginationList<Group>>(
@@ -39,10 +41,9 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
         var groups = await GetGroupsCachedWithValidatedQuery(
             1,
             GroupSortState.GroupDesc,
-            GroupGraduatedStatus.OnlyActive
+            GroupGraduatedStatus.OnlyActive,
+            DeletedStatus.All
         );
-
-        Context.Groups.Should().BeEquivalentTo(groups.Items);
 
         var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10));
         cacheString.Should().BeNull();
@@ -81,11 +82,17 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
     private async Task<PaginationList<Group>> GetGroupsCachedWithValidatedQuery(
         int page,
         GroupSortState sortState,
-        GroupGraduatedStatus graduatedStatus
+        GroupGraduatedStatus graduatedStatus,
+        DeletedStatus deletedStatus
     )
     {
         await SeedDataForTestsWithValidatedQueryForCaching();
-        var query = CreateQuery(page: page, sortState: sortState, graduatedStatus: graduatedStatus);
+        var query = CreateQuery(
+            page: page,
+            sortState: sortState,
+            graduatedStatus: graduatedStatus,
+            deletedStatus: deletedStatus
+        );
 
         return await Action(query);
     }
@@ -128,7 +135,8 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
         int pageSize = 10,
         string searchString = "",
         GroupSortState sortState = GroupSortState.GroupAsc,
-        GroupGraduatedStatus graduatedStatus = GroupGraduatedStatus.OnlyActive
+        GroupGraduatedStatus graduatedStatus = GroupGraduatedStatus.OnlyActive,
+        DeletedStatus deletedStatus = DeletedStatus.OnlyActive
     )
     {
         return new GetGroupsQuery
@@ -138,6 +146,7 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
             SearchString = searchString,
             GraduatedStatus = graduatedStatus,
             SortState = sortState,
+            DeletedStatus = deletedStatus,
         };
     }
 

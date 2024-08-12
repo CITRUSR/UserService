@@ -6,6 +6,7 @@ package Student;
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
+import "Protos/shared.proto";
 
 service StudentService{
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
@@ -15,6 +16,18 @@ service StudentService{
   rpc GetStudentById(GetStudentByIdRequest) returns (StudentModel);
   rpc GetStudentBySsoId (GetStudentBySsoIdRequest) returns (StudentModel);
   rpc GetStudents(GetStudentsRequest) returns (GetStudentsResponse);
+}
+
+//If isDropped true then student has DroppedTime else doesn't have DroppedTime(equals null)
+message StudentModel{
+  string Id = 1;
+  string SsoId = 2;
+  string FistName = 3;
+  string LastName = 4;
+  google.protobuf.StringValue PatronymicName = 5;
+  int32  GroupId = 6;
+  google.protobuf.Timestamp DroppedTime = 7;
+  bool IsDropped = 8;
 }
 
 message CreateStudentRequest{
@@ -52,10 +65,11 @@ message EditStudentRequest{
   string LastName = 3;
   google.protobuf.StringValue PatronymicName = 4;
   int32 GroupId = 5;
+  bool IsDeleted = 6;
 }
 
 message EditStudentResponse{
-  string Id = 1;
+  StudentModel Student = 1;
 }
 
 message GetStudentByIdRequest{
@@ -71,28 +85,24 @@ enum SortState{
   GroupDesc = 5;
 }
 
+enum DroppedOutStatus{
+  All = 0;
+  OnlyDroppedOut = 1;
+  OnlyActive = 2;
+}
+
 message GetStudentsRequest{
   google.protobuf.StringValue SearchString = 1;
   int32 Page = 2;
   int32 PageSize = 3;
   SortState SortState = 4;
+  DroppedOutStatus DroppedOutStatus = 5;
+  DeletedStatus DeletedStatus = 6;
 }
 
 message GetStudentsResponse{
   repeated StudentModel Students = 1;
   int32 LastPage = 2;
-}
-
-//If isDropped true then student has DroppedTime else doesn't have DroppedTime(equals null)
-message StudentModel{
-  string Id = 1;
-  string SsoId = 2;
-  string FistName = 3;
-  string LastName = 4;
-  google.protobuf.StringValue PatronymicName = 5;
-  int32  GroupId = 6;
-  google.protobuf.Timestamp DroppedTime = 7;
-  bool IsDropped = 8;
 }
 
 message GetStudentBySsoIdRequest{
