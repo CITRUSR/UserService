@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.GroupEntity.Commands;
 public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void EditGroup_ShouldBe_Success()
+    public async Task EditGroup_ShouldBe_Success()
     {
         var speciality = Fixture.Create<Speciality>();
         var curator = Fixture.Create<Teacher>();
@@ -47,7 +47,7 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     }
 
     [Fact]
-    public async void EditGroup_ShouldBe_GroupNotFoundException()
+    public async Task EditGroup_ShouldBe_GroupNotFoundException()
     {
         var command = Fixture.Create<EditGroupCommand>();
 
@@ -57,7 +57,7 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     }
 
     [Fact]
-    public async void EditGroup_ShouldBe_SpecialityNotFoundException()
+    public async Task EditGroup_ShouldBe_SpecialityNotFoundException()
     {
         var group = Fixture.Create<Group>();
 
@@ -71,7 +71,7 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     }
 
     [Fact]
-    public async void EditGroup_ShouldBe_TeacherNotFoundException()
+    public async Task EditGroup_ShouldBe_TeacherNotFoundException()
     {
         var group = Fixture.Create<Group>();
 

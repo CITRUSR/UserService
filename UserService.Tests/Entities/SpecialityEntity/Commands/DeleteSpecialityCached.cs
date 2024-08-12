@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 public class DeleteSpecialityCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void DeleteSpecialityCached_ShouldBe_Success()
+    public async Task DeleteSpecialityCached_ShouldBe_Success()
     {
         var speciality = Fixture.Create<Speciality>();
 

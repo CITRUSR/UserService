@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 public class DeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void DeleteSpeciality_ShouldBe_Success()
+    public async Task DeleteSpeciality_ShouldBe_Success()
     {
         var specialities = Fixture.CreateMany<Speciality>(3);
 
@@ -25,7 +25,7 @@ public class DeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(data
     }
 
     [Fact]
-    public async void DeleteSpeciality_ShouldBe_SpecialityNotFoundException()
+    public async Task DeleteSpeciality_ShouldBe_SpecialityNotFoundException()
     {
         var command = new DeleteSpecialityCommand([1123, 123]);
 

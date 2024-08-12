@@ -10,7 +10,7 @@ public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture)
     : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void TransferGroupsToNextCourse_ShouldBe_SuccessWithList()
+    public async Task TransferGroupsToNextCourse_ShouldBe_SuccessWithList()
     {
         var courses = await Arrange(2);
 
@@ -24,7 +24,7 @@ public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture)
     }
 
     [Fact]
-    public async void TransferGroupsToNextCourse_ShouldBe_GroupCourseOutOfRangeException()
+    public async Task TransferGroupsToNextCourse_ShouldBe_GroupCourseOutOfRangeException()
     {
         await Arrange(4);
 
@@ -38,7 +38,7 @@ public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture)
     }
 
     [Fact]
-    public async void TransferGroupsToNextCourse_ShouldBe_GroupNotFoundException()
+    public async Task TransferGroupsToNextCourse_ShouldBe_GroupNotFoundException()
     {
         var command = new TransferGroupsToNextCourseCommand([123]);
 

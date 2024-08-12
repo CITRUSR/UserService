@@ -7,7 +7,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 public class CreateSpeciality(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void CreateSpeciality_ShouldBe_Success()
+    public async Task CreateSpeciality_ShouldBe_Success()
     {
         var command = Fixture
             .Build<CreateSpecialityCommand>()

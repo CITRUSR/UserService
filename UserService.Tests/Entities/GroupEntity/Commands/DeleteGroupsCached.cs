@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.GroupEntity.Commands;
 public class DeleteGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void DeleteGroupsCached_ShouldBe_Success()
+    public async Task DeleteGroupsCached_ShouldBe_Success()
     {
         var groups = Fixture.CreateMany<Group>(3);
 

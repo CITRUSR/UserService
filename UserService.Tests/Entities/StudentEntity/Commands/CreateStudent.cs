@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.StudentEntity.Commands;
 public class CreateStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void CreateStudent_ShouldBe_Success()
+    public async Task CreateStudent_ShouldBe_Success()
     {
         var group = Fixture.Create<Group>();
 
@@ -31,7 +31,7 @@ public class CreateStudent(DatabaseFixture databaseFixture) : CommonTest(databas
     }
 
     [Fact]
-    public async void CreateStudent_ShouldBe_NotFoundException()
+    public async Task CreateStudent_ShouldBe_NotFoundException()
     {
         var command = Fixture.Create<CreateStudentCommand>();
 

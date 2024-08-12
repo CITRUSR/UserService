@@ -11,7 +11,7 @@ public class SoftDeleteSpecialitiesCached(DatabaseFixture databaseFixture)
     : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void SoftDeleteSpecialitiesCached_ShouldBe_Success()
+    public async Task SoftDeleteSpecialitiesCached_ShouldBe_Success()
     {
         var specialities = Fixture.CreateMany<Speciality>(5);
 

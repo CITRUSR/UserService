@@ -7,7 +7,7 @@ namespace UserService.Tests.Entities.TeacherEntity.Commands;
 public class CreateTeacher(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void CreateTeacher_ShouldBe_Success()
+    public async Task CreateTeacher_ShouldBe_Success()
     {
         var command = Fixture
             .Build<CreateTeacherCommand>()

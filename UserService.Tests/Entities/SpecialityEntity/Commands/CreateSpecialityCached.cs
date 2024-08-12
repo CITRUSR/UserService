@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 public class CreateSpecialityCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void CreateSpecialityCached_ShouldBe_Success()
+    public async Task CreateSpecialityCached_ShouldBe_Success()
     {
         var command = Fixture
             .Build<CreateSpecialityCommand>()

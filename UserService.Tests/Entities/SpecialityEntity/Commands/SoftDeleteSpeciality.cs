@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 public class SoftDeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void SoftDeleteSpeciality_ShouldBe_Success()
+    public async Task SoftDeleteSpeciality_ShouldBe_Success()
     {
         var specialities = Fixture.CreateMany<Speciality>(3);
 
@@ -28,7 +28,7 @@ public class SoftDeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(
     }
 
     [Fact]
-    public async void SoftDeleteSpeciality_ShouldBe_SpecialityNotFoundException()
+    public async Task SoftDeleteSpeciality_ShouldBe_SpecialityNotFoundException()
     {
         var command = new SoftDeleteSpecialitiesCommand([123, 1232]);
 

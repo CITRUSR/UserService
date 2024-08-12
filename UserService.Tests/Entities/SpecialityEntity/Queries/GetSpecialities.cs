@@ -10,7 +10,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Queries;
 public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithPageSize()
+    public async Task GetSpecialities_ShouldBe_SuccessWithPageSize()
     {
         await SeedDataForPageTests();
 
@@ -23,7 +23,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithPageNumber()
+    public async Task GetSpecialities_ShouldBe_SuccessWithPageNumber()
     {
         await SeedDataForPageTests();
 
@@ -36,7 +36,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithNameAscOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithNameAscOrdering()
     {
         var (specialityA, specialityB) = await SeedDataForNameTests();
 
@@ -48,7 +48,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithNameDescOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithNameDescOrdering()
     {
         var (specialityA, specialityB) = await SeedDataForNameTests();
 
@@ -60,7 +60,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithAbbrAscOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithAbbrAscOrdering()
     {
         var (specialityA, specialityB) = await SeedDataForAbbrTests();
 
@@ -72,7 +72,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithAbbrDescOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithAbbrDescOrdering()
     {
         var (specialityA, specialityB) = await SeedDataForAbbrTests();
 
@@ -84,7 +84,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithCostAscOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithCostAscOrdering()
     {
         var (specialityA, specialityB) = await SeedDataForCostTests();
 
@@ -96,7 +96,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithCostDescOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithCostDescOrdering()
     {
         var (specialityA, specialityB) = await SeedDataForCostTests();
 
@@ -108,7 +108,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithDurationMonthsAscOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithDurationMonthsAscOrdering()
     {
         var (specialityA, specialityB) = await SeedDataForDurationMonthsTests();
 
@@ -120,7 +120,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithDurationMonthsDescOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithDurationMonthsDescOrdering()
     {
         var (specialityA, specialityB) = await SeedDataForDurationMonthsTests();
 
@@ -132,7 +132,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithDeletedStatus_All()
+    public async Task GetSpecialities_ShouldBe_SuccessWithDeletedStatus_All()
     {
         await SeedDataForDeletedStatusTests();
 
@@ -144,7 +144,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyDeleted()
+    public async Task GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyDeleted()
     {
         var (speciality1, speciality2) = await SeedDataForDeletedStatusTests();
 
@@ -157,7 +157,7 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyActive()
+    public async Task GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyActive()
     {
         var (speciality1, speciality2) = await SeedDataForDeletedStatusTests();
 
@@ -170,13 +170,13 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringName()
+    public async Task GetSpecialities_ShouldBe_SuccessWithSearchStringName()
     {
         await TestSearchString("AA", 1, speciality => speciality.Name == "AAA");
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringAbbr()
+    public async Task GetSpecialities_ShouldBe_SuccessWithSearchStringAbbr()
     {
         await TestSearchString("CC", 1, speciality => speciality.Abbreavation == "CCC");
     }

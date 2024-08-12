@@ -11,7 +11,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Queries;
 public class GetSpecialitiesCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void GetSpecialitiesCached_ShouldBe_Success_WithoutCache_WithValidatedQuery()
+    public async Task GetSpecialitiesCached_ShouldBe_Success_WithoutCache_WithValidatedQuery()
     {
         await SeedData();
 
@@ -31,7 +31,7 @@ public class GetSpecialitiesCached(DatabaseFixture databaseFixture) : RedisTest(
     }
 
     [Fact]
-    public async void GetSpecialitiesCached_ShouldBe_Success_WithCache_WithValidatedQuery()
+    public async Task GetSpecialitiesCached_ShouldBe_Success_WithCache_WithValidatedQuery()
     {
         await SeedData();
 
@@ -61,7 +61,7 @@ public class GetSpecialitiesCached(DatabaseFixture databaseFixture) : RedisTest(
     }
 
     [Fact]
-    public async void GetSpecialitiesCached_ShouldBe_Success_WithoutValidatedQuery()
+    public async Task GetSpecialitiesCached_ShouldBe_Success_WithoutValidatedQuery()
     {
         await SeedData();
 

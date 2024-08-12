@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.GroupEntity.Commands;
 public class EditGroupCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
 {
     [Fact]
-    public async void EditGroupCached_ShouldBe_Success()
+    public async Task EditGroupCached_ShouldBe_Success()
     {
         var (curatorId, specialityId, oldGroup) = await SeedDataForTests();
 

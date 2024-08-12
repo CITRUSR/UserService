@@ -9,7 +9,7 @@ namespace UserService.Tests.Entities.StudentEntity.Queries;
 public class GetStudentBySsoId(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
 {
     [Fact]
-    public async void GetStudentBySsoId_ShouldBe_Success()
+    public async Task GetStudentBySsoId_ShouldBe_Success()
     {
         var student = Fixture.Create<Student>();
 
@@ -26,7 +26,7 @@ public class GetStudentBySsoId(DatabaseFixture databaseFixture) : CommonTest(dat
     }
 
     [Fact]
-    public async void GetStudentBySsoId_ShouldBe_StudentNotFoundException()
+    public async Task GetStudentBySsoId_ShouldBe_StudentNotFoundException()
     {
         var query = new GetStudentBySsoIdQuery(Guid.NewGuid());
 
