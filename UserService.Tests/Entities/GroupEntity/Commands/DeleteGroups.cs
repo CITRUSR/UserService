@@ -13,7 +13,7 @@ public class DeleteGroups(DatabaseFixture databaseFixture) : CommonTest(database
     {
         var groups = Fixture.CreateMany<Group>(3);
 
-        await AddGroupsToContext([.. groups]);
+        await DbHelper.AddGroupsToContext([.. groups]);
 
         var command = new DeleteGroupsCommand(groups.Select(x => x.Id).ToList());
         var handler = new DeleteGroupsCommandHandler(Context);

@@ -13,9 +13,9 @@ public class EditSpeciality(DatabaseFixture databaseFixture) : CommonTest(databa
     {
         var speciality = Fixture.Create<Speciality>();
 
-        var newSpeciality = Fixture.Build<Speciality>().With(x => x.Id, speciality.Id).Create();
+        await DbHelper.AddSpecialitiesToContext(speciality);
 
-        await AddSpecialitiesToContext(speciality);
+        var newSpeciality = Fixture.Build<Speciality>().With(x => x.Id, speciality.Id).Create();
 
         var command = new EditSpecialityCommand(
             speciality.Id,

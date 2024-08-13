@@ -13,7 +13,7 @@ public class GetStudentBySsoId(DatabaseFixture databaseFixture) : CommonTest(dat
     {
         var student = Fixture.Create<Student>();
 
-        await AddStudentsToContext(student);
+        await DbHelper.AddStudentsToContext(student);
 
         var query = new GetStudentBySsoIdQuery(student.SsoId);
 

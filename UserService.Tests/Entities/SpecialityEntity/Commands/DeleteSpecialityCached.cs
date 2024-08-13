@@ -13,7 +13,7 @@ public class DeleteSpecialityCached(DatabaseFixture databaseFixture) : RedisTest
     {
         var speciality = Fixture.Create<Speciality>();
 
-        await AddSpecialitiesToContext(speciality);
+        await DbHelper.AddSpecialitiesToContext(speciality);
 
         var command = new DeleteSpecialityCommand([speciality.Id]);
 

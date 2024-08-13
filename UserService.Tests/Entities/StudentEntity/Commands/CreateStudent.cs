@@ -13,7 +13,7 @@ public class CreateStudent(DatabaseFixture databaseFixture) : CommonTest(databas
     {
         var group = Fixture.Create<Group>();
 
-        await AddGroupsToContext(group);
+        await DbHelper.AddGroupsToContext(group);
 
         var command = Fixture
             .Build<CreateStudentCommand>()

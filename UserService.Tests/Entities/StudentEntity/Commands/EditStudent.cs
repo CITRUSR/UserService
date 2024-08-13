@@ -13,12 +13,17 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         int oldGroupId = 12;
 
-        var oldStudent = Fixture.Build<Student>().With(x => x.GroupId, oldGroupId).Create();
+        var oldStudent = Fixture
+            .Build<Student>()
+            .With(x => x.GroupId, oldGroupId)
+            .With(x => x.Id, Guid.NewGuid())
+            .Create();
 
         var oldGroup = Fixture.Build<Group>().With(x => x.Id, oldGroupId).Create();
+
         oldGroup.Students.Add(oldStudent);
 
-        var newGroup = Fixture.Create<Group>();
+        var newGroup = Fixture.Build<Group>().With(x => x.Id, 2141231231).Create();
 
         var newStudent = Fixture
             .Build<Student>()
@@ -29,8 +34,8 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
             .With(x => x.DroppedOutAt, oldStudent.DroppedOutAt)
             .Create();
 
-        await AddStudentsToContext(oldStudent);
-        await AddGroupsToContext(oldGroup, newGroup);
+        await DbHelper.AddStudentsToContext(oldStudent);
+        await DbHelper.AddGroupsToContext(oldGroup, newGroup);
 
         var command = new EditStudentCommand(
             oldStudent.Id,
@@ -62,7 +67,7 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         var oldStudent = Fixture.Create<Student>();
 
-        await AddStudentsToContext(oldStudent);
+        await DbHelper.AddStudentsToContext(oldStudent);
 
         var command = Fixture.Create<EditStudentCommand>();
 
@@ -76,7 +81,7 @@ public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         var oldStudent = Fixture.Create<Student>();
 
-        await AddStudentsToContext(oldStudent);
+        await DbHelper.AddStudentsToContext(oldStudent);
 
         var command = Fixture.Build<EditStudentCommand>().With(x => x.Id, oldStudent.Id).Create();
 

@@ -14,8 +14,8 @@ public class CreateGroupCached(DatabaseFixture databaseFixture) : RedisTest(data
         var speciality = Fixture.Create<Speciality>();
         var curator = Fixture.Create<Teacher>();
 
-        await AddSpecialitiesToContext(speciality);
-        await AddTeachersToContext(curator);
+        await DbHelper.AddSpecialitiesToContext(speciality);
+        await DbHelper.AddTeachersToContext(curator);
 
         var command = Fixture
             .Build<CreateGroupCommand>()

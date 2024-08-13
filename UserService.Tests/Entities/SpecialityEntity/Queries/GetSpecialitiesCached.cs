@@ -80,25 +80,11 @@ public class GetSpecialitiesCached(DatabaseFixture databaseFixture) : RedisTest(
         specialitiesFromCache.Should().BeNull();
     }
 
-    private List<Speciality> CreateSpecialities(int count)
+    private async Task SeedData()
     {
-        List<Speciality> specialities = new List<Speciality>();
+        var specialities = Fixture.CreateMany<Speciality>(10);
 
-        for (int i = 0; i < count; i++)
-        {
-            specialities.Add(Fixture.Build<Speciality>().Without(x => x.Id).Create());
-        }
-
-        return specialities;
-    }
-
-    private async Task<List<Speciality>> SeedData()
-    {
-        var specialities = CreateSpecialities(10);
-
-        await AddSpecialitiesToContext([.. specialities]);
-
-        return specialities;
+        await DbHelper.AddSpecialitiesToContext([.. specialities]);
     }
 
     private GetSpecialitiesQuery CreateQuery(

@@ -73,6 +73,6 @@ public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databa
             }
         }
 
-        await AddGroupsToContext([.. groups]);
+        await DbHelper.AddGroupsToContext([.. groups]);
     }
 }

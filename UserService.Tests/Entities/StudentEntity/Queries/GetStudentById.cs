@@ -13,7 +13,7 @@ public class GetStudentById(DatabaseFixture databaseFixture) : CommonTest(databa
     {
         var student = Fixture.Create<Student>();
 
-        await AddStudentsToContext(student);
+        await DbHelper.AddStudentsToContext(student);
 
         var query = new GetStudentByIdQuery(student.Id);
         var handler = new GetStudentByIdQueryHandler(Context);

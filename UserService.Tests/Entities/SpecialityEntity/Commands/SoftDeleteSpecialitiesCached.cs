@@ -15,7 +15,7 @@ public class SoftDeleteSpecialitiesCached(DatabaseFixture databaseFixture)
     {
         var specialities = Fixture.CreateMany<Speciality>(5);
 
-        await AddSpecialitiesToContext([.. specialities]);
+        await DbHelper.AddSpecialitiesToContext([.. specialities]);
 
         var command = new SoftDeleteSpecialitiesCommand(specialities.Select(x => x.Id).ToList());
 

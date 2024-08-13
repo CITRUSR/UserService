@@ -138,7 +138,7 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
     )
     {
         var students = Fixture.CreateMany<Student>(12);
-        await AddStudentsToContext(students.ToArray());
+        await DbHelper.AddStudentsToContext(students.ToArray());
 
         var query = CreateQuery(page: page, pageSize: pageSize);
         var studentsRes = await Action(query);
@@ -264,7 +264,7 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             .With(x => x.Group, group1)
             .Create();
 
-        await AddStudentsToContext(new[] { studentA, studentB });
+        await DbHelper.AddStudentsToContext(new[] { studentA, studentB });
     }
 
     private async Task<(Student, Student)> SeedDataForTests()
@@ -285,7 +285,7 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
             .Without(x => x.IsDeleted)
             .Create();
 
-        await AddStudentsToContext(new[] { studentA, studentB });
+        await DbHelper.AddStudentsToContext(new[] { studentA, studentB });
 
         return (studentA, studentB);
     }

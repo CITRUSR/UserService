@@ -12,9 +12,14 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     public async Task EditGroup_ShouldBe_Success()
     {
         var speciality = Fixture.Create<Speciality>();
+
+        await DbHelper.AddSpecialitiesToContext(speciality);
+
         var curator = Fixture.Create<Teacher>();
 
-        var oldGroup = Fixture.Create<Group>();
+        await DbHelper.AddTeachersToContext(curator);
+
+        var oldGroup = Fixture.Build<Group>().With(x => x.Id, 535478).Create();
 
         var newGroup = Fixture
             .Build<Group>()
@@ -27,9 +32,7 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
             .With(x => x.GraduatedAt, oldGroup.GraduatedAt)
             .Create();
 
-        await AddSpecialitiesToContext(speciality);
-        await AddTeachersToContext(curator);
-        await AddGroupsToContext(oldGroup);
+        await DbHelper.AddGroupsToContext(oldGroup);
 
         var command = new EditGroupCommand(
             newGroup.Id,
@@ -61,7 +64,7 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     {
         var group = Fixture.Create<Group>();
 
-        await AddGroupsToContext(group);
+        await DbHelper.AddGroupsToContext(group);
 
         var command = Fixture.Build<EditGroupCommand>().With(x => x.Id, group.Id).Create();
 
@@ -77,8 +80,8 @@ public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFix
 
         var speciality = Fixture.Create<Speciality>();
 
-        await AddGroupsToContext(group);
-        await AddSpecialitiesToContext(speciality);
+        await DbHelper.AddGroupsToContext(group);
+        await DbHelper.AddSpecialitiesToContext(speciality);
 
         var command = Fixture
             .Build<EditGroupCommand>()

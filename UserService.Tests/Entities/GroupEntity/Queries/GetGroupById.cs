@@ -13,7 +13,7 @@ public class GetGroupById(DatabaseFixture databaseFixture) : CommonTest(database
     {
         var group = Fixture.Create<Group>();
 
-        await AddGroupsToContext(group);
+        await DbHelper.AddGroupsToContext(group);
 
         var query = new GetGroupByIdQuery(group.Id);
 

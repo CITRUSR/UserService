@@ -100,13 +100,16 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
     private async Task SeedDataForTestsWithValidatedQueryForCaching()
     {
         var speciality = Fixture.Create<Speciality>();
+
+        await DbHelper.AddSpecialitiesToContext(speciality);
+
         var curator = Fixture.Create<Teacher>();
+
+        await DbHelper.AddTeachersToContext(curator);
 
         var groups = CreateGroups(10, curator.Id, speciality);
 
-        await AddSpecialitiesToContext(speciality);
-        await AddTeachersToContext(curator);
-        await AddGroupsToContext(groups.ToArray());
+        await DbHelper.AddGroupsToContext(groups.ToArray());
     }
 
     private List<Group> CreateGroups(int count, Guid curatorId, Speciality speciality)

@@ -63,7 +63,7 @@ public class TransferGroupsToNextCourse(DatabaseFixture databaseFixture)
             .With(x => x.Speciality, speciality)
             .Create();
 
-        await AddGroupsToContext(group1, group2);
+        await DbHelper.AddGroupsToContext(group1, group2);
 
         return Context.Groups.ToDictionary(x => x, x => x.CurrentCourse);
     }

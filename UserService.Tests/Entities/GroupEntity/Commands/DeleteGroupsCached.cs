@@ -13,7 +13,7 @@ public class DeleteGroupsCached(DatabaseFixture databaseFixture) : RedisTest(dat
     {
         var groups = Fixture.CreateMany<Group>(3);
 
-        await AddGroupsToContext([.. groups]);
+        await DbHelper.AddGroupsToContext([.. groups]);
 
         foreach (var group in groups)
         {
