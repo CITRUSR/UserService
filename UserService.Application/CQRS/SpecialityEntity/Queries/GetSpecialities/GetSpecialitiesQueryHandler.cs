@@ -2,6 +2,7 @@
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
 using UserService.Application.Enums;
+using UserService.Application.Extensions;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
@@ -17,7 +18,10 @@ public class GetSpecialitiesQueryHandler(IAppDbContext dbContext)
     {
         IQueryable<Speciality> specialities = DbContext.Specialities;
 
-        specialities = GetFilteredByDeletedStatus(specialities, request.DeletedStatus);
+        specialities = specialities.FilterByDeletedStatus<Speciality>(
+            request.DeletedStatus,
+            sp => sp.IsDeleted
+        );
 
         if (String.IsNullOrWhiteSpace(request.SearchString) == false)
         {
@@ -34,21 +38,6 @@ public class GetSpecialitiesQueryHandler(IAppDbContext dbContext)
             request.Page,
             request.PageSize
         );
-    }
-
-    private IQueryable<Speciality> GetFilteredByDeletedStatus(
-        IQueryable<Speciality> specialities,
-        DeletedStatus deletedStatus
-    )
-    {
-        specialities = deletedStatus switch
-        {
-            DeletedStatus.All => specialities,
-            DeletedStatus.OnlyDeleted => specialities.Where(x => x.IsDeleted == true),
-            DeletedStatus.OnlyActive => specialities.Where(x => x.IsDeleted == false),
-        };
-
-        return specialities;
     }
 
     private IQueryable<Speciality> GetSortedBySortState(

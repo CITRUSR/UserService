@@ -2,6 +2,7 @@
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
 using UserService.Application.Enums;
+using UserService.Application.Extensions;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
@@ -26,7 +27,7 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext)
             );
         }
 
-        groups = GetFilteredByDeletedStatus(groups, request.DeletedStatus);
+        groups = groups.FilterByDeletedStatus<Group>(request.DeletedStatus, gr => gr.IsDeleted);
 
         groups = GetFilteredByGraduatedStatus(groups, request.GraduatedStatus);
 
@@ -67,21 +68,6 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext)
                     .OrderByDescending(x => x.CurrentCourse)
                     .ThenBy(x => x.Speciality.Abbreavation)
                     .ThenBy(x => x.SubGroup),
-        };
-
-        return groups;
-    }
-
-    private IQueryable<Group> GetFilteredByDeletedStatus(
-        IQueryable<Group> groups,
-        DeletedStatus deletedStatus
-    )
-    {
-        groups = deletedStatus switch
-        {
-            DeletedStatus.All => groups,
-            DeletedStatus.OnlyDeleted => groups.Where(x => x.IsDeleted == true),
-            DeletedStatus.OnlyActive => groups.Where(x => x.IsDeleted == false),
         };
 
         return groups;
