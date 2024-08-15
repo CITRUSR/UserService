@@ -12,7 +12,15 @@ public class TransferGroupsToNextCourseCached(DatabaseFixture databaseFixture)
     [Fact]
     public async Task TransferGroupsToNextCourseCached_ShouldBe_Success()
     {
-        var group = Fixture.Build<Group>().With(x => x.CurrentCourse, 2).Create();
+        var speciality = Fixture.Build<Speciality>().With(x => x.DurationMonths, 48).Create();
+
+        await DbHelper.AddSpecialitiesToContext(speciality);
+
+        var group = Fixture
+            .Build<Group>()
+            .With(x => x.CurrentCourse, 2)
+            .With(x => x.Speciality, speciality)
+            .Create();
 
         await DbHelper.AddGroupsToContext(group);
 
