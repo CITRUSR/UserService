@@ -13,7 +13,7 @@ public class EditSpecialityCached(DatabaseFixture databaseFixture) : RedisTest(d
     {
         var speciality = Fixture.Create<Speciality>();
 
-        await AddSpecialitiesToContext(speciality);
+        await DbHelper.AddSpecialitiesToContext(speciality);
 
         var newSpeciality = Fixture.Build<Speciality>().With(x => x.Id, speciality.Id).Create();
 

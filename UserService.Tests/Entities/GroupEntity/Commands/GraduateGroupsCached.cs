@@ -13,7 +13,7 @@ public class GraduateGroupsCached(DatabaseFixture databaseFixture) : RedisTest(d
     {
         var group = Fixture.Build<Group>().Without(x => x.GraduatedAt).Create();
 
-        await AddGroupsToContext(group);
+        await DbHelper.AddGroupsToContext(group);
 
         DateTime graduatedTime = DateTime.Now;
 

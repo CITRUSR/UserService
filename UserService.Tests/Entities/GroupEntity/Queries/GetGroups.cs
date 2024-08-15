@@ -167,7 +167,7 @@ public class GetGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     )
     {
         var (group1, group2) = CreateGroupsWithSpeciality();
-        await AddGroupsToContext(group1, group2);
+        await DbHelper.AddGroupsToContext(group1, group2);
 
         var query = CreateQuery(searchString: searchString);
         return (group1, group2, query);
@@ -178,7 +178,7 @@ public class GetGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     )
     {
         var (group1, group2) = CreateGroupsWithGraduationStatus();
-        await AddGroupsToContext(group1, group2);
+        await DbHelper.AddGroupsToContext(group1, group2);
 
         var query = CreateQuery(graduatedStatus: graduatedStatus);
         return (group1, group2, query);
@@ -187,7 +187,7 @@ public class GetGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     private async Task SeedDataForPageTests()
     {
         var groups = Fixture.CreateMany<Group>(12);
-        await AddGroupsToContext(groups.ToArray());
+        await DbHelper.AddGroupsToContext([.. groups]);
     }
 
     private async Task<(Group, Group, GetGroupsQuery)> SeedDataForFiltrationTests(
@@ -195,7 +195,7 @@ public class GetGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     )
     {
         var (group1, group2) = CreateGroupsWithSpeciality();
-        await AddGroupsToContext(group1, group2);
+        await DbHelper.AddGroupsToContext(group1, group2);
 
         var query = CreateQuery(sortState: sortState);
         return (group1, group2, query);
@@ -206,7 +206,7 @@ public class GetGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFix
     )
     {
         var (group1, group2) = CreateGroupsWithDeletedStatus();
-        await AddGroupsToContext(group1, group2);
+        await DbHelper.AddGroupsToContext(group1, group2);
 
         var query = CreateQuery(deletedStatus: deletedStatus);
         return (group1, group2, query);

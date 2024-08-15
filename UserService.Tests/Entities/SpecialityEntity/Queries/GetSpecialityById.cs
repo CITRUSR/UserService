@@ -13,7 +13,7 @@ public class GetSpecialityById(DatabaseFixture databaseFixture) : CommonTest(dat
     {
         var speciality = Fixture.Create<Speciality>();
 
-        await AddSpecialitiesToContext(speciality);
+        await DbHelper.AddSpecialitiesToContext(speciality);
 
         var query = new GetSpecialityByIdQuery(speciality.Id);
 

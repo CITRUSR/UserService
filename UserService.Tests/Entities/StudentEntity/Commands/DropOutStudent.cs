@@ -14,7 +14,7 @@ public class DropOutStudent(DatabaseFixture databaseFixture) : CommonTest(databa
         var student = Fixture.Create<Student>();
         student.DroppedOutAt = null;
 
-        await AddStudentsToContext(student);
+        await DbHelper.AddStudentsToContext(student);
 
         var command = Fixture.Build<DropOutStudentCommand>().With(x => x.Id, student.Id).Create();
         var handler = new DropOutStudentCommandHandler(Context);
@@ -32,7 +32,7 @@ public class DropOutStudent(DatabaseFixture databaseFixture) : CommonTest(databa
     {
         var student = Fixture.Create<Student>();
 
-        await AddStudentsToContext(student);
+        await DbHelper.AddStudentsToContext(student);
 
         var command = Fixture.Create<DropOutStudentCommand>();
         var handler = new DropOutStudentCommandHandler(Context);

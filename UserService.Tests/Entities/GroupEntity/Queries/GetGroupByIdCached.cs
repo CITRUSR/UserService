@@ -12,13 +12,16 @@ public class GetGroupByIdCached(DatabaseFixture databaseFixture) : RedisTest(dat
     public async Task GetGroupByIdCached_ShouldBe_SuccessWithoutCache()
     {
         var speciality = Fixture.Create<Speciality>();
+
+        await DbHelper.AddSpecialitiesToContext(speciality);
+
         var curator = Fixture.Create<Teacher>();
+
+        await DbHelper.AddTeachersToContext(curator);
 
         var group = CreateGroup(curator.Id, speciality.Id);
 
-        await AddTeachersToContext(curator);
-        await AddSpecialitiesToContext(speciality);
-        await AddGroupsToContext(group);
+        await DbHelper.AddGroupsToContext(group);
 
         var query = new GetGroupByIdQuery(group.Id);
 

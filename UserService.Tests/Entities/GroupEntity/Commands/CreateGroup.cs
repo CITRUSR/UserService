@@ -14,8 +14,8 @@ public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseF
         var speciality = Fixture.Create<Speciality>();
         var curator = Fixture.Create<Teacher>();
 
-        await AddSpecialitiesToContext(speciality);
-        await AddTeachersToContext(curator);
+        await DbHelper.AddSpecialitiesToContext(speciality);
+        await DbHelper.AddTeachersToContext(curator);
 
         var command = Fixture
             .Build<CreateGroupCommand>()
@@ -34,7 +34,7 @@ public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         var curator = Fixture.Create<Teacher>();
 
-        await AddTeachersToContext(curator);
+        await DbHelper.AddTeachersToContext(curator);
 
         var command = Fixture
             .Build<CreateGroupCommand>()
@@ -52,7 +52,7 @@ public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         var speciality = Fixture.Create<Speciality>();
 
-        await AddSpecialitiesToContext(speciality);
+        await DbHelper.AddSpecialitiesToContext(speciality);
 
         var command = Fixture
             .Build<CreateGroupCommand>()

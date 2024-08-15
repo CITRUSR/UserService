@@ -17,8 +17,8 @@ public class DeleteStudent(DatabaseFixture databaseFixture) : CommonTest(databas
 
         group.Students.Add(student);
 
-        await AddStudentsToContext(student);
-        await AddGroupsToContext(group);
+        await DbHelper.AddStudentsToContext(student);
+        await DbHelper.AddGroupsToContext(group);
 
         var command = new DeleteStudentCommand(student.Id);
         var handler = new DeleteStudentCommandHandler(Context);
@@ -34,7 +34,7 @@ public class DeleteStudent(DatabaseFixture databaseFixture) : CommonTest(databas
     {
         var student = Fixture.Create<Student>();
 
-        await AddStudentsToContext(student);
+        await DbHelper.AddStudentsToContext(student);
 
         var command = new DeleteStudentCommand(Guid.NewGuid());
         var handler = new DeleteStudentCommandHandler(Context);

@@ -54,14 +54,16 @@ public class EditGroupCached(DatabaseFixture databaseFixture) : RedisTest(databa
 
         var speciality = Fixture.Create<Speciality>();
 
+        await DbHelper.AddSpecialitiesToContext(speciality);
+
         var curator = Fixture.Create<Teacher>();
+
+        await DbHelper.AddTeachersToContext(curator);
 
         oldGroup.CuratorId = curator.Id;
         oldGroup.SpecialityId = speciality.Id;
 
-        await AddSpecialitiesToContext(speciality);
-        await AddTeachersToContext(curator);
-        await AddGroupsToContext(oldGroup);
+        await DbHelper.AddGroupsToContext(oldGroup);
 
         return (curator.Id, speciality.Id, oldGroup);
     }

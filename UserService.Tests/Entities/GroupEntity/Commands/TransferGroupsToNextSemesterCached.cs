@@ -14,7 +14,7 @@ public class TransferGroupsToNextSemesterCached(DatabaseFixture databaseFixture)
     {
         var group = Fixture.Build<Group>().With(x => x.CurrentSemester, 2).Create();
 
-        await AddGroupsToContext(group);
+        await DbHelper.AddGroupsToContext(group);
 
         var command = new TransferGroupsToNextSemesterCommand([group.Id]);
 
