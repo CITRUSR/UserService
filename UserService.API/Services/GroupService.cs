@@ -5,6 +5,7 @@ using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
+using UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
@@ -55,6 +56,21 @@ public class GroupService(
         return new DeleteGroupsResponse
         {
             Group = { groups.Select(x => _changeGroupResponseMapper.Map(x)) }
+        };
+    }
+
+    public override async Task<SoftDeleteGroupsResponse> SoftDeleteGroups(
+        SoftDeleteGroupsRequest request,
+        ServerCallContext context
+    )
+    {
+        var command = new SoftDeleteGroupsCommand([.. request.Ids]);
+
+        var groups = await _mediator.Send(command);
+
+        return new SoftDeleteGroupsResponse
+        {
+            Group = { groups.Select(x => _changeGroupResponseMapper.Map(x)) },
         };
     }
 
