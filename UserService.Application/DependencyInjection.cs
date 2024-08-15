@@ -10,6 +10,7 @@ using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
+using UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
@@ -56,6 +57,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<DeleteGroupsCommand, List<Group>>,
             DeleteGroupsCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<SoftDeleteGroupsCommand, List<Group>>,
+            SoftDeleteGroupsCommandHandlerCached
         >();
         services.Decorate<
             IRequestHandler<EditGroupCommand, Group>,
