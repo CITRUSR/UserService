@@ -46,6 +46,12 @@ public static class DependencyInjection
 
     private static void DecorateHandlersToCacheVersion(IServiceCollection services)
     {
+        DecorateGroupsHandlersToCacheVersion(services);
+        DecorateSpecialitiesHandlersToCacheVersion(services);
+    }
+
+    private static void DecorateGroupsHandlersToCacheVersion(IServiceCollection services)
+    {
         services.Decorate<
             IRequestHandler<GetGroupByIdQuery, Group>,
             GetGroupByIdQueryHandlerCached
@@ -82,7 +88,10 @@ public static class DependencyInjection
             IRequestHandler<CreateGroupCommand, Group>,
             CreateGroupCommandHandlerCached
         >();
+    }
 
+    private static void DecorateSpecialitiesHandlersToCacheVersion(IServiceCollection services)
+    {
         services.Decorate<
             IRequestHandler<GetSpecialityByIdQuery, Speciality>,
             GetSpecialityByIdQueryHandlerCached
