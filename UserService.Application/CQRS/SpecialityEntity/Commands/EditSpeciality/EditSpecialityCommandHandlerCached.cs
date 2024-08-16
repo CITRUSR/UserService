@@ -26,6 +26,7 @@ public class EditSpecialityCommandHandlerCached(
         );
 
         await _cacheService.RemovePagesWithObjectAsync<Speciality, int>(
+            CacheKeys.GetEntities<Speciality>,
             speciality.Id,
             (spec, i) => spec.Id == i,
             cancellationToken

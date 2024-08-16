@@ -23,7 +23,7 @@ public class CreateSpecialityCommandHandlerCached(
         for (int i = 0; i < CacheConstants.PagesForCaching; i++)
         {
             await _cacheService.RemoveAsync(
-                CacheKeys.GetEntities<Speciality>(i, 10),
+                CacheKeys.GetEntities<Speciality>(i),
                 cancellationToken
             );
         }

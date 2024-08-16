@@ -27,6 +27,7 @@ public class DeleteGroupsCommandHandlerCached(
             await _cacheService.RemoveAsync(key, cancellationToken);
 
             await _cacheService.RemovePagesWithObjectAsync<Group, int>(
+                CacheKeys.GetEntities<Group>,
                 group.Id,
                 (group, i) => group.Id == i,
                 cancellationToken
