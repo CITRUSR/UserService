@@ -28,7 +28,7 @@ public class GetGroupsQueryHandlerCached(GetGroupsQueryHandler handler, ICacheSe
                 }
         )
         {
-            var key = CacheKeys.GetEntities<Group>(request.Page, request.PageSize);
+            var key = CacheKeys.GetEntities<Group>(request.Page);
 
             return await _cacheService.GetOrCreateAsync<PaginationList<Group>>(
                 key,

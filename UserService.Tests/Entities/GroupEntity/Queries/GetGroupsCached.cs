@@ -21,10 +21,10 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
         );
 
         var groupsFromCache = await CacheService.GetObjectAsync<PaginationList<Group>>(
-            CacheKeys.GetEntities<Group>(1, 10)
+            CacheKeys.GetEntities<Group>(1)
         );
 
-        CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10)).Should().NotBeNull();
+        CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1)).Should().NotBeNull();
 
         groupsFromCache
             .Items.Should()
@@ -45,7 +45,7 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
             DeletedStatus.All
         );
 
-        var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10));
+        var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1));
         cacheString.Should().BeNull();
     }
 
@@ -60,13 +60,13 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
 
         var groups = await baseHandler.Handle(query, CancellationToken.None);
 
-        await CacheService.SetObjectAsync(CacheKeys.GetEntities<Group>(1, 10), groups);
+        await CacheService.SetObjectAsync(CacheKeys.GetEntities<Group>(1), groups);
 
         await Action(query);
 
-        var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10));
+        var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1));
         var groupsFromCache = await CacheService.GetObjectAsync<PaginationList<Group>>(
-            CacheKeys.GetEntities<Group>(1, 10)
+            CacheKeys.GetEntities<Group>(1)
         );
 
         cacheString.Should().NotBeNull();

@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using UserService.Application.Abstraction;
+using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 
-namespace UserService.Application.Common.Cache;
+namespace UserService.Persistance.Cache;
 
 public class CacheService(IDistributedCache cache) : ICacheService
 {
@@ -66,7 +67,6 @@ public class CacheService(IDistributedCache cache) : ICacheService
     )
         where T : class
     {
-        var t = JsonConvert.SerializeObject(value, _settings);
         await _cache.SetStringAsync(
             cacheKey,
             JsonConvert.SerializeObject(value, _settings),
@@ -80,6 +80,7 @@ public class CacheService(IDistributedCache cache) : ICacheService
     }
 
     public async Task RemovePagesWithObjectAsync<T, K>(
+        Func<int, string> pageKey,
         K id,
         Func<T, K, bool> pred,
         CancellationToken cancellationToken = default
@@ -88,10 +89,7 @@ public class CacheService(IDistributedCache cache) : ICacheService
     {
         for (int i = 1; i <= CacheConstants.PagesForCaching; i++)
         {
-            var page = await GetObjectAsync<PaginationList<T>>(
-                CacheKeys.GetEntities<T>(i, 10),
-                cancellationToken
-            );
+            var page = await GetObjectAsync<PaginationList<T>>(pageKey(i), cancellationToken);
 
             if (page == null)
             {
@@ -100,7 +98,7 @@ public class CacheService(IDistributedCache cache) : ICacheService
 
             if (ObjectExistsInPage<T, K>(page, id, pred))
             {
-                await RemovePagesStartingFrom<T>(i);
+                await RemovePagesStartingFrom<T>(pageKey, i);
             }
         }
     }
@@ -110,11 +108,11 @@ public class CacheService(IDistributedCache cache) : ICacheService
         return page.Items.Any(x => pred(x, id));
     }
 
-    private async Task RemovePagesStartingFrom<T>(int startPage)
+    private async Task RemovePagesStartingFrom<T>(Func<int, string> pageKey, int startPage)
     {
         for (int j = startPage; j <= CacheConstants.PagesForCaching; j++)
         {
-            await _cache.RemoveAsync(CacheKeys.GetEntities<T>(j, 10));
+            await _cache.RemoveAsync(pageKey(j));
         }
     }
 }

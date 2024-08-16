@@ -43,9 +43,7 @@ public class TransferGroupsToNextSemesterCached(DatabaseFixture databaseFixture)
 
         for (int i = 0; i < CacheConstants.PagesForCaching; i++)
         {
-            var cacheString = await CacheService.GetStringAsync(
-                CacheKeys.GetEntities<Group>(i, 10)
-            );
+            var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(i));
 
             cacheString.Should().BeNull();
         }

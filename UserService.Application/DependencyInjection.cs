@@ -2,9 +2,7 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using UserService.Application.Abstraction;
 using UserService.Application.Common.Behaviors;
-using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
@@ -45,8 +43,6 @@ public static class DependencyInjection
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         DecorateHandlersToCacheVersion(services);
-
-        services.AddSingleton<ICacheService, CacheService>();
 
         return services;
     }
