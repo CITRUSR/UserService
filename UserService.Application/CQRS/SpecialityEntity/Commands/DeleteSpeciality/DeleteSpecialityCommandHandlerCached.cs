@@ -23,6 +23,7 @@ public class DeleteSpecialityCommandHandlerCached(
         foreach (var speciality in specialities)
         {
             await _cacheService.RemovePagesWithObjectAsync<Speciality, int>(
+                CacheKeys.GetEntities<Speciality>,
                 speciality.Id,
                 (speciality, i) => speciality.Id == i,
                 cancellationToken

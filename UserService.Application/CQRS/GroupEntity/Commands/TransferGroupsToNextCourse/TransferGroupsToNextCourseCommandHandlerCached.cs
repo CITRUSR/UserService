@@ -29,6 +29,7 @@ public class TransferGroupsToNextCourseCommandHandlerCached(
             );
 
             await _cacheService.RemovePagesWithObjectAsync<Group, int>(
+                CacheKeys.GetEntities<Group>,
                 group.Id,
                 (group1, i) => group1.Id == i,
                 cancellationToken
