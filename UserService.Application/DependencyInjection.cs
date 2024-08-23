@@ -24,6 +24,7 @@ using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
 using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 using UserService.Domain.Entities;
 
 namespace UserService.Application;
@@ -135,6 +136,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<DropOutStudentCommand, Guid>,
             DropOutStudentCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<EditStudentCommand, Student>,
+            EditStudentCommandHandlerCached
         >();
     }
 }
