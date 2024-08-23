@@ -21,6 +21,7 @@ using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
+using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 using UserService.Domain.Entities;
 
 namespace UserService.Application;
@@ -48,6 +49,7 @@ public static class DependencyInjection
     {
         DecorateGroupsHandlersToCacheVersion(services);
         DecorateSpecialitiesHandlersToCacheVersion(services);
+        DecorateStudentsHandlerToCacheVersion(services);
     }
 
     private static void DecorateGroupsHandlersToCacheVersion(IServiceCollection services)
@@ -115,6 +117,14 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<CreateSpecialityCommand, Speciality>,
             CreateSpecialityCommandHandlerCached
+        >();
+    }
+
+    private static void DecorateStudentsHandlerToCacheVersion(IServiceCollection services)
+    {
+        services.Decorate<
+            IRequestHandler<CreateStudentCommand, Guid>,
+            CreateStudentCommandHandlerCached
         >();
     }
 }
