@@ -22,9 +22,8 @@ public class TransferGroupsToNextSemesterCommandHandlerCached(
 
         foreach (var group in groups)
         {
-            await _cacheService.SetObjectAsync<Group>(
+            await _cacheService.RemoveAsync(
                 CacheKeys.ById<Group, int>(group.Id),
-                group,
                 cancellationToken
             );
 
