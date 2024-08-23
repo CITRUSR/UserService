@@ -27,6 +27,7 @@ using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
 using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
+using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
 using UserService.Domain.Entities;
 
 namespace UserService.Application;
@@ -150,6 +151,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<GetStudentBySsoIdQuery, Student>,
             GetStudentBySsoIdQueryHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<GetStudentsQuery, PaginationList<Student>>,
+            GetStudentsQueryHandlerCached
         >();
     }
 }
