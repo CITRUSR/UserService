@@ -22,8 +22,9 @@ public class CreateStudentCommandHandlerCached(
 
         for (int i = 0; i < CacheConstants.PagesForCaching; i++)
         {
-            await _cacheService.RemoveAsync(
-                CacheKeys.GetEntities<Student>(i, 10),
+            await _cacheService.RemovePagesWithObjectAsync<Student, Guid>(
+                id,
+                (student, i) => student.Id == i,
                 cancellationToken
             );
         }
