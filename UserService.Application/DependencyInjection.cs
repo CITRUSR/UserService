@@ -22,6 +22,7 @@ using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialit
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
 using UserService.Domain.Entities;
 
 namespace UserService.Application;
@@ -125,6 +126,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<CreateStudentCommand, Guid>,
             CreateStudentCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<DeleteStudentCommand, Guid>,
+            DeleteStudentCommandHandlerCached
         >();
     }
 }
