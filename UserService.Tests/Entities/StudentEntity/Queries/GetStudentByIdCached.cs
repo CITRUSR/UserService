@@ -17,16 +17,11 @@ public class GetStudentByIdCached(DatabaseFixture databaseFixture) : RedisTest(d
 
         var query = new GetStudentByIdQuery(student.Id);
 
-        var handler = new GetStudentByIdQueryHandlerCached(
-            CacheService,
-            new GetStudentByIdQueryHandler(Context)
-        );
-
         var key = CacheKeys.ById<Student, Guid>(student.Id);
 
         var studentFromCacheBeforeAction = await CacheService.GetObjectAsync<Student>(key);
 
-        var studentRes = await handler.Handle(query, CancellationToken.None);
+        var studentRes = await Action(query);
 
         var studentFromCache = await CacheService.GetObjectAsync<Student>(key);
 
@@ -50,17 +45,22 @@ public class GetStudentByIdCached(DatabaseFixture databaseFixture) : RedisTest(d
 
         var query = new GetStudentByIdQuery(student.Id);
 
-        var handler = new GetStudentByIdQueryHandlerCached(
-            CacheService,
-            new GetStudentByIdQueryHandler(Context)
-        );
-
-        var studentRes = await handler.Handle(query, CancellationToken.None);
+        var studentRes = await Action(query);
 
         var studentFromCache = await CacheService.GetObjectAsync<Student>(key);
 
         studentRes
             .Should()
             .BeEquivalentTo(studentFromCache, options => options.Excluding(x => x.Group));
+    }
+
+    private async Task<Student> Action(GetStudentByIdQuery query)
+    {
+        var handler = new GetStudentByIdQueryHandlerCached(
+            CacheService,
+            new GetStudentByIdQueryHandler(Context)
+        );
+
+        return await handler.Handle(query, CancellationToken.None);
     }
 }
