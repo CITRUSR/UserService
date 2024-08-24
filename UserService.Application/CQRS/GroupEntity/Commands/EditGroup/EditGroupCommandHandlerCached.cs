@@ -17,11 +17,7 @@ public class EditGroupCommandHandlerCached(
     {
         var group = await _handler.Handle(request, cancellationToken);
 
-        await _cacheService.SetObjectAsync(
-            CacheKeys.ById<Group, int>(request.Id),
-            group,
-            cancellationToken
-        );
+        await _cacheService.RemoveAsync(CacheKeys.ById<Group, int>(request.Id), cancellationToken);
 
         await _cacheService.RemovePagesWithObjectAsync<Group, int>(
             group.Id,

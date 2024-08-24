@@ -20,9 +20,8 @@ public class EditSpecialityCommandHandlerCached(
     {
         var speciality = await _handler.Handle(request, cancellationToken);
 
-        await _cacheService.SetObjectAsync<Speciality>(
+        await _cacheService.RemoveAsync(
             CacheKeys.ById<Speciality, int>(speciality.Id),
-            speciality,
             cancellationToken
         );
 

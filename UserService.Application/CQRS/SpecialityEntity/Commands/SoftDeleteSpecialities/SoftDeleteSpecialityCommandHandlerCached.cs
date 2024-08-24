@@ -23,9 +23,8 @@ public class SoftDeleteSpecialitiesCommandHandlerCached(
 
         foreach (var speciality in specialities)
         {
-            await _cacheService.SetObjectAsync<Speciality>(
+            await _cacheService.RemoveAsync(
                 CacheKeys.ById<Speciality, int>(speciality.Id),
-                speciality,
                 cancellationToken
             );
 
