@@ -30,7 +30,7 @@ public class GetSpecialitiesQueryHandlerCached(
                 }
         )
         {
-            var key = CacheKeys.GetEntities<Speciality>(request.Page);
+            var key = CacheKeys.GetEntities<Speciality>();
 
             return await _cacheService.GetOrCreateAsync<PaginationList<Speciality>>(
                 key,

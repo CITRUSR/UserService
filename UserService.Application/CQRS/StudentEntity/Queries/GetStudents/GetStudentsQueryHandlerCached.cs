@@ -30,7 +30,7 @@ public class GetStudentsQueryHandlerCached(
                 }
         )
         {
-            var key = CacheKeys.GetEntities<Student>(request.Page, request.PageSize);
+            var key = CacheKeys.GetEntities<Student>();
 
             return await _cacheService.GetOrCreateAsync<PaginationList<Student>>(
                 key,

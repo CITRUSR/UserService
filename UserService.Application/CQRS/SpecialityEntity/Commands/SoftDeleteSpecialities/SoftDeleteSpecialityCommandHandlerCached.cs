@@ -27,14 +27,9 @@ public class SoftDeleteSpecialitiesCommandHandlerCached(
                 CacheKeys.ById<Speciality, int>(speciality.Id),
                 cancellationToken
             );
-
-            await _cacheService.RemovePagesWithObjectAsync<Speciality, int>(
-                CacheKeys.GetEntities<Speciality>,
-                speciality.Id,
-                (speciality, i) => speciality.Id == i,
-                cancellationToken
-            );
         }
+
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Speciality>(), cancellationToken);
 
         return specialities;
     }
