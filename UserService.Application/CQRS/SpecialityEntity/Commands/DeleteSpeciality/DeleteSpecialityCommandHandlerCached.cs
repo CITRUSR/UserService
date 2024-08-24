@@ -22,17 +22,13 @@ public class DeleteSpecialityCommandHandlerCached(
 
         foreach (var speciality in specialities)
         {
-            await _cacheService.RemovePagesWithObjectAsync<Speciality, int>(
-                speciality.Id,
-                (speciality, i) => speciality.Id == i,
-                cancellationToken
-            );
-
             await _cacheService.RemoveAsync(
                 CacheKeys.ById<Speciality, int>(speciality.Id),
                 cancellationToken
             );
         }
+
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Speciality>(), cancellationToken);
 
         return specialities;
     }

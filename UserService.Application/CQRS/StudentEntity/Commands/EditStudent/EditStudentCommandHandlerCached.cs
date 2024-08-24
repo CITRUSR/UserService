@@ -25,14 +25,7 @@ public class EditStudentCommandHandlerCached(
             cancellationToken
         );
 
-        for (int i = 0; i < CacheConstants.PagesForCaching; i++)
-        {
-            await _cacheService.RemovePagesWithObjectAsync<Student, Guid>(
-                student.Id,
-                (cachedStudent, i) => cachedStudent.Id == i,
-                cancellationToken
-            );
-        }
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Student>(), cancellationToken);
 
         return student;
     }
