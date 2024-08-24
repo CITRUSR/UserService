@@ -5,7 +5,7 @@ using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 
-public class GetGroupsQuery : IRequest<PaginationList<Group>>
+public record GetGroupsQuery : IRequest<PaginationList<Group>>
 {
     public string? SearchString { get; set; } = String.Empty;
     public int Page { get; set; } = 1;
