@@ -26,13 +26,9 @@ public class GraduateGroupsCommandHandlerCached(
                 CacheKeys.ById<Group, int>(group.Id),
                 cancellationToken
             );
-
-            await _cacheService.RemovePagesWithObjectAsync<Group, int>(
-                group.Id,
-                (gr, i) => gr.Id == i,
-                cancellationToken
-            );
         }
+
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return groups;
     }

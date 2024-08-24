@@ -30,13 +30,25 @@ public class GetStudentsQueryHandlerCached(
                 }
         )
         {
-            var key = CacheKeys.GetEntities<Student>(request.Page, request.PageSize);
+            var key = CacheKeys.GetEntities<Student>();
 
-            return await _cacheService.GetOrCreateAsync<PaginationList<Student>>(
+            var entities = await _cacheService.GetOrCreateAsync<PaginationList<Student>>(
                 key,
-                async () => await _handler.Handle(request, cancellationToken),
+                async () =>
+                    await _handler.Handle(
+                        request with
+                        {
+                            PageSize =
+                                CacheConstants.PagesForCaching * CacheConstants.EntitiesPerPage
+                        },
+                        cancellationToken
+                    ),
                 cancellationToken
             );
+
+            entities.Items = [.. entities.Items.Take(request.PageSize)];
+
+            return entities;
         }
 
         return await _handler.Handle(request, cancellationToken);

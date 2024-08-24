@@ -22,14 +22,7 @@ public class DropOutStudentCommandHandlerCached(
 
         await _cacheService.RemoveAsync(CacheKeys.ById<Student, Guid>(id), cancellationToken);
 
-        for (int i = 0; i < CacheConstants.PagesForCaching; i++)
-        {
-            await _cacheService.RemovePagesWithObjectAsync<Student, Guid>(
-                id,
-                (student, i) => student.Id == i,
-                cancellationToken
-            );
-        }
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Student>(), cancellationToken);
 
         return id;
     }

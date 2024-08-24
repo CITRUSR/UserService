@@ -19,7 +19,7 @@ public class GetSpecialitiesCached(DatabaseFixture databaseFixture) : RedisTest(
 
         var specialitiesRes = await Action(query);
 
-        var key = CacheKeys.GetEntities<Speciality>(query.Page, query.PageSize);
+        var key = CacheKeys.GetEntities<Speciality>();
 
         var cacheString = await CacheService.GetStringAsync(key);
         var specialitiesFromCache = await CacheService.GetObjectAsync<PaginationList<Speciality>>(
@@ -45,7 +45,7 @@ public class GetSpecialitiesCached(DatabaseFixture databaseFixture) : RedisTest(
             query.PageSize
         );
 
-        var key = CacheKeys.GetEntities<Speciality>(query.Page, query.PageSize);
+        var key = CacheKeys.GetEntities<Speciality>();
 
         await CacheService.SetObjectAsync(key, paginationList);
 
@@ -67,7 +67,7 @@ public class GetSpecialitiesCached(DatabaseFixture databaseFixture) : RedisTest(
 
         var query = CreateQuery(sortState: SpecialitySortState.NameDesc);
 
-        var key = CacheKeys.GetEntities<Speciality>(query.Page, query.PageSize);
+        var key = CacheKeys.GetEntities<Speciality>();
 
         await Action(query);
 

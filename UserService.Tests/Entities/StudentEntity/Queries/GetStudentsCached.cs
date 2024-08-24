@@ -19,7 +19,7 @@ public class GetStudentsCached(DatabaseFixture databaseFixture) : RedisTest(data
 
         var StudentsRes = await Action(query);
 
-        var key = CacheKeys.GetEntities<Student>(query.Page, query.PageSize);
+        var key = CacheKeys.GetEntities<Student>();
 
         var cacheString = await CacheService.GetStringAsync(key);
         var StudentsFromCache = await CacheService.GetObjectAsync<PaginationList<Student>>(key);
@@ -44,7 +44,7 @@ public class GetStudentsCached(DatabaseFixture databaseFixture) : RedisTest(data
             query.PageSize
         );
 
-        var key = CacheKeys.GetEntities<Student>(query.Page, query.PageSize);
+        var key = CacheKeys.GetEntities<Student>();
 
         await CacheService.SetObjectAsync(key, paginationList);
 
@@ -64,7 +64,7 @@ public class GetStudentsCached(DatabaseFixture databaseFixture) : RedisTest(data
 
         var query = CreateQuery(sortState: SortState.FistNameAsc);
 
-        var key = CacheKeys.GetEntities<Student>(query.Page, query.PageSize);
+        var key = CacheKeys.GetEntities<Student>();
 
         await Action(query);
 

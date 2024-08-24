@@ -5,7 +5,7 @@ using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
 
-public class GetStudentsQuery : IRequest<PaginationList<Student>>
+public record GetStudentsQuery : IRequest<PaginationList<Student>>
 {
     public string? SearchString { get; set; } = String.Empty;
     public int Page { get; set; } = 1;

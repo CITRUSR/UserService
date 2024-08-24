@@ -28,13 +28,25 @@ public class GetGroupsQueryHandlerCached(GetGroupsQueryHandler handler, ICacheSe
                 }
         )
         {
-            var key = CacheKeys.GetEntities<Group>(request.Page, request.PageSize);
+            var key = CacheKeys.GetEntities<Group>();
 
-            return await _cacheService.GetOrCreateAsync<PaginationList<Group>>(
+            var entities = await _cacheService.GetOrCreateAsync<PaginationList<Group>>(
                 key,
-                async () => await _handler.Handle(request, cancellationToken),
+                async () =>
+                    await _handler.Handle(
+                        request with
+                        {
+                            PageSize =
+                                CacheConstants.PagesForCaching * CacheConstants.EntitiesPerPage
+                        },
+                        cancellationToken
+                    ),
                 cancellationToken
             );
+
+            entities.Items = [.. entities.Items.Take(request.PageSize)];
+
+            return entities;
         }
 
         return await _handler.Handle(request, cancellationToken);

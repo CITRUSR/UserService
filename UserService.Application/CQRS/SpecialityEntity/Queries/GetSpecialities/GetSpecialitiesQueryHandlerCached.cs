@@ -2,7 +2,6 @@ using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
-using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
@@ -30,13 +29,25 @@ public class GetSpecialitiesQueryHandlerCached(
                 }
         )
         {
-            var key = CacheKeys.GetEntities<Speciality>(request.Page, request.PageSize);
+            var key = CacheKeys.GetEntities<Speciality>();
 
-            return await _cacheService.GetOrCreateAsync<PaginationList<Speciality>>(
+            var entities = await _cacheService.GetOrCreateAsync<PaginationList<Speciality>>(
                 key,
-                async () => await _handler.Handle(request, cancellationToken),
+                async () =>
+                    await _handler.Handle(
+                        request with
+                        {
+                            PageSize =
+                                CacheConstants.PagesForCaching * CacheConstants.EntitiesPerPage
+                        },
+                        cancellationToken
+                    ),
                 cancellationToken
             );
+
+            entities.Items = [.. entities.Items.Take(request.PageSize)];
+
+            return entities;
         }
 
         return await _handler.Handle(request, cancellationToken);
