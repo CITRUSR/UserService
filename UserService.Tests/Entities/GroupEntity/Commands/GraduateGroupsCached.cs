@@ -17,6 +17,10 @@ public class GraduateGroupsCached(DatabaseFixture databaseFixture) : RedisTest(d
 
         DateTime graduatedTime = DateTime.Now;
 
+        var key = CacheKeys.ById<Group, int>(group.Id);
+
+        await CacheService.SetObjectAsync<Group>(key, group);
+
         var command = new GraduateGroupsCommand([group.Id], graduatedTime);
 
         var handler = new GraduateGroupsCommandHandlerCached(
@@ -26,15 +30,8 @@ public class GraduateGroupsCached(DatabaseFixture databaseFixture) : RedisTest(d
 
         var groups = await handler.Handle(command, CancellationToken.None);
 
-        var groupFromCache = await CacheService.GetObjectAsync<Group>(
-            CacheKeys.ById<Group, int>(group.Id)
-        );
+        var groupFromCache = await CacheService.GetObjectAsync<Group>(key);
 
-        groupFromCache
-            .Should()
-            .BeEquivalentTo(
-                Context.Groups.First(),
-                options => options.Excluding(x => x.Speciality).Excluding(x => x.Curator)
-            );
+        groupFromCache.Should().BeNull();
     }
 }
