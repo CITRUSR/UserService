@@ -77,47 +77,4 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
         var stringFromCache = await CacheService.GetObjectAsync<string>("test");
         stringFromCache.Should().BeEquivalentTo(specialityRes);
     }
-
-    [Fact]
-    public async Task CacheService_RemovePagesWithObjectAsync_ShouldBe_Success()
-    {
-        await RemoveObjectFromPage(1);
-        await RemoveObjectFromPage(2);
-        await RemoveObjectFromPage(3);
-    }
-
-    private async Task RemoveObjectFromPage(int pageNumber)
-    {
-        for (int i = pageNumber; i <= CacheConstants.PagesForCaching; i++)
-        {
-            var page = await GetPage(pageNumber);
-            await CacheService.SetObjectAsync(CacheKeys.GetEntities<Group>(i), page);
-        }
-
-        var key = CacheKeys.GetEntities<Group>(pageNumber);
-        var paginationList = await CacheService.GetObjectAsync<PaginationList<Group>>(key);
-
-        await CacheService.RemovePagesWithObjectAsync<Group, int>(
-            CacheKeys.GetEntities<Group>,
-            paginationList.Items[0].Id,
-            (group, i) => group.Id == i
-        );
-
-        for (int i = pageNumber; i < CacheConstants.PagesForCaching; i++)
-        {
-            var CacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(i));
-            CacheString.Should().BeNull();
-        }
-    }
-
-    private async Task<PaginationList<Group>> GetPage(int pageNumber)
-    {
-        var groups = Fixture.CreateMany<Group>(CacheConstants.PagesForCaching * 10);
-
-        await DbHelper.AddGroupsToContext([.. groups]);
-
-        IQueryable<Group> dbGroups = Context.Groups;
-
-        return await PaginationList<Group>.CreateAsync(dbGroups, pageNumber, 10);
-    }
 }

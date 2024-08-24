@@ -78,41 +78,4 @@ public class CacheService(IDistributedCache cache) : ICacheService
     {
         await _cache.RemoveAsync(cacheKey, cancellationToken);
     }
-
-    public async Task RemovePagesWithObjectAsync<T, K>(
-        Func<int, string> pageKey,
-        K id,
-        Func<T, K, bool> pred,
-        CancellationToken cancellationToken = default
-    )
-        where T : class
-    {
-        for (int i = 1; i <= CacheConstants.PagesForCaching; i++)
-        {
-            var page = await GetObjectAsync<PaginationList<T>>(pageKey(i), cancellationToken);
-
-            if (page == null)
-            {
-                continue;
-            }
-
-            if (ObjectExistsInPage<T, K>(page, id, pred))
-            {
-                await RemovePagesStartingFrom<T>(pageKey, i);
-            }
-        }
-    }
-
-    private bool ObjectExistsInPage<T, K>(PaginationList<T> page, K id, Func<T, K, bool> pred)
-    {
-        return page.Items.Any(x => pred(x, id));
-    }
-
-    private async Task RemovePagesStartingFrom<T>(Func<int, string> pageKey, int startPage)
-    {
-        for (int j = startPage; j <= CacheConstants.PagesForCaching; j++)
-        {
-            await _cache.RemoveAsync(pageKey(j));
-        }
-    }
 }

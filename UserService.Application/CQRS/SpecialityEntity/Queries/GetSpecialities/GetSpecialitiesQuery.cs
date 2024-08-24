@@ -5,7 +5,7 @@ using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 
-public class GetSpecialitiesQuery : IRequest<PaginationList<Speciality>>
+public record GetSpecialitiesQuery : IRequest<PaginationList<Speciality>>
 {
     public string? SearchString { get; set; } = String.Empty;
     public int Page { get; set; } = 1;

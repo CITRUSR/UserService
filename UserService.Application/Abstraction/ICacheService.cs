@@ -18,12 +18,4 @@ public interface ICacheService
         where T : class;
 
     Task RemoveAsync(string cacheKey, CancellationToken cancellationToken = default);
-
-    Task RemovePagesWithObjectAsync<T, K>(
-        Func<int, string> pageKey,
-        K id,
-        Func<T, K, bool> pred,
-        CancellationToken cancellationToken = default
-    )
-        where T : class;
 }

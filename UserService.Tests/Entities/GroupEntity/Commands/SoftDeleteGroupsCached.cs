@@ -15,6 +15,11 @@ public class SoftDeleteGroupsCached(DatabaseFixture databaseFixture) : RedisTest
 
         await DbHelper.AddGroupsToContext([.. groups]);
 
+        foreach (var group in groups)
+        {
+            await CacheService.SetObjectAsync<Group>(CacheKeys.ById<Group, int>(group.Id), group);
+        }
+
         var command = new SoftDeleteGroupsCommand([.. groups.Select(x => x.Id)]);
 
         var handler = new SoftDeleteGroupsCommandHandlerCached(
@@ -30,12 +35,7 @@ public class SoftDeleteGroupsCached(DatabaseFixture databaseFixture) : RedisTest
                 CacheKeys.ById<Group, int>(group.Id)
             );
 
-            specialityFromCache
-                .Should()
-                .BeEquivalentTo(
-                    group,
-                    options => options.Excluding(x => x.Curator).Excluding(x => x.Speciality)
-                );
+            specialityFromCache.Should().BeNull();
         }
     }
 }

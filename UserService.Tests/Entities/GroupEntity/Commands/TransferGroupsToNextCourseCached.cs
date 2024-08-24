@@ -24,6 +24,10 @@ public class TransferGroupsToNextCourseCached(DatabaseFixture databaseFixture)
 
         await DbHelper.AddGroupsToContext(group);
 
+        var key = CacheKeys.ById<Group, int>(group.Id);
+
+        await CacheService.SetObjectAsync<Group>(key, group);
+
         var command = new TransferGroupsToNextCourseCommand([group.Id]);
 
         var handler = new TransferGroupsToNextCourseCommandHandlerCached(
@@ -33,18 +37,8 @@ public class TransferGroupsToNextCourseCached(DatabaseFixture databaseFixture)
 
         var groupRes = await handler.Handle(command, CancellationToken.None);
 
-        var key = CacheKeys.ById<Group, int>(group.Id);
-
-        var cachedString = await CacheService.GetStringAsync(key);
-
         var groupFromCache = await CacheService.GetObjectAsync<Group>(key);
 
-        cachedString.Should().NotBeNullOrEmpty();
-        groupFromCache
-            .Should()
-            .BeEquivalentTo(
-                group,
-                options => options.Excluding(x => x.Curator).Excluding(x => x.Speciality)
-            );
+        groupFromCache.Should().BeNull();
     }
 }

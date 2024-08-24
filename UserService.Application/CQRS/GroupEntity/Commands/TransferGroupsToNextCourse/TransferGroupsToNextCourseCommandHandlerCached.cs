@@ -22,18 +22,12 @@ public class TransferGroupsToNextCourseCommandHandlerCached(
 
         foreach (var group in groups)
         {
-            await _cacheService.SetObjectAsync<Group>(
+            await _cacheService.RemoveAsync(
                 CacheKeys.ById<Group, int>(group.Id),
-                group,
                 cancellationToken
             );
 
-            await _cacheService.RemovePagesWithObjectAsync<Group, int>(
-                CacheKeys.GetEntities<Group>,
-                group.Id,
-                (group1, i) => group1.Id == i,
-                cancellationToken
-            );
+            await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
         }
 
         return groups;

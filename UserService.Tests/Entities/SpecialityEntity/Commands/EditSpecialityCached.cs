@@ -26,6 +26,10 @@ public class EditSpecialityCached(DatabaseFixture databaseFixture) : RedisTest(d
             newSpeciality.IsDeleted
         );
 
+        var key = CacheKeys.ById<Speciality, int>(speciality.Id);
+
+        await CacheService.SetObjectAsync<Speciality>(key, speciality);
+
         var handler = new EditSpecialityCommandHandlerCached(
             new EditSpecialityCommandHandler(Context),
             CacheService
@@ -33,12 +37,8 @@ public class EditSpecialityCached(DatabaseFixture databaseFixture) : RedisTest(d
 
         var specialityRes = await handler.Handle(command, CancellationToken.None);
 
-        var key = CacheKeys.ById<Speciality, int>(specialityRes.Id);
-
-        var cachedString = await CacheService.GetStringAsync(key);
         var cachedObject = await CacheService.GetObjectAsync<Speciality>(key);
 
-        cachedString.Should().NotBeNull();
-        cachedObject.Should().BeEquivalentTo(newSpeciality);
+        cachedObject.Should().BeNull();
     }
 }

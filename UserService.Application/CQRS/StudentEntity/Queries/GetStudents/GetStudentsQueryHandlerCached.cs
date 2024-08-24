@@ -5,18 +5,18 @@ using UserService.Application.Common.Paging;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
-namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
+namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
 
-public class GetSpecialitiesQueryHandlerCached(
-    ICacheService cacheService,
-    GetSpecialitiesQueryHandler handler
-) : IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>>
+public class GetStudentsQueryHandlerCached(
+    GetStudentsQueryHandler handler,
+    ICacheService cacheService
+) : IRequestHandler<GetStudentsQuery, PaginationList<Student>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly GetSpecialitiesQueryHandler _handler = handler;
+    private readonly GetStudentsQueryHandler _handler = handler;
 
-    public async Task<PaginationList<Speciality>> Handle(
-        GetSpecialitiesQuery request,
+    public async Task<PaginationList<Student>> Handle(
+        GetStudentsQuery request,
         CancellationToken cancellationToken
     )
     {
@@ -24,14 +24,15 @@ public class GetSpecialitiesQueryHandlerCached(
             request.Page <= CacheConstants.PagesForCaching
             && request
                 is {
-                    SortState: SpecialitySortState.NameAsc,
+                    SortState: SortState.LastNameAsc,
+                    DroppedOutStatus: StudentDroppedOutStatus.OnlyActive,
                     DeletedStatus: DeletedStatus.OnlyActive
                 }
         )
         {
-            var key = CacheKeys.GetEntities<Speciality>();
+            var key = CacheKeys.GetEntities<Student>();
 
-            var entities = await _cacheService.GetOrCreateAsync<PaginationList<Speciality>>(
+            var entities = await _cacheService.GetOrCreateAsync<PaginationList<Student>>(
                 key,
                 async () =>
                     await _handler.Handle(
