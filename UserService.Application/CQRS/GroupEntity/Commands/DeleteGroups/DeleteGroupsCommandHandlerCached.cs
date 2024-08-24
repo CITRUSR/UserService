@@ -22,17 +22,13 @@ public class DeleteGroupsCommandHandlerCached(
 
         foreach (var group in groups)
         {
-            var key = CacheKeys.ById<Group, int>(group.Id);
-
-            await _cacheService.RemoveAsync(key, cancellationToken);
-
-            await _cacheService.RemovePagesWithObjectAsync<Group, int>(
-                CacheKeys.GetEntities<Group>,
-                group.Id,
-                (group, i) => group.Id == i,
+            await _cacheService.RemoveAsync(
+                CacheKeys.ById<Group, int>(group.Id),
                 cancellationToken
             );
         }
+
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return groups;
     }

@@ -19,12 +19,7 @@ public class EditGroupCommandHandlerCached(
 
         await _cacheService.RemoveAsync(CacheKeys.ById<Group, int>(request.Id), cancellationToken);
 
-        await _cacheService.RemovePagesWithObjectAsync<Group, int>(
-            CacheKeys.GetEntities<Group>,
-            group.Id,
-            (group1, i) => group1.Id == i,
-            cancellationToken
-        );
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return group;
     }

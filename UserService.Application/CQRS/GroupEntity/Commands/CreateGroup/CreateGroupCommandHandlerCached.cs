@@ -18,10 +18,7 @@ public class CreateGroupCommandHandlerCached(
     {
         var group = await _handler.Handle(request, cancellationToken);
 
-        for (int i = 0; i < CacheConstants.PagesForCaching; i++)
-        {
-            await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(i), cancellationToken);
-        }
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return group;
     }

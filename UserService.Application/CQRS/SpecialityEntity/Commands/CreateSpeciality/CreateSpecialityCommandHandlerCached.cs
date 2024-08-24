@@ -20,13 +20,7 @@ public class CreateSpecialityCommandHandlerCached(
     {
         var speciality = await _handler.Handle(request, cancellationToken);
 
-        for (int i = 0; i < CacheConstants.PagesForCaching; i++)
-        {
-            await _cacheService.RemoveAsync(
-                CacheKeys.GetEntities<Speciality>(i),
-                cancellationToken
-            );
-        }
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Speciality>(), cancellationToken);
 
         return speciality;
     }
