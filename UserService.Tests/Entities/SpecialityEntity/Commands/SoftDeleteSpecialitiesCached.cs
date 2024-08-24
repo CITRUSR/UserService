@@ -1,5 +1,4 @@
 using FluentAssertions;
-using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Domain.Entities;
@@ -19,6 +18,14 @@ public class SoftDeleteSpecialitiesCached(DatabaseFixture databaseFixture)
 
         var command = new SoftDeleteSpecialitiesCommand(specialities.Select(x => x.Id).ToList());
 
+        foreach (var speciality in specialities)
+        {
+            await CacheService.SetObjectAsync<Speciality>(
+                CacheKeys.ById<Speciality, int>(speciality.Id),
+                speciality
+            );
+        }
+
         var handler = new SoftDeleteSpecialitiesCommandHandlerCached(
             new SoftDeleteSpecialitiesCommandHandler(Context),
             CacheService
@@ -32,7 +39,7 @@ public class SoftDeleteSpecialitiesCached(DatabaseFixture databaseFixture)
                 CacheKeys.ById<Speciality, int>(speciality.Id)
             );
 
-            specialityFromCache.Should().BeEquivalentTo(speciality);
+            specialityFromCache.Should().BeNull();
         }
     }
 }
