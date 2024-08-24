@@ -26,9 +26,9 @@ public class TransferGroupsToNextCourseCommandHandlerCached(
                 CacheKeys.ById<Group, int>(group.Id),
                 cancellationToken
             );
-
-            await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
         }
+
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return groups;
     }
