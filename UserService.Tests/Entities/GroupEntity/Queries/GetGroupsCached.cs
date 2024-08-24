@@ -21,13 +21,14 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
         );
 
         var groupsFromCache = await CacheService.GetObjectAsync<PaginationList<Group>>(
-            CacheKeys.GetEntities<Group>(1, 10)
+            CacheKeys.GetEntities<Group>()
         );
 
-        CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10)).Should().NotBeNull();
+        CacheService.GetStringAsync(CacheKeys.GetEntities<Group>()).Should().NotBeNull();
 
         groupsFromCache
-            .Items.Should()
+            .Items.Take(groups.Items.Count)
+            .Should()
             .BeEquivalentTo(
                 groups.Items,
                 options => options.Excluding(x => x.Speciality).Excluding(x => x.Curator)
@@ -45,7 +46,7 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
             DeletedStatus.All
         );
 
-        var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10));
+        var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>());
         cacheString.Should().BeNull();
     }
 
@@ -60,13 +61,13 @@ public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databa
 
         var groups = await baseHandler.Handle(query, CancellationToken.None);
 
-        await CacheService.SetObjectAsync(CacheKeys.GetEntities<Group>(1, 10), groups);
+        await CacheService.SetObjectAsync(CacheKeys.GetEntities<Group>(), groups);
 
         await Action(query);
 
-        var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10));
+        var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>());
         var groupsFromCache = await CacheService.GetObjectAsync<PaginationList<Group>>(
-            CacheKeys.GetEntities<Group>(1, 10)
+            CacheKeys.GetEntities<Group>()
         );
 
         cacheString.Should().NotBeNull();
