@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using UserService.Application.Abstraction;
+using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 
-namespace UserService.Application.Common.Cache;
+namespace UserService.Persistance.Cache;
 
 public class CacheService(IDistributedCache cache) : ICacheService
 {
@@ -66,7 +67,6 @@ public class CacheService(IDistributedCache cache) : ICacheService
     )
         where T : class
     {
-        var t = JsonConvert.SerializeObject(value, _settings);
         await _cache.SetStringAsync(
             cacheKey,
             JsonConvert.SerializeObject(value, _settings),

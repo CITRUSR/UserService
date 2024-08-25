@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Testcontainers.Redis;
 using UserService.Application.Abstraction;
-using UserService.Application.Common.Cache;
+using UserService.Persistance.Cache;
 using UserService.Tests.Common.Factories;
 
 namespace UserService.Tests.Common;

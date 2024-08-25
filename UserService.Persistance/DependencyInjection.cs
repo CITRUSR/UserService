@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UserService.Application.Abstraction;
+using UserService.Persistance.Cache;
 
 namespace UserService.Persistance;
 
@@ -23,6 +24,8 @@ public static class DependencyInjection
         {
             options.Configuration = configuration.GetConnectionString("Redis");
         });
+
+        services.AddSingleton<ICacheService, CacheService>();
 
         return services;
     }
