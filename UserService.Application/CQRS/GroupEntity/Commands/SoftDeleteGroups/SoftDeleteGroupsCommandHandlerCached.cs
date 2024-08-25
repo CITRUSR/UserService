@@ -25,9 +25,9 @@ public class SoftDeleteGroupsCommandHandlerCached(
             var key = CacheKeys.ById<Group, int>(group.Id);
 
             await _cacheService.RemoveAsync(key, cancellationToken);
-
-            await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
         }
+
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return groups;
     }
