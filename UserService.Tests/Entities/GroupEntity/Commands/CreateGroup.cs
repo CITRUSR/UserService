@@ -1,67 +1,99 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class CreateGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class CreateGroup
 {
-    [Fact]
-    public async Task CreateGroup_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+    private readonly CreateGroupCommand _command;
+
+    public CreateGroup()
     {
-        var speciality = Fixture.Create<Speciality>();
-        var curator = Fixture.Create<Teacher>();
-
-        await DbHelper.AddSpecialitiesToContext(speciality);
-        await DbHelper.AddTeachersToContext(curator);
-
-        var command = Fixture
-            .Build<CreateGroupCommand>()
-            .With(x => x.CuratorId, curator.Id)
-            .With(x => x.SpecialityId, speciality.Id)
-            .Create();
-
-        var handler = new CreateGroupCommandHandler(Context);
-
-        var group = await handler.Handle(command, CancellationToken.None);
-        Context.Groups.Should().HaveCount(1);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
+        _command = _fixture.Create<CreateGroupCommand>();
     }
 
     [Fact]
-    public async Task CreateGroup_ShouldBe_SpecialityNotFoundException()
+    public async Task CreateGroup_ShouldBe_Success()
     {
-        var curator = Fixture.Create<Teacher>();
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([]);
 
-        await DbHelper.AddTeachersToContext(curator);
+        _mockDbContext
+            .Setup(x =>
+                x.Specialities.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync(new Speciality());
 
-        var command = Fixture
-            .Build<CreateGroupCommand>()
-            .With(x => x.CuratorId, curator.Id)
-            .Create();
+        _mockDbContext
+            .Setup(x => x.Teachers.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Teacher());
 
-        var handler = new CreateGroupCommandHandler(Context);
+        var handler = new CreateGroupCommandHandler(_mockDbContext.Object);
 
-        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(_command, CancellationToken.None);
+
+        _mockDbContext.Verify(
+            x =>
+                x.Groups.AddAsync(
+                    It.Is<Group>(x =>
+                        x.SubGroup == _command.SubGroup
+                        && x.CuratorId == _command.CuratorId
+                        && x.SpecialityId == _command.SpecialityId
+                        && x.CurrentCourse == _command.CurrentCourse
+                        && x.CurrentSemester == _command.CurrentSemester
+                        && x.StartedAt == _command.StartedAt
+                    ),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once()
+        );
+
+        _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+
+        result.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task CreateGroup_ShouldBe_SpecialityNotFoundException_WhenSpecialityDoesNotExist()
+    {
+        _mockDbContext
+            .Setup(x =>
+                x.Specialities.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync((Speciality?)null);
+
+        var handler = new CreateGroupCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(_command, CancellationToken.None);
+
         await act.Should().ThrowAsync<SpecialityNotFoundException>();
     }
 
     [Fact]
-    public async Task CreateGroup_ShouldBe_TeacherNotFoundException()
+    public async Task CreateGroup_ShouldBe_TeacherNotFoundException_WhenCuratorDoesNotExist()
     {
-        var speciality = Fixture.Create<Speciality>();
+        _mockDbContext
+            .Setup(x =>
+                x.Specialities.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync(new Speciality());
 
-        await DbHelper.AddSpecialitiesToContext(speciality);
+        _mockDbContext
+            .Setup(x => x.Teachers.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Teacher?)null);
 
-        var command = Fixture
-            .Build<CreateGroupCommand>()
-            .With(x => x.SpecialityId, speciality.Id)
-            .Create();
+        var handler = new CreateGroupCommandHandler(_mockDbContext.Object);
 
-        var handler = new CreateGroupCommandHandler(Context);
+        Func<Task> act = async () => await handler.Handle(_command, CancellationToken.None);
 
-        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
         await act.Should().ThrowAsync<TeacherNotFoundException>();
     }
 }
