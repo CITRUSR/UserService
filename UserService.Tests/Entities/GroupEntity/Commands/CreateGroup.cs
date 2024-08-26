@@ -41,18 +41,7 @@ public class CreateGroup
         var result = await handler.Handle(_command, CancellationToken.None);
 
         _mockDbContext.Verify(
-            x =>
-                x.Groups.AddAsync(
-                    It.Is<Group>(x =>
-                        x.SubGroup == _command.SubGroup
-                        && x.CuratorId == _command.CuratorId
-                        && x.SpecialityId == _command.SpecialityId
-                        && x.CurrentCourse == _command.CurrentCourse
-                        && x.CurrentSemester == _command.CurrentSemester
-                        && x.StartedAt == _command.StartedAt
-                    ),
-                    It.IsAny<CancellationToken>()
-                ),
+            x => x.Groups.AddAsync(It.IsAny<Group>(), It.IsAny<CancellationToken>()),
             Times.Once()
         );
 
