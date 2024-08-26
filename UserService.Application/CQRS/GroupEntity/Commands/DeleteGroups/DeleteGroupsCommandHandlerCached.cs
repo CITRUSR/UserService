@@ -6,11 +6,11 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 
 public class DeleteGroupsCommandHandlerCached(
-    DeleteGroupsCommandHandler handler,
+    IRequestHandler<DeleteGroupsCommand, List<Group>> handler,
     ICacheService cacheService
 ) : IRequestHandler<DeleteGroupsCommand, List<Group>>
 {
-    private readonly DeleteGroupsCommandHandler _handler = handler;
+    private readonly IRequestHandler<DeleteGroupsCommand, List<Group>> _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
 
     public async Task<List<Group>> Handle(
