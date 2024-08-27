@@ -7,11 +7,12 @@ namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNext
 
 public class TransferGroupsToNextCourseCommandHandlerCached(
     ICacheService cacheService,
-    TransferGroupsToNextCourseCommandHandler handler
+    IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>> handler
 ) : IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly TransferGroupsToNextCourseCommandHandler _handler = handler;
+    private readonly IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>> _handler =
+        handler;
 
     public async Task<List<Group>> Handle(
         TransferGroupsToNextCourseCommand request,
