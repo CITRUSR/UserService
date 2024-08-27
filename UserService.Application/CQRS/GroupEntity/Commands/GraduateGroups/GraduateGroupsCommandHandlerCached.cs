@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
 
 public class GraduateGroupsCommandHandlerCached(
     ICacheService cacheService,
-    GraduateGroupsCommandHandler handler
+    IRequestHandler<GraduateGroupsCommand, List<Group>> handler
 ) : IRequestHandler<GraduateGroupsCommand, List<Group>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly GraduateGroupsCommandHandler _handler = handler;
+    private readonly IRequestHandler<GraduateGroupsCommand, List<Group>> _handler = handler;
 
     public async Task<List<Group>> Handle(
         GraduateGroupsCommand request,
