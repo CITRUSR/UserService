@@ -6,12 +6,12 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
 
 public class DropOutStudentCommandHandlerCached(
-    DropOutStudentCommandHandler handler,
+    IRequestHandler<DropOutStudentCommand, Guid> handler,
     ICacheService cacheService
 ) : IRequestHandler<DropOutStudentCommand, Guid>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly DropOutStudentCommandHandler _handler = handler;
+    private readonly IRequestHandler<DropOutStudentCommand, Guid> _handler = handler;
 
     public async Task<Guid> Handle(
         DropOutStudentCommand request,
