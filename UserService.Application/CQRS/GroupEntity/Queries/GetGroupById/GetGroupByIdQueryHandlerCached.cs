@@ -6,11 +6,11 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 
 public class GetGroupByIdQueryHandlerCached(
-    GetGroupByIdQueryHandler handler,
+    IRequestHandler<GetGroupByIdQuery, Group> handler,
     ICacheService cacheService
 ) : IRequestHandler<GetGroupByIdQuery, Group>
 {
-    private readonly GetGroupByIdQueryHandler _handler = handler;
+    private readonly IRequestHandler<GetGroupByIdQuery, Group> _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
 
     public async Task<Group> Handle(GetGroupByIdQuery request, CancellationToken cancellationToken)

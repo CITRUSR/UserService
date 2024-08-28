@@ -1,41 +1,52 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Queries;
 
-public class GetGroupById(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class GetGroupById
 {
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+
+    public GetGroupById()
+    {
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
+    }
+
     [Fact]
     public async Task GetGroupById_ShouldBe_Success()
     {
-        var group = Fixture.Create<Group>();
+        var group = _fixture.Create<Group>();
 
-        await DbHelper.AddGroupsToContext(group);
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([group]);
 
         var query = new GetGroupByIdQuery(group.Id);
 
-        var groupRes = await Action(query);
+        var handler = new GetGroupByIdQueryHandler(_mockDbContext.Object);
 
-        Context.Groups.FirstOrDefault(x => x.Id == group.Id).Should().BeEquivalentTo(groupRes);
+        var result = await handler.Handle(query, default);
+
+        result.Should().NotBeNull();
+        result.Id.Should().Be(group.Id);
     }
 
     [Fact]
     public async Task GetGroupById_ShouldBe_GroupNotFoundException()
     {
-        var query = Fixture.Create<GetGroupByIdQuery>();
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([]);
 
-        Func<Task> act = async () => await Action(query);
+        var query = new GetGroupByIdQuery(125125);
+
+        var handler = new GetGroupByIdQueryHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(query, default);
 
         await act.Should().ThrowAsync<GroupNotFoundException>();
-    }
-
-    private async Task<Group> Action(GetGroupByIdQuery query)
-    {
-        var handler = new GetGroupByIdQueryHandler(Context);
-
-        return await handler.Handle(query, CancellationToken.None);
     }
 }
