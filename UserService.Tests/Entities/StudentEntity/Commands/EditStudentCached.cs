@@ -1,45 +1,64 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
 
-public class EditStudentCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class EditStudentCached
 {
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<IRequestHandler<EditStudentCommand, Student>> _mockHandler;
+    private readonly IFixture _fixture;
+
+    public EditStudentCached()
+    {
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<EditStudentCommand, Student>>();
+        _fixture = new Fixture();
+    }
+
     [Fact]
     public async Task EditStudentCached_ShouldBe_Success()
     {
-        var student = Fixture.Create<Student>();
+        var student = _fixture.Create<Student>();
 
-        await DbHelper.AddStudentsToContext(student);
+        _mockHandler
+            .Setup(x => x.Handle(It.IsAny<EditStudentCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(student);
 
-        await CacheService.SetObjectAsync<Student>(
-            CacheKeys.ById<Student, Guid>(student.Id),
-            student
-        );
-
-        var command = Fixture
-            .Build<EditStudentCommand>()
-            .With(x => x.Id, student.Id)
-            .With(x => x.FirstName, "asdasdasd")
-            .With(x => x.LastName, "asdasdasd")
-            .With(x => x.PatronymicName, "asdasdasd")
-            .With(x => x.GroupId, student.GroupId)
-            .Create();
+        var command = _fixture.Create<EditStudentCommand>();
 
         var handler = new EditStudentCommandHandlerCached(
-            CacheService,
-            new EditStudentCommandHandler(Context)
+            _mockCacheService.Object,
+            _mockHandler.Object
         );
 
-        await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, default);
 
-        var studentFromCache = await CacheService.GetObjectAsync<Student>(
-            CacheKeys.ById<Student, Guid>(student.Id)
+        _mockHandler.Verify(x => x.Handle(command, It.IsAny<CancellationToken>()), Times.Once());
+
+        _mockCacheService.Verify(
+            x =>
+                x.RemoveAsync(
+                    It.Is<string>(x => x.Equals(CacheKeys.ById<Student, Guid>(student.Id))),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once()
         );
 
-        studentFromCache.Should().BeNull();
+        _mockCacheService.Verify(
+            x =>
+                x.RemoveAsync(
+                    It.Is<string>(x => x.Equals(CacheKeys.GetEntities<Student>())),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once()
+        );
+
+        result.Should().NotBeNull();
     }
 }
