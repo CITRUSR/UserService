@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 
 public class EditStudentCommandHandlerCached(
     ICacheService cacheService,
-    EditStudentCommandHandler handler
+    IRequestHandler<EditStudentCommand, Student> handler
 ) : IRequestHandler<EditStudentCommand, Student>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly EditStudentCommandHandler _handler = handler;
+    private readonly IRequestHandler<EditStudentCommand, Student> _handler = handler;
 
     public async Task<Student> Handle(
         EditStudentCommand request,
