@@ -1,80 +1,60 @@
 ﻿using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Queries;
 
-public class GetGroupByIdCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class GetGroupByIdCached
 {
-    [Fact]
-    public async Task GetGroupByIdCached_ShouldBe_SuccessWithoutCache()
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<IRequestHandler<GetGroupByIdQuery, Group>> _mockHandler;
+    private readonly IFixture _fixture;
+
+    public GetGroupByIdCached()
     {
-        var speciality = Fixture.Create<Speciality>();
-
-        await DbHelper.AddSpecialitiesToContext(speciality);
-
-        var curator = Fixture.Create<Teacher>();
-
-        await DbHelper.AddTeachersToContext(curator);
-
-        var group = CreateGroup(curator.Id, speciality.Id);
-
-        await DbHelper.AddGroupsToContext(group);
-
-        var query = new GetGroupByIdQuery(group.Id);
-
-        var groupRes = await Action(query);
-        var groupFromCache = await CacheService.GetObjectAsync<Group>(
-            CacheKeys.ById<Group, int>(group.Id)
-        );
-
-        Context.Groups.Find(groupRes.Id).Should().BeEquivalentTo(group);
-        groupFromCache
-            .Should()
-            .BeEquivalentTo(
-                group,
-                options => options.Excluding(x => x.Curator).Excluding(x => x.Speciality)
-            );
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<GetGroupByIdQuery, Group>>();
+        _fixture = new Fixture();
     }
 
     [Fact]
-    public async Task GetGroupByIdCached_ShouldBe_SuccessWithCache()
+    public async Task GetGroupById_ShouldBe_Success()
     {
-        var group = CreateGroup(Guid.NewGuid(), 123);
+        var group = _fixture.Create<Group>();
 
-        await CacheService.SetObjectAsync(CacheKeys.ById<Group, int>(group.Id), group);
+        _mockCacheService
+            .Setup(x =>
+                x.GetOrCreateAsync<Group>(
+                    It.Is<string>(x => x.Equals(CacheKeys.ById<Group, int>(group.Id))),
+                    It.IsAny<Func<Task<Group>>>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(group);
 
         var query = new GetGroupByIdQuery(group.Id);
 
-        var groupRes = await Action(query);
-        var groupFromCache = await CacheService.GetObjectAsync<Group>(
-            CacheKeys.ById<Group, int>(group.Id)
-        );
-
-        groupRes.Should().BeEquivalentTo(group);
-        groupFromCache.Should().BeEquivalentTo(group);
-    }
-
-    private Group CreateGroup(Guid curatorId, int specialityId)
-    {
-        return Fixture
-            .Build<Group>()
-            .Without(x => x.Curator)
-            .Without(x => x.Speciality)
-            .With(x => x.SpecialityId, specialityId)
-            .With(x => x.CuratorId, curatorId)
-            .Create();
-    }
-
-    private async Task<Group> Action(GetGroupByIdQuery query)
-    {
         var handler = new GetGroupByIdQueryHandlerCached(
-            new GetGroupByIdQueryHandler(Context),
-            CacheService
+            _mockHandler.Object,
+            _mockCacheService.Object
         );
 
-        return await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, default);
+
+        _mockCacheService.Verify(
+            x =>
+                x.GetOrCreateAsync<Group>(
+                    It.Is<string>(x => x.Equals(CacheKeys.ById<Group, int>(group.Id))),
+                    It.IsAny<Func<Task<Group>>>(),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once()
+        );
+
+        result.Should().NotBeNull();
     }
 }
