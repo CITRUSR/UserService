@@ -6,12 +6,12 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 
 public class GetStudentBySsoIdQueryHandlerCached(
-    GetStudentBySsoIdQueryHandler handler,
+    IRequestHandler<GetStudentBySsoIdQuery, Student> handler,
     ICacheService cacheService
 ) : IRequestHandler<GetStudentBySsoIdQuery, Student>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly GetStudentBySsoIdQueryHandler _handler = handler;
+    private readonly IRequestHandler<GetStudentBySsoIdQuery, Student> _handler = handler;
 
     public async Task<Student> Handle(
         GetStudentBySsoIdQuery request,
