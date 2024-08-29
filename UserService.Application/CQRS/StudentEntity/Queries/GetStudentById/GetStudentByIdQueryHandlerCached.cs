@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 
 public class GetStudentByIdQueryHandlerCached(
     ICacheService cacheService,
-    GetStudentByIdQueryHandler handler
+    IRequestHandler<GetStudentByIdQuery, Student> handler
 ) : IRequestHandler<GetStudentByIdQuery, Student>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly GetStudentByIdQueryHandler _handler = handler;
+    private readonly IRequestHandler<GetStudentByIdQuery, Student> _handler = handler;
 
     public async Task<Student> Handle(
         GetStudentByIdQuery request,
