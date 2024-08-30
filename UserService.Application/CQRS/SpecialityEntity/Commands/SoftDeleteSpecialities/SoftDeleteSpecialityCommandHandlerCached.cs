@@ -7,12 +7,13 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 
 public class SoftDeleteSpecialitiesCommandHandlerCached(
-    SoftDeleteSpecialitiesCommandHandler handler,
+    IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>> handler,
     ICacheService cacheService
 ) : IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly SoftDeleteSpecialitiesCommandHandler _handler = handler;
+    private readonly IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>> _handler =
+        handler;
 
     public async Task<List<Speciality>> Handle(
         SoftDeleteSpecialitiesCommand request,
