@@ -1,45 +1,76 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 
-public class SoftDeleteSpecialitiesCached(DatabaseFixture databaseFixture)
-    : RedisTest(databaseFixture)
+public class SoftDeleteSpecialitiesCached
 {
-    [Fact]
-    public async Task SoftDeleteSpecialitiesCached_ShouldBe_Success()
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<
+        IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>
+    > _mockHandler;
+    private readonly IFixture _fixture;
+
+    public SoftDeleteSpecialitiesCached()
     {
-        var specialities = Fixture.CreateMany<Speciality>(5);
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>>();
+        _fixture = new Fixture();
+    }
 
-        await DbHelper.AddSpecialitiesToContext([.. specialities]);
+    [Fact]
+    public async Task SoftDeleteSpecialititesCached_ShouldBe_Success()
+    {
+        var groups = _fixture.CreateMany<Speciality>(3).ToList();
+        var ids = groups.Select(x => x.Id).ToList();
 
-        var command = new SoftDeleteSpecialitiesCommand(specialities.Select(x => x.Id).ToList());
+        var command = _fixture
+            .Build<SoftDeleteSpecialitiesCommand>()
+            .With(x => x.SpecialitiesId, ids)
+            .Create();
 
-        foreach (var speciality in specialities)
-        {
-            await CacheService.SetObjectAsync<Speciality>(
-                CacheKeys.ById<Speciality, int>(speciality.Id),
-                speciality
-            );
-        }
+        _mockHandler
+            .Setup(x =>
+                x.Handle(
+                    It.Is<SoftDeleteSpecialitiesCommand>(x => x.SpecialitiesId == ids),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(groups);
 
         var handler = new SoftDeleteSpecialitiesCommandHandlerCached(
-            new SoftDeleteSpecialitiesCommandHandler(Context),
-            CacheService
+            _mockHandler.Object,
+            _mockCacheService.Object
         );
 
-        var specialitiesRes = await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, default);
 
-        foreach (var speciality in specialitiesRes)
+        _mockHandler.Verify(x => x.Handle(command, default), Times.Once());
+
+        foreach (var group in groups)
         {
-            var specialityFromCache = await CacheService.GetObjectAsync<Speciality>(
-                CacheKeys.ById<Speciality, int>(speciality.Id)
+            _mockCacheService.Verify(
+                x =>
+                    x.RemoveAsync(
+                        It.Is<string>(x => x.Equals(CacheKeys.ById<Speciality, int>(group.Id))),
+                        default
+                    ),
+                Times.Once()
             );
-
-            specialityFromCache.Should().BeNull();
         }
+
+        _mockCacheService.Verify(x =>
+            x.RemoveAsync(
+                It.Is<string>(x => x.Equals(CacheKeys.GetEntities<Speciality>())),
+                default
+            )
+        );
+
+        result.Should().NotBeNull();
     }
 }
