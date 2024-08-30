@@ -1,43 +1,92 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 
-public class DeleteSpeciality(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class DeleteSpecialities
 {
-    [Fact]
-    public async Task DeleteSpeciality_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+
+    public DeleteSpecialities()
     {
-        var specialities = Fixture.CreateMany<Speciality>(3);
-
-        await DbHelper.AddSpecialitiesToContext([.. specialities]);
-
-        var command = new DeleteSpecialityCommand(specialities.Select(x => x.Id).ToList());
-
-        var specialitiesRes = await Action(command);
-
-        var t = Context.Specialities;
-
-        Context.Specialities.Should().BeEmpty();
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
     }
 
     [Fact]
-    public async Task DeleteSpeciality_ShouldBe_SpecialityNotFoundException()
+    public async Task DeleteSpecialities_ShouldBe_Success()
     {
-        var command = new DeleteSpecialityCommand([1123, 123]);
+        var specialitites = _fixture.CreateMany<Speciality>(3);
 
-        Func<Task> act = async () => await Action(command);
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([.. specialitites]);
+
+        var command = _fixture
+            .Build<DeleteSpecialityCommand>()
+            .With(x => x.SpecialitiesId, [.. specialitites.Select(x => x.Id)])
+            .Create();
+
+        var handler = new DeleteSpecialityCommandHandler(_mockDbContext.Object);
+
+        await handler.Handle(command, CancellationToken.None);
+
+        _mockDbContext.Verify(
+            x =>
+                x.Specialities.RemoveRange(
+                    It.Is<List<Speciality>>(x =>
+                        x.TrueForAll(z => command.SpecialitiesId.Contains(z.Id))
+                    )
+                ),
+            Times.Once()
+        );
+
+        _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+        _mockDbContext.Verify(x => x.CommitTransactionAsync(), Times.Once());
+    }
+
+    [Fact]
+    public async Task DeleteSpecialities_ShouldBe_SpecialityNotFoundException_WhenSoecialitiesDoNotExist()
+    {
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([]);
+
+        var command = _fixture
+            .Build<DeleteSpecialityCommand>()
+            .With(x => x.SpecialitiesId, [123, 512, 46])
+            .Create();
+
+        var handler = new DeleteSpecialityCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<SpecialityNotFoundException>();
     }
 
-    private async Task<List<Speciality>> Action(DeleteSpecialityCommand command)
+    [Fact]
+    public async Task DeleteSpecialities_ShouldBe_CallRallback_WhenThrowException()
     {
-        var handler = new DeleteSpecialityCommandHandler(Context);
+        var specialities = _fixture.CreateMany<Speciality>(3);
 
-        return await handler.Handle(command, CancellationToken.None);
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([.. specialities]);
+        _mockDbContext
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .Throws(new Exception());
+
+        var command = _fixture
+            .Build<DeleteSpecialityCommand>()
+            .With(x => x.SpecialitiesId, [.. specialities.Select(x => x.Id)])
+            .Create();
+
+        var handler = new DeleteSpecialityCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
+
+        await act.Should().ThrowAsync<Exception>();
+
+        _mockDbContext.Verify(x => x.RollbackTransactionAsync(), Times.Once());
     }
 }
