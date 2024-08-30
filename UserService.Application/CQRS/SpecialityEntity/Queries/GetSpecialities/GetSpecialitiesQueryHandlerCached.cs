@@ -9,11 +9,12 @@ namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 
 public class GetSpecialitiesQueryHandlerCached(
     ICacheService cacheService,
-    GetSpecialitiesQueryHandler handler
+    IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>> handler
 ) : IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly GetSpecialitiesQueryHandler _handler = handler;
+    private readonly IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>> _handler =
+        handler;
 
     public async Task<PaginationList<Speciality>> Handle(
         GetSpecialitiesQuery request,
