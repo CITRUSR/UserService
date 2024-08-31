@@ -1,103 +1,110 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class EditGroup(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class EditGroup
 {
-    [Fact]
-    public async Task EditGroup_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+    private readonly EditGroupCommand _command;
+
+    public EditGroup()
     {
-        var speciality = Fixture.Create<Speciality>();
-
-        await DbHelper.AddSpecialitiesToContext(speciality);
-
-        var curator = Fixture.Create<Teacher>();
-
-        await DbHelper.AddTeachersToContext(curator);
-
-        var oldGroup = Fixture.Build<Group>().With(x => x.Id, 535478).Create();
-
-        var newGroup = Fixture
-            .Build<Group>()
-            .With(x => x.CuratorId, curator.Id)
-            .With(x => x.SpecialityId, speciality.Id)
-            .With(x => x.Id, oldGroup.Id)
-            .With(x => x.Curator, curator)
-            .With(x => x.Speciality, speciality)
-            .With(x => x.StartedAt, oldGroup.StartedAt)
-            .With(x => x.GraduatedAt, oldGroup.GraduatedAt)
-            .Create();
-
-        await DbHelper.AddGroupsToContext(oldGroup);
-
-        var command = new EditGroupCommand(
-            newGroup.Id,
-            speciality.Id,
-            curator.Id,
-            newGroup.CurrentCourse,
-            newGroup.CurrentSemester,
-            newGroup.SubGroup,
-            newGroup.IsDeleted
-        );
-
-        var group = await Action(command);
-
-        group.Should().BeEquivalentTo(newGroup);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
+        _command = _fixture.Create<EditGroupCommand>();
     }
 
     [Fact]
-    public async Task EditGroup_ShouldBe_GroupNotFoundException()
+    public async Task EditGroup_ShouldBe_Success()
     {
-        var command = Fixture.Create<EditGroupCommand>();
+        var group = _fixture.Build<Group>().With(x => x.Id, _command.Id).Create();
 
-        Func<Task> act = async () => await Action(command);
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([group]);
+
+        _mockDbContext
+            .Setup(x =>
+                x.Specialities.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync(new Speciality());
+
+        _mockDbContext
+            .Setup(x => x.Teachers.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Teacher());
+
+        var handler = new EditGroupCommandHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(_command, default);
+
+        _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+
+        group.CuratorId.Should().Be(_command.CuratorId);
+        group.SpecialityId.Should().Be(_command.SpecialityId);
+        group.CurrentCourse.Should().Be(_command.CurrentCourse);
+        group.CurrentSemester.Should().Be(_command.CurrentSemester);
+        group.IsDeleted.Should().Be(_command.IsDeleted);
+        group.SubGroup.Should().Be(_command.SubGroup);
+    }
+
+    [Fact]
+    public async Task EditGroup_ShouldBe_GroupNotFoundException_WhenGroupDoesNotExist()
+    {
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([new Group()]);
+
+        var handler = new EditGroupCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(_command, default);
 
         await act.Should().ThrowAsync<GroupNotFoundException>();
     }
 
     [Fact]
-    public async Task EditGroup_ShouldBe_SpecialityNotFoundException()
+    public async Task EditGroup_ShouldBe_SpecialityNotFoundException_WhenSpecialityDoesNotExist()
     {
-        var group = Fixture.Create<Group>();
+        var group = _fixture.Build<Group>().With(x => x.Id, _command.Id).Create();
 
-        await DbHelper.AddGroupsToContext(group);
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([group]);
 
-        var command = Fixture.Build<EditGroupCommand>().With(x => x.Id, group.Id).Create();
+        _mockDbContext
+            .Setup(x =>
+                x.Specialities.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync((Speciality?)null);
 
-        Func<Task> act = async () => await Action(command);
+        var handler = new EditGroupCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(_command, default);
 
         await act.Should().ThrowAsync<SpecialityNotFoundException>();
     }
 
     [Fact]
-    public async Task EditGroup_ShouldBe_TeacherNotFoundException()
+    public async Task EditGroup_ShouldBe_TeacherNotFoundException_WhenCuratorDoesNotExist()
     {
-        var group = Fixture.Create<Group>();
+        var group = _fixture.Build<Group>().With(x => x.Id, _command.Id).Create();
 
-        var speciality = Fixture.Create<Speciality>();
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([group]);
 
-        await DbHelper.AddGroupsToContext(group);
-        await DbHelper.AddSpecialitiesToContext(speciality);
+        _mockDbContext
+            .Setup(x =>
+                x.Specialities.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync(new Speciality());
 
-        var command = Fixture
-            .Build<EditGroupCommand>()
-            .With(x => x.Id, group.Id)
-            .With(x => x.SpecialityId, speciality.Id)
-            .Create();
+        _mockDbContext
+            .Setup(x => x.Teachers.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Teacher?)null);
 
-        Func<Task> act = async () => await Action(command);
+        var handler = new EditGroupCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(_command, default);
 
         await act.Should().ThrowAsync<TeacherNotFoundException>();
-    }
-
-    private async Task<Group> Action(EditGroupCommand command)
-    {
-        var handler = new EditGroupCommandHandler(Context);
-
-        return await handler.Handle(command, CancellationToken.None);
     }
 }

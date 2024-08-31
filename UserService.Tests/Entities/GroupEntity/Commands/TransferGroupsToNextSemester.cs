@@ -1,86 +1,121 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class TransferGroupsToNextSemester(DatabaseFixture databaseFixture)
-    : CommonTest(databaseFixture)
+public class TransferGroupsToNextSemester
 {
-    [Fact]
-    public async Task TransferGroupsToNextSemester_ShouldBe_SuccessWithList()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+
+    public TransferGroupsToNextSemester()
     {
-        var semesters = await Arrange(6);
-
-        var command = new TransferGroupsToNextSemesterCommand(
-            Context.Groups.Select(x => x.Id).ToList()
-        );
-
-        var groups = await Action(command);
-
-        Assert(groups, semesters);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
     }
 
     [Fact]
-    public async Task TransferGroupsToNextSemester_ShouldBe_GroupSemesterOutOfRange()
+    public async Task TransferGroupsToNextSemester_ShouldBe_Success()
     {
-        await Arrange(8);
+        var speciality = _fixture.Build<Speciality>().With(x => x.DurationMonths, 48).Create();
 
-        var command = new TransferGroupsToNextSemesterCommand(
-            Context.Groups.Select(x => x.Id).ToList()
+        _fixture.Customize<Group>(x =>
+            x.With(x => x.CurrentSemester, 2).With(x => x.Speciality, speciality)
         );
 
-        Func<Task> act = async () => await Action(command);
+        var groups = _fixture.CreateMany<Group>(3);
+
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([.. groups]);
+
+        var command = _fixture
+            .Build<TransferGroupsToNextSemesterCommand>()
+            .With(x => x.IdGroups, [.. groups.Select(x => x.Id)])
+            .Create();
+
+        var handler = new TransferGroupsToNextSemesterCommandHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(command, default);
+
+        _mockDbContext.Verify(x => x.BeginTransactionAsync(), Times.Once());
+
+        _mockDbContext.Verify(x => x.CommitTransactionAsync(), Times.Once());
+
+        groups.All(x => x.CurrentSemester == 3).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task TransferGroupsToNextSemester_ShouldBe_GroupNotFoundException_WhenGroupsDoNotExist()
+    {
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([]);
+
+        var command = _fixture
+            .Build<TransferGroupsToNextSemesterCommand>()
+            .With(x => x.IdGroups, [123, 512, 46, 7])
+            .Create();
+
+        var handler = new TransferGroupsToNextSemesterCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(command, default);
+
+        await act.Should().ThrowAsync<GroupNotFoundException>();
+    }
+
+    [Fact]
+    public async Task TransferGroupsToNextSemester_ShouldBe_GroupSemesterOutOfRangeException_WhenGroupCourseOutOfRange()
+    {
+        var speciality = _fixture.Build<Speciality>().With(x => x.DurationMonths, 12).Create();
+
+        _fixture.Customize<Group>(x =>
+            x.With(x => x.CurrentSemester, 2).With(x => x.Speciality, speciality)
+        );
+
+        var groups = _fixture.CreateMany<Group>(3);
+
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([.. groups]);
+
+        var command = _fixture
+            .Build<TransferGroupsToNextSemesterCommand>()
+            .With(x => x.IdGroups, [.. groups.Select(x => x.Id)])
+            .Create();
+
+        var handler = new TransferGroupsToNextSemesterCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(command, default);
 
         await act.Should().ThrowAsync<GroupSemesterOutOfRangeException>();
     }
 
     [Fact]
-    public async Task TransferGroupsToNextSemester_ShouldBe_GroupNotFoundException()
+    public async Task TransferGroupsToNextSemester_ShouldBe_CallRallback_WhenThrowException()
     {
-        var command = new TransferGroupsToNextSemesterCommand([123]);
+        var speciality = _fixture.Build<Speciality>().With(x => x.DurationMonths, 48).Create();
 
-        Func<Task> act = async () => await Action(command);
+        _fixture.Customize<Group>(x =>
+            x.With(x => x.CurrentSemester, 2).With(x => x.Speciality, speciality)
+        );
 
-        await act.Should().ThrowAsync<GroupNotFoundException>();
-    }
+        _mockDbContext.Setup(x => x.CommitTransactionAsync()).Throws(new Exception());
 
-    private async Task<Dictionary<Group, byte>> Arrange(int currentSemester)
-    {
-        var speciality = Fixture.Build<Speciality>().With(x => x.DurationMonths, 46).Create();
+        var groups = _fixture.CreateMany<Group>(3);
 
-        var group1 = Fixture
-            .Build<Group>()
-            .With(x => x.CurrentSemester, currentSemester)
-            .With(x => x.Speciality, speciality)
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([.. groups]);
+
+        var command = _fixture
+            .Build<TransferGroupsToNextSemesterCommand>()
+            .With(x => x.IdGroups, [.. groups.Select(x => x.Id)])
             .Create();
 
-        var group2 = Fixture
-            .Build<Group>()
-            .With(x => x.CurrentSemester, currentSemester)
-            .With(x => x.Speciality, speciality)
-            .Create();
+        var handler = new TransferGroupsToNextSemesterCommandHandler(_mockDbContext.Object);
 
-        await DbHelper.AddSpecialitiesToContext(speciality);
-        await DbHelper.AddGroupsToContext(group1, group2);
+        Func<Task> act = async () => await handler.Handle(command, default);
 
-        return Context.Groups.ToDictionary(x => x, x => x.CurrentSemester);
-    }
+        await act.Should().ThrowAsync<Exception>();
 
-    private async Task<List<Group>> Action(TransferGroupsToNextSemesterCommand command)
-    {
-        var handler = new TransferGroupsToNextSemesterCommandHandler(Context);
-
-        return await handler.Handle(command, CancellationToken.None);
-    }
-
-    private void Assert(List<Group> groups, Dictionary<Group, byte> semesters)
-    {
-        foreach (var group in groups)
-        {
-            semesters[group].Should().Be(--group.CurrentSemester);
-        }
+        _mockDbContext.Verify(x => x.RollbackTransactionAsync(), Times.Once());
     }
 }

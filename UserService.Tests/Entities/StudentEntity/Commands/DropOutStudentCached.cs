@@ -1,38 +1,60 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
 
-public class DropOutStudentCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class DropOutStudentCached
 {
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<IRequestHandler<DropOutStudentCommand, Guid>> _mockHandler;
+
+    public DropOutStudentCached()
+    {
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<DropOutStudentCommand, Guid>>();
+    }
+
     [Fact]
     public async Task DropOutStudentCached_ShouldBe_Success()
     {
-        var student = Fixture.Create<Student>();
+        var id = Guid.NewGuid();
 
-        await DbHelper.AddStudentsToContext(student);
+        _mockHandler
+            .Setup(x => x.Handle(It.IsAny<DropOutStudentCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(id);
 
-        await CacheService.SetObjectAsync<Student>(
-            CacheKeys.ById<Student, Guid>(student.Id),
-            student
-        );
-
-        var command = Fixture.Build<DropOutStudentCommand>().With(x => x.Id, student.Id).Create();
+        var command = new DropOutStudentCommand(id, DateTime.Now);
 
         var handler = new DropOutStudentCommandHandlerCached(
-            new DropOutStudentCommandHandler(Context),
-            CacheService
+            _mockHandler.Object,
+            _mockCacheService.Object
         );
 
-        var id = await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, default);
 
-        var studentFromCache = await CacheService.GetObjectAsync<Student>(
-            CacheKeys.ById<Student, Guid>(id)
+        _mockCacheService.Verify(
+            x =>
+                x.RemoveAsync(
+                    It.Is<string>(x => x.Equals(CacheKeys.ById<Student, Guid>(id))),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once()
         );
 
-        studentFromCache.Should().BeNull();
+        _mockCacheService.Verify(
+            x =>
+                x.RemoveAsync(
+                    It.Is<string>(x => x.Equals(CacheKeys.GetEntities<Student>())),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once()
+        );
+
+        result.Should().NotBeEmpty();
     }
 }

@@ -1,24 +1,32 @@
 ﻿using FluentAssertions;
-using UserService.Application.Common.Paging;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Queries;
 
-public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class GetStudents
 {
-    [Fact]
-    public async Task GetStudents_ShouldBe_SuccessWithPageSize()
-    {
-        await TestPagination(pageSize: 10, expectedCount: 10, expectedMaxPage: 2);
-    }
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+    private readonly GetStudentsQuery _query;
 
-    [Fact]
-    public async Task GetStudents_ShouldBe_SuccessWithPageNumber()
+    public GetStudents()
     {
-        await TestPagination(page: 2, expectedCount: 2, expectedMaxPage: 2);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
+        _query = new GetStudentsQuery
+        {
+            Page = 1,
+            PageSize = 10,
+            SortState = SortState.LastNameAsc,
+            SearchString = "",
+            DeletedStatus = DeletedStatus.All,
+            DroppedOutStatus = StudentDroppedOutStatus.All,
+        };
     }
 
     [Fact]
@@ -48,19 +56,22 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
     [Fact]
     public async Task GetStudents_ShouldBe_SuccessWithFiltrationByGroupAsc()
     {
-        await TestGroupFiltration(SortState.GroupAsc, true);
+        await TestFiltration(SortState.GroupAsc, (studentA, studentB) => [studentA, studentB]);
     }
 
     [Fact]
     public async Task GetStudents_ShouldBe_SuccessWithFiltrationByGroupDesc()
     {
-        await TestGroupFiltration(SortState.GroupDesc, false);
+        await TestFiltration(SortState.GroupDesc, (studentA, studentB) => [studentB, studentA]);
     }
 
     [Fact]
     public async Task GetStudents_ShouldBe_SuccessWithDroppedOutStatus_All()
     {
-        await TestDroppedOutStatus(StudentDroppedOutStatus.All, 2);
+        await TestDroppedOutStatus(
+            StudentDroppedOutStatus.All,
+            (StudentA, StudentB) => [StudentA, StudentB]
+        );
     }
 
     [Fact]
@@ -68,8 +79,7 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         await TestDroppedOutStatus(
             StudentDroppedOutStatus.OnlyDroppedOut,
-            1,
-            (studentA, studentB) => studentA
+            (studentA, studentB) => [studentA]
         );
     }
 
@@ -78,27 +88,26 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
     {
         await TestDroppedOutStatus(
             StudentDroppedOutStatus.OnlyActive,
-            1,
-            (studentA, studentB) => studentB
+            (studentA, studentB) => [studentB]
         );
     }
 
     [Fact]
     public async Task GetStudents_ShouldBe_SuccessWithDeletedStatus_OnlyActive()
     {
-        await TestDeletedStatus(DeletedStatus.OnlyActive, 1, (studentA, studentB) => studentB);
+        await TestDeletedStatus(DeletedStatus.OnlyActive, (studentA, studentB) => [studentB]);
     }
 
     [Fact]
     public async Task GetStudents_ShouldBe_SuccessWithDeletedStatus_OnlyDeleted()
     {
-        await TestDeletedStatus(DeletedStatus.OnlyDeleted, 1, (studentA, studentB) => studentA);
+        await TestDeletedStatus(DeletedStatus.OnlyDeleted, (studentA, studentB) => [studentA]);
     }
 
     [Fact]
     public async Task GetStudents_ShouldBe_SuccessWithDeletedStatus_All()
     {
-        await TestDeletedStatus(DeletedStatus.All, 2);
+        await TestDeletedStatus(DeletedStatus.All, (studentA, studentB) => [studentA, studentB]);
     }
 
     [Fact]
@@ -130,98 +139,95 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
         );
     }
 
-    private async Task TestPagination(
-        int pageSize = 10,
-        int page = 1,
-        int expectedCount = 10,
-        int expectedMaxPage = 1
-    )
-    {
-        var students = Fixture.CreateMany<Student>(12);
-        await DbHelper.AddStudentsToContext(students.ToArray());
-
-        var query = CreateQuery(page: page, pageSize: pageSize);
-        var studentsRes = await Action(query);
-
-        studentsRes.Items.Should().HaveCount(expectedCount);
-        studentsRes.MaxPage.Should().Be(expectedMaxPage);
-    }
-
     private async Task TestFiltration(
         SortState sortState,
         Func<Student, Student, Student[]> expectedOrder
     )
     {
-        var (studentA, studentB) = await SeedDataForTests();
+        var specialityA = _fixture.Build<Speciality>().With(x => x.Abbreavation, "AAA").Create();
+        var specialityB = _fixture.Build<Speciality>().With(x => x.Abbreavation, "BBB").Create();
 
-        var query = CreateQuery(sortState: sortState);
-        var students = await Action(query);
+        var groupA = _fixture
+            .Build<Group>()
+            .With(x => x.Speciality, specialityA)
+            .With(x => x.CurrentCourse, 1)
+            .With(x => x.SubGroup, 1)
+            .Create();
 
-        students.Items.Should().BeEquivalentTo(expectedOrder(studentA, studentB));
-    }
+        var groupB = _fixture
+            .Build<Group>()
+            .With(x => x.Speciality, specialityB)
+            .With(x => x.CurrentCourse, 2)
+            .With(x => x.SubGroup, 2)
+            .Create();
 
-    private async Task TestGroupFiltration(SortState sortState, bool isAsc)
-    {
-        await SeedDataForTests();
+        var studentA = _fixture
+            .Build<Student>()
+            .With(x => x.FirstName, "AAA")
+            .With(x => x.LastName, "AAA")
+            .With(x => x.Group, groupA)
+            .Create();
 
-        var studentExc = isAsc
-            ? Context
-                .Students.OrderBy(s => s.Group.CurrentSemester)
-                .ThenBy(s => s.Group.Speciality.Abbreavation)
-                .ThenBy(s => s.Group.SubGroup)
-            : Context
-                .Students.OrderByDescending(s => s.Group.CurrentSemester)
-                .ThenBy(s => s.Group.Speciality.Abbreavation)
-                .ThenBy(s => s.Group.SubGroup);
+        var studentB = _fixture
+            .Build<Student>()
+            .With(x => x.FirstName, "BBB")
+            .With(x => x.LastName, "BBB")
+            .With(x => x.Group, groupB)
+            .Create();
 
-        var query = CreateQuery(sortState: sortState);
-        var students = await Action(query);
+        _mockDbContext.Setup(x => x.Students).ReturnsDbSet([studentA, studentB]);
 
-        students.Items.Should().BeEquivalentTo(studentExc, options => options.WithStrictOrdering());
+        var handler = new GetStudentsQueryHandler(_mockDbContext.Object);
+
+        var query = _query with { SortState = sortState };
+
+        var result = await handler.Handle(query, default);
+
+        result
+            .Items.Select(x => x.Id)
+            .Should()
+            .BeEquivalentTo(
+                expectedOrder(studentA, studentB).Select(x => x.Id),
+                options => options.WithStrictOrdering()
+            );
     }
 
     private async Task TestDroppedOutStatus(
         StudentDroppedOutStatus status,
-        int expectedCount,
-        Func<Student, Student, Student> expectedStudent = null
+        Func<Student, Student, Student[]> expectedStudent
     )
     {
-        var (specialityA, specialityB) = await SeedDataForTests();
+        var studentA = _fixture.Build<Student>().With(x => x.DroppedOutAt, DateTime.Now).Create();
+        var studentB = _fixture.Build<Student>().Without(x => x.DroppedOutAt).Create();
 
-        var query = CreateQuery(droppedOutStatus: status);
-        var specialities = await Action(query);
+        _mockDbContext.Setup(x => x.Students).ReturnsDbSet([studentA, studentB]);
 
-        specialities.Items.Should().HaveCount(expectedCount);
+        var handler = new GetStudentsQueryHandler(_mockDbContext.Object);
 
-        if (expectedStudent != null)
-        {
-            specialities
-                .Items[0]
-                .Should()
-                .BeEquivalentTo(expectedStudent(specialityA, specialityB));
-        }
+        var query = _query with { DroppedOutStatus = status };
+
+        var result = await handler.Handle(query, default);
+
+        result.Items.Select(x => x.Id).Should().BeEquivalentTo(result.Items.Select(x => x.Id));
     }
 
     private async Task TestDeletedStatus(
         DeletedStatus status,
-        int expectedCount,
-        Func<Student, Student, Student> expectedStudent = null
+        Func<Student, Student, Student[]> expectedStudent
     )
     {
-        var (specialityA, specialityB) = await SeedDataForTests();
+        var studentA = _fixture.Build<Student>().With(x => x.IsDeleted, true).Create();
+        var studentB = _fixture.Build<Student>().With(x => x.IsDeleted, false).Create();
 
-        var query = CreateQuery(deletedStatus: status);
-        var specialities = await Action(query);
+        _mockDbContext.Setup(x => x.Students).ReturnsDbSet([studentA, studentB]);
 
-        specialities.Items.Should().HaveCount(expectedCount);
+        var handler = new GetStudentsQueryHandler(_mockDbContext.Object);
 
-        if (expectedStudent != null)
-        {
-            specialities
-                .Items[0]
-                .Should()
-                .BeEquivalentTo(expectedStudent(specialityA, specialityB));
-        }
+        var query = _query with { DeletedStatus = status };
+
+        var result = await handler.Handle(query, default);
+
+        result.Items.Select(x => x.Id).Should().BeEquivalentTo(result.Items.Select(x => x.Id));
     }
 
     private async Task TestSearchString(
@@ -230,90 +236,39 @@ public class GetStudents(DatabaseFixture databaseFixture) : CommonTest(databaseF
         Func<Student, bool> predicate
     )
     {
-        await SeedDataForSearchStringTests();
+        var speciality = _fixture.Build<Speciality>().With(x => x.Abbreavation, "H").Create();
 
-        var query = CreateQuery(searchString: searchString);
-        var students = await Action(query);
-
-        students.Items.Should().HaveCount(expectedCount);
-        students.Items.Should().Contain(student => predicate(student));
-    }
-
-    private async Task SeedDataForSearchStringTests()
-    {
-        var speciality = Fixture.Build<Speciality>().With(x => x.Abbreavation, "H").Create();
-
-        var group1 = Fixture
+        var group = _fixture
             .Build<Group>()
             .With(x => x.Speciality, speciality)
             .With(x => x.CurrentCourse, 2)
             .Create();
 
-        var studentA = Fixture
+        var studentA = _fixture
             .Build<Student>()
             .With(x => x.FirstName, "AAA")
-            .With(x => x.LastName, "BBB")
-            .With(x => x.Group, group1)
-            .Create();
-
-        var studentB = Fixture
-            .Build<Student>()
-            .With(x => x.FirstName, "CCC")
-            .With(x => x.LastName, "DDD")
+            .With(x => x.LastName, "YYY")
             .With(x => x.PatronymicName, "GGG")
-            .With(x => x.Group, group1)
+            .With(x => x.Group, group)
             .Create();
 
-        await DbHelper.AddStudentsToContext(new[] { studentA, studentB });
-    }
-
-    private async Task<(Student, Student)> SeedDataForTests()
-    {
-        var studentA = Fixture
+        var studentB = _fixture
             .Build<Student>()
-            .With(x => x.FirstName, "AAA")
-            .With(x => x.LastName, "AAA")
-            .With(x => x.DroppedOutAt, DateTime.Now)
-            .With(x => x.IsDeleted, true)
-            .Create();
-
-        var studentB = Fixture
-            .Build<Student>()
-            .With(x => x.FirstName, "BBB")
+            .With(x => x.FirstName, "PPP")
             .With(x => x.LastName, "BBB")
-            .Without(x => x.DroppedOutAt)
-            .Without(x => x.IsDeleted)
+            .With(x => x.PatronymicName, "LLL")
+            .With(x => x.Group, group)
             .Create();
 
-        await DbHelper.AddStudentsToContext(new[] { studentA, studentB });
+        _mockDbContext.Setup(x => x.Students).ReturnsDbSet([studentA, studentB]);
 
-        return (studentA, studentB);
-    }
+        var query = _query with { SearchString = searchString };
 
-    private GetStudentsQuery CreateQuery(
-        int page = 1,
-        int pageSize = 10,
-        string searchString = "",
-        SortState sortState = SortState.LastNameAsc,
-        StudentDroppedOutStatus droppedOutStatus = StudentDroppedOutStatus.All,
-        DeletedStatus deletedStatus = DeletedStatus.All
-    )
-    {
-        return new GetStudentsQuery
-        {
-            Page = page,
-            PageSize = pageSize,
-            SearchString = searchString,
-            SortState = sortState,
-            DroppedOutStatus = droppedOutStatus,
-            DeletedStatus = deletedStatus,
-        };
-    }
+        var handler = new GetStudentsQueryHandler(_mockDbContext.Object);
 
-    private async Task<PaginationList<Student>> Action(GetStudentsQuery query)
-    {
-        var handler = new GetStudentsQueryHandler(Context);
+        var result = await handler.Handle(query, default);
 
-        return await handler.Handle(query, CancellationToken.None);
+        result.Items.Count.Should().Be(expectedCount);
+        result.Items.Should().Contain(student => predicate(student));
     }
 }

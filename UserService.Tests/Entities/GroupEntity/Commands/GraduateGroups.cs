@@ -1,40 +1,60 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class GraduateGroups
 {
-    [Fact]
-    public async Task GraduateGroup_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+
+    public GraduateGroups()
     {
-        await SeedDataForTests();
-
-        DateTime graduatedTime = DateTime.Now;
-
-        var command = new GraduateGroupsCommand(
-            Context.Groups.Select(x => x.Id).ToList(),
-            graduatedTime
-        );
-        var handler = new GraduateGroupsCommandHandler(Context);
-
-        var groupsRes = await handler.Handle(command, CancellationToken.None);
-
-        foreach (var group in groupsRes)
-        {
-            group.GraduatedAt.Should().Be(graduatedTime);
-            group.Students.Where(x => x.DroppedOutAt == null).Should().BeNullOrEmpty();
-        }
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
     }
 
     [Fact]
-    public async Task GraduateGroup_ShouldBe_GroupNotFoundException()
+    public async Task GraduateGroup_ShouldBe_Success()
     {
-        var command = new GraduateGroupsCommand(new List<int> { 12 }, DateTime.Now);
-        var handler = new GraduateGroupsCommandHandler(Context);
+        _fixture.Customize<Group>(c => c.Without(x => x.GraduatedAt));
+
+        var groups = _fixture.CreateMany<Group>(3);
+
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([.. groups]);
+
+        var command = _fixture
+            .Build<GraduateGroupsCommand>()
+            .With(x => x.GroupsId, [.. groups.Select(x => x.Id)])
+            .Create();
+
+        var handler = new GraduateGroupsCommandHandler(_mockDbContext.Object);
+
+        await handler.Handle(command, CancellationToken.None);
+
+        _mockDbContext.Verify(x => x.BeginTransactionAsync(), Times.Once);
+
+        _mockDbContext.Verify(x => x.CommitTransactionAsync(), Times.Once());
+
+        groups.All(x => x.GraduatedAt.HasValue).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task GraduateGroup_ShouldBe_GroupNotFoundException_WhenGroupsDoNotExist()
+    {
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([new Group(), new Group()]);
+
+        var command = _fixture
+            .Build<GraduateGroupsCommand>()
+            .With(x => x.GroupsId, [123, 5236, 547])
+            .Create();
+
+        var handler = new GraduateGroupsCommandHandler(_mockDbContext.Object);
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
@@ -42,37 +62,48 @@ public class GraduateGroups(DatabaseFixture databaseFixture) : CommonTest(databa
     }
 
     [Fact]
-    public async Task GraduateGroup_ShouldBe_GroupAlreadyGraduatedException()
+    public async Task GraduateGroup_ShouldBe_GroupAlreadyGraduatedException_WhenGroupsAlreadyGraduated()
     {
-        await SeedDataForTests();
+        _fixture.Customize<Group>(c => c.With(x => x.GraduatedAt, DateTime.Now));
 
-        var group = Context.Groups.First();
+        var groups = _fixture.CreateMany<Group>(3);
 
-        group.GraduatedAt = DateTime.Now;
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([.. groups]);
 
-        await Context.SaveChangesAsync(CancellationToken.None);
+        var command = _fixture
+            .Build<GraduateGroupsCommand>()
+            .With(x => x.GroupsId, [.. groups.Select(x => x.Id)])
+            .Create();
 
-        var command = new GraduateGroupsCommand(new List<int> { group.Id }, DateTime.Now);
-        var handler = new GraduateGroupsCommandHandler(Context);
+        var handler = new GraduateGroupsCommandHandler(_mockDbContext.Object);
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<GroupAlreadyGraduatedException>();
     }
 
-    private async Task SeedDataForTests()
+    [Fact]
+    public async Task GraduateGroup_ShouldBe_CallRallback_WhenThrowException()
     {
-        var students = Fixture.CreateMany<Student>(5);
-        var groups = Fixture.CreateMany<Group>(3);
-        foreach (var group in groups)
-        {
-            group.GraduatedAt = null;
-            foreach (var student in students)
-            {
-                group.Students.Add(student);
-            }
-        }
+        _fixture.Customize<Group>(c => c.With(x => x.GraduatedAt, DateTime.Now));
 
-        await DbHelper.AddGroupsToContext([.. groups]);
+        var groups = _fixture.CreateMany<Group>(3);
+
+        _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([.. groups]);
+
+        _mockDbContext.Setup(x => x.BeginTransactionAsync()).Throws(new Exception());
+
+        var command = _fixture
+            .Build<GraduateGroupsCommand>()
+            .With(x => x.GroupsId, [.. groups.Select(x => x.Id)])
+            .Create();
+
+        var handler = new GraduateGroupsCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
+
+        await act.Should().ThrowAsync<Exception>();
+
+        _mockDbContext.Verify(x => x.RollbackTransactionAsync(), Times.Once());
     }
 }

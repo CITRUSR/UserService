@@ -1,30 +1,41 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.CQRS.TeacherEntity.Commands.CreateTeacher;
-using UserService.Tests.Common;
+using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.TeacherEntity.Commands;
 
-public class CreateTeacher(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class CreateTeacher
 {
-    [Fact]
-    public async Task CreateTeacher_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+
+    public CreateTeacher()
     {
-        var command = Fixture
-            .Build<CreateTeacherCommand>()
-            .With(x => x.FirstName, "asadas")
-            .With(x => x.LastName, "asadas")
-            .With(x => x.PatronymicName, "asadas")
-            .Create();
-
-        var id = await Action(command);
-
-        Context.Teachers.FindAsync(id).Should().NotBeNull();
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
     }
 
-    private async Task<Guid> Action(CreateTeacherCommand command)
+    [Fact]
+    public async Task CreateSpeciality_ShouldBe_Success()
     {
-        var handler = new CreateTeacherCommandHandler(Context);
+        _mockDbContext.Setup(x => x.Teachers).ReturnsDbSet([]);
 
-        return await handler.Handle(command, CancellationToken.None);
+        var command = _fixture.Create<CreateTeacherCommand>();
+
+        var handler = new CreateTeacherCommandHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        _mockDbContext.Verify(
+            x => x.Teachers.AddAsync(It.IsAny<Teacher>(), It.IsAny<CancellationToken>()),
+            Times.Once()
+        );
+
+        _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+
+        result.Should().NotBeEmpty();
     }
 }

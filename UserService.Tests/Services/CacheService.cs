@@ -1,33 +1,44 @@
 ﻿using FluentAssertions;
-using UserService.Application.Common.Cache;
-using UserService.Application.Common.Paging;
 using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
 namespace UserService.Tests.Services;
 
-public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class CacheService : IClassFixture<RedisFixture>
 {
+    private readonly IFixture _fixture;
+    private readonly RedisFixture _redisFixture;
+
+    public CacheService(RedisFixture redisFixture)
+    {
+        _fixture = new Fixture();
+        _redisFixture = redisFixture;
+    }
+
     [Fact]
     public async Task CacheService_GetStringAsync_ShouldBe_Success()
     {
         string testString = "12345A";
 
-        await CacheService.SetObjectAsync("test", testString);
+        var key = Guid.NewGuid().ToString();
 
-        var stringFromCache = CacheService.GetStringAsync("test");
+        await _redisFixture.CacheService.SetObjectAsync(key, testString);
+
+        var stringFromCache = _redisFixture.CacheService.GetStringAsync(key);
         stringFromCache.Should().NotBeNull();
     }
 
     [Fact]
     public async Task CacheService_SetObjectAsync_ShouldBe_Success()
     {
-        var speciality = Fixture.Create<Speciality>();
+        var speciality = _fixture.Create<Speciality>();
 
-        await CacheService.SetObjectAsync("test", speciality);
+        var key = Guid.NewGuid().ToString();
 
-        var stringFromCache = await CacheService.GetStringAsync("test");
-        var objectFromCache = await CacheService.GetObjectAsync<Speciality>("test");
+        await _redisFixture.CacheService.SetObjectAsync(key, speciality);
+
+        var stringFromCache = await _redisFixture.CacheService.GetStringAsync(key);
+        var objectFromCache = await _redisFixture.CacheService.GetObjectAsync<Speciality>(key);
 
         stringFromCache.Should().NotBeNull();
         objectFromCache.Should().BeEquivalentTo(speciality);
@@ -36,11 +47,13 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     [Fact]
     public async Task CacheService_GetObjectAsync_ShouldBe_Success()
     {
-        var speciality = Fixture.Create<Speciality>();
+        var speciality = _fixture.Create<Speciality>();
 
-        await CacheService.SetObjectAsync("test", speciality);
+        var key = Guid.NewGuid().ToString();
 
-        var objectFromCache = await CacheService.GetObjectAsync<Speciality>("test");
+        await _redisFixture.CacheService.SetObjectAsync(key, speciality);
+
+        var objectFromCache = await _redisFixture.CacheService.GetObjectAsync<Speciality>(key);
 
         objectFromCache.Should().BeEquivalentTo(speciality);
     }
@@ -48,13 +61,15 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     [Fact]
     public async Task CacheService_RemoveAsync_ShouldBe_Success()
     {
-        var speciality = Fixture.Create<Speciality>();
+        var speciality = _fixture.Create<Speciality>();
 
-        await CacheService.SetObjectAsync("test", speciality);
+        var key = Guid.NewGuid().ToString();
 
-        await CacheService.RemoveAsync("test");
+        await _redisFixture.CacheService.SetObjectAsync(key, speciality);
 
-        string stringFromCache = await CacheService.GetStringAsync("test");
+        await _redisFixture.CacheService.RemoveAsync(key);
+
+        string stringFromCache = await _redisFixture.CacheService.GetStringAsync(key);
 
         stringFromCache.Should().BeNull();
     }
@@ -62,9 +77,11 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     [Fact]
     public async Task CacheService_GetOrCreate_ShouldBe_SuccessWithGet()
     {
-        await CacheService.SetObjectAsync("test", "test");
+        var key = Guid.NewGuid().ToString();
 
-        var specialityRes = await CacheService.GetOrCreateAsync("test", async () => "");
+        await _redisFixture.CacheService.SetObjectAsync(key, "test");
+
+        var specialityRes = await _redisFixture.CacheService.GetOrCreateAsync(key, async () => "");
 
         specialityRes.Should().NotBeEmpty();
     }
@@ -72,9 +89,14 @@ public class CacheService(DatabaseFixture databaseFixture) : RedisTest(databaseF
     [Fact]
     public async Task CacheService_GetOrCreate_ShouldBe_SuccessWithCreate()
     {
-        var specialityRes = await CacheService.GetOrCreateAsync("test", async () => "test");
+        var key = Guid.NewGuid().ToString();
 
-        var stringFromCache = await CacheService.GetObjectAsync<string>("test");
+        var specialityRes = await _redisFixture.CacheService.GetOrCreateAsync(
+            key,
+            async () => "test"
+        );
+
+        var stringFromCache = await _redisFixture.CacheService.GetObjectAsync<string>(key);
         stringFromCache.Should().BeEquivalentTo(specialityRes);
     }
 }

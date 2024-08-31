@@ -1,41 +1,68 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class SoftDeleteGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class SoftDeleteGroupsCached
 {
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<IRequestHandler<SoftDeleteGroupsCommand, List<Group>>> _mockHandler;
+    private readonly IFixture _fixture;
+
+    public SoftDeleteGroupsCached()
+    {
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<SoftDeleteGroupsCommand, List<Group>>>();
+        _fixture = new Fixture();
+    }
+
     [Fact]
     public async Task SoftDeleteGroupsCached_ShouldBe_Success()
     {
-        var groups = Fixture.CreateMany<Group>(5);
+        var groups = _fixture.CreateMany<Group>(3).ToList();
+        var ids = groups.Select(x => x.Id).ToList();
 
-        await DbHelper.AddGroupsToContext([.. groups]);
+        var command = _fixture.Build<SoftDeleteGroupsCommand>().With(x => x.GroupsId, ids).Create();
+
+        _mockHandler
+            .Setup(x =>
+                x.Handle(
+                    It.Is<SoftDeleteGroupsCommand>(x => x.GroupsId == ids),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(groups);
+
+        var handler = new SoftDeleteGroupsCommandHandlerCached(
+            _mockCacheService.Object,
+            _mockHandler.Object
+        );
+
+        var result = await handler.Handle(command, default);
+
+        _mockHandler.Verify(x => x.Handle(command, default), Times.Once());
 
         foreach (var group in groups)
         {
-            await CacheService.SetObjectAsync<Group>(CacheKeys.ById<Group, int>(group.Id), group);
+            _mockCacheService.Verify(
+                x =>
+                    x.RemoveAsync(
+                        It.Is<string>(x => x.Equals(CacheKeys.ById<Group, int>(group.Id))),
+                        default
+                    ),
+                Times.Once()
+            );
         }
 
-        var command = new SoftDeleteGroupsCommand([.. groups.Select(x => x.Id)]);
-
-        var handler = new SoftDeleteGroupsCommandHandlerCached(
-            CacheService,
-            new SoftDeleteGroupsCommandHandler(Context)
+        _mockCacheService.Verify(x =>
+            x.RemoveAsync(It.Is<string>(x => x.Equals(CacheKeys.GetEntities<Group>())), default)
         );
 
-        var groupsRes = await handler.Handle(command, CancellationToken.None);
-
-        foreach (var group in groupsRes)
-        {
-            var specialityFromCache = await CacheService.GetObjectAsync<Group>(
-                CacheKeys.ById<Group, int>(group.Id)
-            );
-
-            specialityFromCache.Should().BeNull();
-        }
+        result.Should().NotBeNull();
     }
 }

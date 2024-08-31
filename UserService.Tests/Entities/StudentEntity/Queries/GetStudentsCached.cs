@@ -1,114 +1,107 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Queries;
 
-public class GetStudentsCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class GetStudentsCached
 {
-    [Fact]
-    public async Task GetStudentsCached_ShouldBe_Success_WithoutCache_WithValidatedQuery()
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<IRequestHandler<GetStudentsQuery, PaginationList<Student>>> _mockHandler;
+    private readonly GetStudentsQuery _query;
+
+    public GetStudentsCached()
     {
-        await SeedData();
-
-        var query = CreateQuery();
-
-        var StudentsRes = await Action(query);
-
-        var key = CacheKeys.GetEntities<Student>();
-
-        var cacheString = await CacheService.GetStringAsync(key);
-        var StudentsFromCache = await CacheService.GetObjectAsync<PaginationList<Student>>(key);
-
-        cacheString.Should().NotBeNullOrEmpty();
-        StudentsFromCache.Should().BeEquivalentTo(StudentsRes);
-    }
-
-    [Fact]
-    public async Task GetStudentsCached_ShouldBe_Success_WithCache_WithValidatedQuery()
-    {
-        await SeedData();
-
-        var students = Context.Students;
-        ;
-
-        var query = CreateQuery();
-
-        var paginationList = await PaginationList<Student>.CreateAsync(
-            students,
-            query.Page,
-            query.PageSize
-        );
-
-        var key = CacheKeys.GetEntities<Student>();
-
-        await CacheService.SetObjectAsync(key, paginationList);
-
-        await Action(query);
-
-        var cacheString = await CacheService.GetStringAsync(key);
-        var studentsFromCache = await CacheService.GetObjectAsync<PaginationList<Student>>(key);
-
-        cacheString.Should().NotBeNullOrEmpty();
-        studentsFromCache.Should().BeEquivalentTo(paginationList);
-    }
-
-    [Fact]
-    public async Task GetStudentsCached_ShouldBe_Success_WithoutValidatedQuery()
-    {
-        await SeedData();
-
-        var query = CreateQuery(sortState: SortState.FistNameAsc);
-
-        var key = CacheKeys.GetEntities<Student>();
-
-        await Action(query);
-
-        var cacheString = await CacheService.GetStringAsync(key);
-        var StudentsFromCache = await CacheService.GetObjectAsync<PaginationList<Student>>(key);
-
-        cacheString.Should().BeNullOrEmpty();
-        StudentsFromCache.Should().BeNull();
-    }
-
-    private async Task SeedData()
-    {
-        var students = Fixture.CreateMany<Student>(10);
-
-        await DbHelper.AddStudentsToContext([.. students]);
-    }
-
-    private GetStudentsQuery CreateQuery(
-        int page = 1,
-        int pageSize = 10,
-        string searchString = "",
-        SortState sortState = SortState.LastNameAsc,
-        DeletedStatus deletedStatus = DeletedStatus.OnlyActive,
-        StudentDroppedOutStatus droppedOutStatus = StudentDroppedOutStatus.OnlyActive
-    )
-    {
-        return new GetStudentsQuery
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<GetStudentsQuery, PaginationList<Student>>>();
+        _query = new GetStudentsQuery
         {
-            Page = page,
-            PageSize = pageSize,
-            SearchString = searchString,
-            DeletedStatus = deletedStatus,
-            SortState = sortState,
-            DroppedOutStatus = droppedOutStatus,
+            Page = 1,
+            PageSize = 10,
+            DeletedStatus = DeletedStatus.All,
+            DroppedOutStatus = StudentDroppedOutStatus.All,
+            SearchString = "",
+            SortState = SortState.LastNameAsc,
         };
     }
 
-    private async Task<PaginationList<Student>> Action(GetStudentsQuery query)
+    [Fact]
+    public async Task GetStudentsCached_ShouldBe_Success_WhenQueryIsValid()
     {
+        _mockCacheService
+            .Setup(x =>
+                x.GetOrCreateAsync<PaginationList<Student>>(
+                    It.IsAny<string>(),
+                    It.IsAny<Func<Task<PaginationList<Student>>>>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(
+                new PaginationList<Student> { Items = new List<Student> { new Student() } }
+            );
+
         var handler = new GetStudentsQueryHandlerCached(
-            new GetStudentsQueryHandler(Context),
-            CacheService
+            _mockHandler.Object,
+            _mockCacheService.Object
         );
 
-        return await handler.Handle(query, CancellationToken.None);
+        var query = _query with
+        {
+            DroppedOutStatus = StudentDroppedOutStatus.OnlyActive,
+            DeletedStatus = DeletedStatus.OnlyActive
+        };
+
+        var result = await handler.Handle(query, CancellationToken.None);
+
+        _mockHandler.Verify(x => x.Handle(_query, CancellationToken.None), Times.Never());
+
+        _mockCacheService.Verify(
+            x =>
+                x.GetOrCreateAsync<PaginationList<Student>>(
+                    It.IsAny<string>(),
+                    It.IsAny<Func<Task<PaginationList<Student>>>>(),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once
+        );
+
+        result.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetStudentsCached_ShouldBe_Success_WhenQueryIsInvalid()
+    {
+        _mockHandler
+            .Setup(x => x.Handle(It.IsAny<GetStudentsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
+                new PaginationList<Student> { Items = new List<Student> { new Student() } }
+            );
+
+        var handler = new GetStudentsQueryHandlerCached(
+            _mockHandler.Object,
+            _mockCacheService.Object
+        );
+
+        var result = await handler.Handle(_query, CancellationToken.None);
+
+        _mockHandler.Verify(x => x.Handle(_query, CancellationToken.None), Times.Once());
+
+        _mockCacheService.Verify(
+            x =>
+                x.GetOrCreateAsync<PaginationList<Student>>(
+                    It.IsAny<string>(),
+                    It.IsAny<Func<Task<PaginationList<Student>>>>(),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Never()
+        );
+
+        result.Should().NotBeNull();
     }
 }

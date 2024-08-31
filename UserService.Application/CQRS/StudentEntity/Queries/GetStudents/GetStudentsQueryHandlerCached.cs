@@ -8,12 +8,12 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
 
 public class GetStudentsQueryHandlerCached(
-    GetStudentsQueryHandler handler,
+    IRequestHandler<GetStudentsQuery, PaginationList<Student>> handler,
     ICacheService cacheService
 ) : IRequestHandler<GetStudentsQuery, PaginationList<Student>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly GetStudentsQueryHandler _handler = handler;
+    private readonly IRequestHandler<GetStudentsQuery, PaginationList<Student>> _handler = handler;
 
     public async Task<PaginationList<Student>> Handle(
         GetStudentsQuery request,

@@ -1,66 +1,60 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Queries;
 
-public class GetStudentByIdCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class GetStudentByIdCached
 {
-    [Fact]
-    public async Task GetStudentById_ShouldBe_Success_WithoutCache()
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<IRequestHandler<GetStudentByIdQuery, Student>> _mockHandler;
+    private readonly IFixture _fixture;
+
+    public GetStudentByIdCached()
     {
-        var student = Fixture.Create<Student>();
-
-        await DbHelper.AddStudentsToContext(student);
-
-        var query = new GetStudentByIdQuery(student.Id);
-
-        var key = CacheKeys.ById<Student, Guid>(student.Id);
-
-        var studentFromCacheBeforeAction = await CacheService.GetObjectAsync<Student>(key);
-
-        var studentRes = await Action(query);
-
-        var studentFromCache = await CacheService.GetObjectAsync<Student>(key);
-
-        studentFromCacheBeforeAction.Should().BeNull();
-
-        studentRes
-            .Should()
-            .BeEquivalentTo(studentFromCache, options => options.Excluding(x => x.Group));
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<GetStudentByIdQuery, Student>>();
+        _fixture = new Fixture();
     }
 
     [Fact]
-    public async Task GetStudentById_ShouldBe_Success_WithCache()
+    public async Task GetStudentByIdCached_ShouldBe_Success()
     {
-        var student = Fixture.Create<Student>();
+        var student = _fixture.Create<Student>();
 
-        await DbHelper.AddStudentsToContext(student);
-
-        var key = CacheKeys.ById<Student, Guid>(student.Id);
-
-        await CacheService.SetObjectAsync<Student>(key, student);
+        _mockCacheService
+            .Setup(x =>
+                x.GetOrCreateAsync<Student>(
+                    It.Is<string>(x => x.Equals(CacheKeys.ById<Student, Guid>(student.Id))),
+                    It.IsAny<Func<Task<Student>>>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(student);
 
         var query = new GetStudentByIdQuery(student.Id);
 
-        var studentRes = await Action(query);
-
-        var studentFromCache = await CacheService.GetObjectAsync<Student>(key);
-
-        studentRes
-            .Should()
-            .BeEquivalentTo(studentFromCache, options => options.Excluding(x => x.Group));
-    }
-
-    private async Task<Student> Action(GetStudentByIdQuery query)
-    {
         var handler = new GetStudentByIdQueryHandlerCached(
-            CacheService,
-            new GetStudentByIdQueryHandler(Context)
+            _mockCacheService.Object,
+            _mockHandler.Object
         );
 
-        return await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, default);
+
+        _mockCacheService.Verify(
+            x =>
+                x.GetOrCreateAsync<Student>(
+                    It.Is<string>(x => x.Equals(CacheKeys.ById<Student, Guid>(student.Id))),
+                    It.IsAny<Func<Task<Student>>>(),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once()
+        );
+
+        result.Should().NotBeNull();
     }
 }

@@ -6,12 +6,12 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 
 public class EditSpecialityCommandHandlerCached(
-    EditSpecialityCommandHandler handler,
+    IRequestHandler<EditSpecialityCommand, Speciality> handler,
     ICacheService cacheService
 ) : IRequestHandler<EditSpecialityCommand, Speciality>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly EditSpecialityCommandHandler _handler = handler;
+    private readonly IRequestHandler<EditSpecialityCommand, Speciality> _handler = handler;
 
     public async Task<Speciality> Handle(
         EditSpecialityCommand request,

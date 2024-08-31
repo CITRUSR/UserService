@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
 
 public class DeleteStudentCommandHandlerCached(
     ICacheService cacheService,
-    DeleteStudentCommandHandler handler
+    IRequestHandler<DeleteStudentCommand, Guid> handler
 ) : IRequestHandler<DeleteStudentCommand, Guid>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly DeleteStudentCommandHandler _handler = handler;
+    private readonly IRequestHandler<DeleteStudentCommand, Guid> _handler = handler;
 
     public async Task<Guid> Handle(
         DeleteStudentCommand request,

@@ -8,20 +8,17 @@ namespace UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 
 public class CreateGroupCommandHandlerCached(
     ICacheService cacheService,
-    CreateGroupCommandHandler handler
+    IRequestHandler<CreateGroupCommand, Group> handler
 ) : IRequestHandler<CreateGroupCommand, Group>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly CreateGroupCommandHandler _handler = handler;
+    private readonly IRequestHandler<CreateGroupCommand, Group> _handler = handler;
 
     public async Task<Group> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
     {
         var group = await _handler.Handle(request, cancellationToken);
 
-        for (int i = 0; i < CacheConstants.PagesForCaching; i++)
-        {
-            await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
-        }
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return group;
     }
