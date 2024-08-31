@@ -16,9 +16,10 @@ public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
         CancellationToken cancellationToken
     )
     {
-        var groups = DbContext
+        var groups = await DbContext
             .Groups.Where(x => request.GroupsId.Contains(x.Id))
-            .Include(x => x.Speciality);
+            .Include(x => x.Speciality)
+            .ToListAsync();
 
         if (groups.Count() < request.GroupsId.Count)
         {
@@ -43,7 +44,7 @@ public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
             throw;
         }
 
-        return await groups.ToListAsync(cancellationToken);
+        return groups;
     }
 
     private bool TryGraduateGroups(

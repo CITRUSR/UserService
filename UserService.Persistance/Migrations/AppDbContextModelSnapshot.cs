@@ -42,6 +42,9 @@ namespace UserService.Persistance.Migrations
                     b.Property<DateTime?>("GraduatedAt")
                         .HasColumnType("timestamp");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("SpecialityId")
                         .HasColumnType("integer");
 
@@ -110,6 +113,9 @@ namespace UserService.Persistance.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -145,6 +151,9 @@ namespace UserService.Persistance.Migrations
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
                         .IsRequired()

@@ -9,5 +9,6 @@ public record EditGroupCommand(
     Guid CuratorId,
     byte CurrentCourse,
     byte CurrentSemester,
-    byte SubGroup
+    byte SubGroup,
+    bool IsDeleted
 ) : IRequest<Group>;

@@ -1,42 +1,73 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class TransferGroupsToNextCourseCached(DatabaseFixture databaseFixture)
-    : RedisTest(databaseFixture)
+public class TransferGroupsToNextCourseCached
 {
-    [Fact]
-    public async void TransferGroupsToNextCourseCached_ShouldBe_Success()
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<
+        IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>>
+    > _mockHandler;
+    private readonly IFixture _fixture;
+
+    public TransferGroupsToNextCourseCached()
     {
-        var group = Fixture.Build<Group>().With(x => x.CurrentCourse, 2).Create();
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>>>();
+        _fixture = new Fixture();
+    }
 
-        await AddGroupsToContext(group);
+    [Fact]
+    public async Task TransferGroupsToNextCourseCached_ShouldBe_Success()
+    {
+        var groups = _fixture.CreateMany<Group>(3).ToList();
+        var ids = groups.Select(x => x.Id).ToList();
 
-        var command = new TransferGroupsToNextCourseCommand([group.Id]);
+        var command = _fixture
+            .Build<TransferGroupsToNextCourseCommand>()
+            .With(x => x.IdGroups, ids)
+            .Create();
+
+        _mockHandler
+            .Setup(x =>
+                x.Handle(
+                    It.Is<TransferGroupsToNextCourseCommand>(x => x.IdGroups == ids),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(groups);
 
         var handler = new TransferGroupsToNextCourseCommandHandlerCached(
-            CacheService,
-            new TransferGroupsToNextCourseCommandHandler(Context)
+            _mockCacheService.Object,
+            _mockHandler.Object
         );
 
-        var groupRes = await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, default);
 
-        var key = CacheKeys.ById<Group, int>(group.Id);
+        _mockHandler.Verify(x => x.Handle(command, default), Times.Once());
 
-        var cachedString = await CacheService.GetStringAsync(key);
-
-        var groupFromCache = await CacheService.GetObjectAsync<Group>(key);
-
-        cachedString.Should().NotBeNullOrEmpty();
-        groupFromCache
-            .Should()
-            .BeEquivalentTo(
-                group,
-                options => options.Excluding(x => x.Curator).Excluding(x => x.Speciality)
+        foreach (var group in groups)
+        {
+            _mockCacheService.Verify(
+                x =>
+                    x.RemoveAsync(
+                        It.Is<string>(x => x.Equals(CacheKeys.ById<Group, int>(group.Id))),
+                        default
+                    ),
+                Times.Once()
             );
+        }
+
+        _mockCacheService.Verify(x =>
+            x.RemoveAsync(It.Is<string>(x => x.Equals(CacheKeys.GetEntities<Group>())), default)
+        );
+
+        result.Should().NotBeNull();
     }
 }

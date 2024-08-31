@@ -2,9 +2,10 @@
 using MediatR;
 using UserService.API.Mappers;
 using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
-using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
+using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
+using UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
@@ -43,16 +44,34 @@ public class GroupService(
         return new CreateGroupResponse { Group = _changeGroupResponseMapper.Map(group) };
     }
 
-    public override async Task<DeleteGroupResponse> DeleteGroup(
-        DeleteGroupRequest request,
+    public override async Task<DeleteGroupsResponse> DeleteGroups(
+        DeleteGroupsRequest request,
         ServerCallContext context
     )
     {
-        var command = new DeleteGroupCommand(request.Id);
+        var command = new DeleteGroupsCommand([.. request.Ids]);
 
-        var group = await _mediator.Send(command);
+        var groups = await _mediator.Send(command);
 
-        return new DeleteGroupResponse { Group = _changeGroupResponseMapper.Map(group) };
+        return new DeleteGroupsResponse
+        {
+            Group = { groups.Select(x => _changeGroupResponseMapper.Map(x)) }
+        };
+    }
+
+    public override async Task<SoftDeleteGroupsResponse> SoftDeleteGroups(
+        SoftDeleteGroupsRequest request,
+        ServerCallContext context
+    )
+    {
+        var command = new SoftDeleteGroupsCommand([.. request.Ids]);
+
+        var groups = await _mediator.Send(command);
+
+        return new SoftDeleteGroupsResponse
+        {
+            Group = { groups.Select(x => _changeGroupResponseMapper.Map(x)) },
+        };
     }
 
     public override async Task<GroupModel> EditGroup(
@@ -66,7 +85,8 @@ public class GroupService(
             Guid.Parse(request.CuratorId),
             (byte)request.CurrentCourse,
             (byte)request.CurrentSemester,
-            (byte)request.SubGroup
+            (byte)request.SubGroup,
+            request.IsDeleted
         );
 
         var group = await _mediator.Send(command);
@@ -146,6 +166,7 @@ public class GroupService(
             SortState = (Application.CQRS.GroupEntity.Queries.GetGroups.GroupSortState)
                 request.SortState,
             SearchString = request.SearchString,
+            DeletedStatus = (Application.Enums.DeletedStatus)request.DeletedStatus,
         };
 
         var groups = await _mediator.Send(query);

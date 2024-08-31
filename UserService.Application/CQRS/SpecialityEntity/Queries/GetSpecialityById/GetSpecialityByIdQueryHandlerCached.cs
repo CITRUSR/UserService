@@ -8,11 +8,11 @@ namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityByI
 
 public class GetSpecialityByIdQueryHandlerCached(
     ICacheService cacheService,
-    GetSpecialityByIdQueryHandler handler
+    IRequestHandler<GetSpecialityByIdQuery, Speciality> handler
 ) : IRequestHandler<GetSpecialityByIdQuery, Speciality>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly GetSpecialityByIdQueryHandler _handler = handler;
+    private readonly IRequestHandler<GetSpecialityByIdQuery, Speciality> _handler = handler;
 
     public async Task<Speciality> Handle(
         GetSpecialityByIdQuery request,

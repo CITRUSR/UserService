@@ -24,4 +24,5 @@ public class Teacher
     public short RoomId { get; set; }
     public ICollection<Group> Groups { get; } = new List<Group>();
     public DateTime? FiredAt { get; set; }
+    public bool IsDeleted { get; set; } = false;
 }

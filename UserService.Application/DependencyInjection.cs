@@ -2,14 +2,13 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using UserService.Application.Abstraction;
 using UserService.Application.Common.Behaviors;
-using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
-using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroup;
+using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
+using UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
@@ -20,6 +19,13 @@ using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
+using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
+using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
+using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
+using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
 using UserService.Domain.Entities;
 
 namespace UserService.Application;
@@ -38,12 +44,17 @@ public static class DependencyInjection
 
         DecorateHandlersToCacheVersion(services);
 
-        services.AddSingleton<ICacheService, CacheService>();
-
         return services;
     }
 
     private static void DecorateHandlersToCacheVersion(IServiceCollection services)
+    {
+        DecorateGroupsHandlersToCacheVersion(services);
+        DecorateSpecialitiesHandlersToCacheVersion(services);
+        DecorateStudentsHandlerToCacheVersion(services);
+    }
+
+    private static void DecorateGroupsHandlersToCacheVersion(IServiceCollection services)
     {
         services.Decorate<
             IRequestHandler<GetGroupByIdQuery, Group>,
@@ -54,8 +65,12 @@ public static class DependencyInjection
             GetGroupsQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<DeleteGroupCommand, Group>,
-            DeleteGroupCommandHandlerCached
+            IRequestHandler<DeleteGroupsCommand, List<Group>>,
+            DeleteGroupsCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<SoftDeleteGroupsCommand, List<Group>>,
+            SoftDeleteGroupsCommandHandlerCached
         >();
         services.Decorate<
             IRequestHandler<EditGroupCommand, Group>,
@@ -77,7 +92,10 @@ public static class DependencyInjection
             IRequestHandler<CreateGroupCommand, Group>,
             CreateGroupCommandHandlerCached
         >();
+    }
 
+    private static void DecorateSpecialitiesHandlersToCacheVersion(IServiceCollection services)
+    {
         services.Decorate<
             IRequestHandler<GetSpecialityByIdQuery, Speciality>,
             GetSpecialityByIdQueryHandlerCached
@@ -101,6 +119,38 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<CreateSpecialityCommand, Speciality>,
             CreateSpecialityCommandHandlerCached
+        >();
+    }
+
+    private static void DecorateStudentsHandlerToCacheVersion(IServiceCollection services)
+    {
+        services.Decorate<
+            IRequestHandler<CreateStudentCommand, Guid>,
+            CreateStudentCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<DeleteStudentCommand, Guid>,
+            DeleteStudentCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<DropOutStudentCommand, Guid>,
+            DropOutStudentCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<EditStudentCommand, Student>,
+            EditStudentCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<GetStudentByIdQuery, Student>,
+            GetStudentByIdQueryHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<GetStudentBySsoIdQuery, Student>,
+            GetStudentBySsoIdQueryHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<GetStudentsQuery, PaginationList<Student>>,
+            GetStudentsQueryHandlerCached
         >();
     }
 }

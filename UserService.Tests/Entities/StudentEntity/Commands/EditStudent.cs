@@ -1,88 +1,93 @@
 ﻿using FluentAssertions;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
 
-public class EditStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class EditStudent
 {
-    [Fact]
-    public async void EditStudent_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+
+    public EditStudent()
     {
-        int oldGroupId = 12;
-
-        var oldStudent = Fixture.Build<Student>().With(x => x.GroupId, oldGroupId).Create();
-
-        var oldGroup = Fixture.Build<Group>().With(x => x.Id, oldGroupId).Create();
-        oldGroup.Students.Add(oldStudent);
-
-        var newGroup = Fixture.Create<Group>();
-
-        var newStudent = Fixture
-            .Build<Student>()
-            .With(x => x.GroupId, newGroup.Id)
-            .With(x => x.Id, oldStudent.Id)
-            .With(x => x.SsoId, oldStudent.SsoId)
-            .With(x => x.Group, newGroup)
-            .With(x => x.DroppedOutAt, oldStudent.DroppedOutAt)
-            .Create();
-
-        await AddStudentsToContext(oldStudent);
-        await AddGroupsToContext(oldGroup, newGroup);
-
-        var command = new EditStudentCommand(
-            oldStudent.Id,
-            newStudent.FirstName,
-            newStudent.LastName,
-            newStudent.PatronymicName,
-            newStudent.GroupId
-        );
-
-        var handler = new EditStudentCommandHandler(Context);
-
-        await handler.Handle(command, CancellationToken.None);
-
-        Context
-            .Students.FirstOrDefault(x => x.Id == oldStudent.Id)
-            .Should()
-            .BeEquivalentTo(newStudent);
-        Context
-            .Groups.FirstOrDefault(x => x.Id == oldGroupId)
-            .Students.Should()
-            .NotContain(oldStudent);
-        Context
-            .Groups.FirstOrDefault(x => x.Id == newGroup.Id)
-            .Students.Should()
-            .Contain(oldStudent);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
     }
 
     [Fact]
-    public async void EditStudent_ShouldBe_UserNotFoundException()
+    public async Task EditStudent_ShouldBe_Success()
     {
-        var oldStudent = Fixture.Create<Student>();
+        var student = _fixture.Create<Student>();
 
-        await AddStudentsToContext(oldStudent);
+        _mockDbContext
+            .Setup(x => x.Students.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(student);
 
-        var command = Fixture.Create<EditStudentCommand>();
-        var handler = new EditStudentCommandHandler(Context);
+        var group = _fixture.Create<Group>();
 
-        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
+        _mockDbContext
+            .Setup(x => x.Groups.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group);
+
+        var command = _fixture
+            .Build<EditStudentCommand>()
+            .With(x => x.Id, student.Id)
+            .With(x => x.GroupId, group.Id)
+            .Create();
+
+        var handler = new EditStudentCommandHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(command, default);
+
+        student.GroupId.Should().Be(command.GroupId);
+        student.FirstName.Should().Be(command.FirstName);
+        student.LastName.Should().Be(command.LastName);
+        student.PatronymicName.Should().Be(command.PatronymicName);
+        student.IsDeleted.Should().Be(command.IsDeleted);
+
+        _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+
+        result.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task EditStudent_ShouldBe_StudentNotFoundException_WhenStudentDoesNotExist()
+    {
+        _mockDbContext
+            .Setup(x => x.Students.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Student?)null);
+
+        var command = _fixture.Create<EditStudentCommand>();
+
+        var handler = new EditStudentCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(command, default);
+
         await act.Should().ThrowAsync<StudentNotFoundException>();
     }
 
     [Fact]
-    public async void EditStudent_ShouldBe_GroupNotFoundException()
+    public async Task EditStudent_ShouldBe_GroupNotFoundException_WhenGroupDoesNotExist()
     {
-        var oldStudent = Fixture.Create<Student>();
+        var student = _fixture.Create<Student>();
 
-        await AddStudentsToContext(oldStudent);
+        _mockDbContext
+            .Setup(x => x.Students.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(student);
 
-        var command = Fixture.Build<EditStudentCommand>().With(x => x.Id, oldStudent.Id).Create();
-        var handler = new EditStudentCommandHandler(Context);
+        _mockDbContext
+            .Setup(x => x.Groups.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Group?)null);
 
-        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
+        var command = _fixture.Build<EditStudentCommand>().With(x => x.Id, student.Id).Create();
+
+        var handler = new EditStudentCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(command, default);
 
         await act.Should().ThrowAsync<GroupNotFoundException>();
     }

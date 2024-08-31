@@ -6,12 +6,12 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 
 public class EditSpecialityCommandHandlerCached(
-    EditSpecialityCommandHandler handler,
+    IRequestHandler<EditSpecialityCommand, Speciality> handler,
     ICacheService cacheService
 ) : IRequestHandler<EditSpecialityCommand, Speciality>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly EditSpecialityCommandHandler _handler = handler;
+    private readonly IRequestHandler<EditSpecialityCommand, Speciality> _handler = handler;
 
     public async Task<Speciality> Handle(
         EditSpecialityCommand request,
@@ -20,17 +20,12 @@ public class EditSpecialityCommandHandlerCached(
     {
         var speciality = await _handler.Handle(request, cancellationToken);
 
-        await _cacheService.SetObjectAsync<Speciality>(
+        await _cacheService.RemoveAsync(
             CacheKeys.ById<Speciality, int>(speciality.Id),
-            speciality,
             cancellationToken
         );
 
-        await _cacheService.RemovePagesWithObjectAsync<Speciality, int>(
-            speciality.Id,
-            (spec, i) => spec.Id == i,
-            cancellationToken
-        );
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Speciality>(), cancellationToken);
 
         return speciality;
     }

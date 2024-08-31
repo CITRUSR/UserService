@@ -1,50 +1,61 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 
-public class EditSpeciality(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class EditSpeciality
 {
-    [Fact]
-    public async void EditSpeciality_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+    private readonly EditSpecialityCommand _command;
+
+    public EditSpeciality()
     {
-        var speciality = Fixture.Create<Speciality>();
-
-        var newSpeciality = Fixture.Build<Speciality>().With(x => x.Id, speciality.Id).Create();
-
-        await AddSpecialitiesToContext(speciality);
-
-        var command = new EditSpecialityCommand(
-            speciality.Id,
-            newSpeciality.Name,
-            newSpeciality.Abbreavation,
-            newSpeciality.Cost,
-            newSpeciality.DurationMonths,
-            newSpeciality.IsDeleted
-        );
-
-        var specialityRes = await Action(command);
-
-        Context.Specialities.Find(specialityRes.Id).Should().BeEquivalentTo(newSpeciality);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
+        _command = _fixture.Create<EditSpecialityCommand>();
     }
 
     [Fact]
-    public async void EditSpeciality_ShouldBe_SpecialityNotFoundException()
+    public async Task EditSpeciality_ShouldBe_Success()
     {
-        var command = Fixture.Create<EditSpecialityCommand>();
+        var speciality = _fixture.Build<Speciality>().With(x => x.Id, _command.Id).Create();
 
-        Func<Task> act = async () => await Action(command);
+        _mockDbContext
+            .Setup(x =>
+                x.Specialities.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync(speciality);
+
+        var handler = new EditSpecialityCommandHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(_command, default);
+
+        _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+
+        speciality.Abbreavation.Should().Be(_command.Abbrevation);
+        speciality.Cost.Should().Be(_command.Cost);
+        speciality.DurationMonths.Should().Be(_command.DurationMonths);
+        speciality.Name.Should().Be(_command.Name);
+        speciality.IsDeleted.Should().Be(_command.IsDeleted);
+
+        result.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task EditSpeciality_ShouldBe_SpecialityNotFoundException_WhenSpecialityDoesNotExist()
+    {
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([new Speciality()]);
+
+        var handler = new EditSpecialityCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(_command, default);
 
         await act.Should().ThrowAsync<SpecialityNotFoundException>();
-    }
-
-    private async Task<Speciality> Action(EditSpecialityCommand command)
-    {
-        var handler = new EditSpecialityCommandHandler(Context);
-
-        return await handler.Handle(command, CancellationToken.None);
     }
 }

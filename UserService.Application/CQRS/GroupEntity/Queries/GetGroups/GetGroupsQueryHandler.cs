@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
+using UserService.Application.Enums;
+using UserService.Application.Extensions;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
@@ -20,10 +22,13 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext)
         {
             groups = groups.Where(x =>
                 (x.CurrentCourse + "-" + x.Speciality.Abbreavation + x.SubGroup).Contains(
-                    request.SearchString
+                    request.SearchString,
+                    StringComparison.CurrentCultureIgnoreCase
                 )
             );
         }
+
+        groups = groups.FilterByDeletedStatus<Group>(request.DeletedStatus, gr => gr.IsDeleted);
 
         groups = GetFilteredByGraduatedStatus(groups, request.GraduatedStatus);
 

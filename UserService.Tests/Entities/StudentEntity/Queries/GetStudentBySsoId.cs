@@ -1,38 +1,51 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Queries;
 
-public class GetStudentBySsoId(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class GetStudentBySsoId
 {
-    [Fact]
-    public async void GetStudentBySsoId_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+
+    public GetStudentBySsoId()
     {
-        var student = Fixture.Create<Student>();
-
-        await AddStudentsToContext(student);
-
-        var query = new GetStudentBySsoIdQuery(student.SsoId);
-
-        var handler = new GetStudentBySsoIdQueryHandler(Context);
-
-        var studentRes = await handler.Handle(query, CancellationToken.None);
-
-        studentRes.Should().NotBeNull();
-        studentRes.Should().BeEquivalentTo(student);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
     }
 
     [Fact]
-    public async void GetStudentBySsoId_ShouldBe_StudentNotFoundException()
+    public async Task GetStudentBySsoId_ShouldBe_Success()
     {
+        var student = _fixture.Create<Student>();
+
+        _mockDbContext.Setup(x => x.Students).ReturnsDbSet([student]);
+
+        var query = new GetStudentBySsoIdQuery(student.SsoId);
+
+        var hanlder = new GetStudentBySsoIdQueryHandler(_mockDbContext.Object);
+
+        var result = await hanlder.Handle(query, default);
+
+        result.Should().NotBeNull();
+        result.SsoId.Should().Be(student.SsoId);
+    }
+
+    [Fact]
+    public async Task GetStudentBySsoId_ShouldBe_StudentNotFoundException_WhenStudentDoesNotExist()
+    {
+        _mockDbContext.Setup(x => x.Students).ReturnsDbSet([]);
+
         var query = new GetStudentBySsoIdQuery(Guid.NewGuid());
 
-        var handler = new GetStudentBySsoIdQueryHandler(Context);
+        var hanlder = new GetStudentBySsoIdQueryHandler(_mockDbContext.Object);
 
-        Func<Task> act = async () => await handler.Handle(query, CancellationToken.None);
+        Func<Task> act = async () => await hanlder.Handle(query, default);
 
         await act.Should().ThrowAsync<StudentNotFoundException>();
     }

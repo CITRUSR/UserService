@@ -8,9 +8,12 @@ namespace UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 
 public class EditStudentCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<EditStudentCommand, Guid>
+        IRequestHandler<EditStudentCommand, Student>
 {
-    public async Task<Guid> Handle(EditStudentCommand request, CancellationToken cancellationToken)
+    public async Task<Student> Handle(
+        EditStudentCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var student = await DbContext.Students.FindAsync(
             new object?[] { request.Id, cancellationToken },
@@ -42,6 +45,7 @@ public class EditStudentCommandHandler(IAppDbContext dbContext)
             GroupId = student.GroupId,
             Group = student.Group,
             DroppedOutAt = student.DroppedOutAt,
+            IsDeleted = student.IsDeleted,
         };
 
         var oldGroup = await DbContext.Groups.FindAsync(
@@ -56,6 +60,7 @@ public class EditStudentCommandHandler(IAppDbContext dbContext)
         student.PatronymicName = request.PatronymicName;
         student.GroupId = request.GroupId;
         student.Group = newGroup;
+        student.IsDeleted = request.IsDeleted;
 
         newGroup.Students.Add(student);
 
@@ -66,6 +71,6 @@ public class EditStudentCommandHandler(IAppDbContext dbContext)
                 + "Old state: {@oldStudent}. New state: {@student}"
         );
 
-        return student.Id;
+        return student;
     }
 }

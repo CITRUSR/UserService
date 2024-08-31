@@ -1,43 +1,59 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
 
-public class CreateStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class CreateStudent
 {
-    [Fact]
-    public async void CreateStudent_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+    private readonly CreateStudentCommand _command;
+
+    public CreateStudent()
     {
-        var group = Fixture.Create<Group>();
-
-        await AddGroupsToContext(group);
-
-        var command = Fixture
-            .Build<CreateStudentCommand>()
-            .With(x => x.GroupId, group.Id)
-            .With(x => x.FirstName, "ASDASDASFASGAS")
-            .With(x => x.LastName, "ASDASDASGAS")
-            .With(x => x.PatronymicName, "asaASa")
-            .Create();
-
-        CreateStudentCommandHandler handler = new CreateStudentCommandHandler(Context);
-
-        await handler.Handle(command, CancellationToken.None);
-
-        Context.Students.Should().HaveCount(1);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
+        _command = _fixture.Create<CreateStudentCommand>();
     }
 
     [Fact]
-    public async void CreateStudent_ShouldBe_NotFoundException()
+    public async Task CreateStudent_ShouldBe_Success()
     {
-        var command = Fixture.Create<CreateStudentCommand>();
+        _mockDbContext.Setup(x => x.Students).ReturnsDbSet([]);
 
-        var handler = new CreateStudentCommandHandler(Context);
+        _mockDbContext
+            .Setup(x => x.Groups.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Group());
 
-        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
+        var handler = new CreateStudentCommandHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(_command, CancellationToken.None);
+
+        _mockDbContext.Verify(
+            x => x.Students.AddAsync(It.IsAny<Student>(), It.IsAny<CancellationToken>()),
+            Times.Once()
+        );
+
+        _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+
+        result.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task CreateStudent_ShouldBe_GroupNotFoundException_WhenGroupDoesNotExist()
+    {
+        _mockDbContext
+            .Setup(x => x.Groups.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Group?)null);
+
+        var handler = new CreateStudentCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(_command, CancellationToken.None);
 
         await act.Should().ThrowAsync<GroupNotFoundException>();
     }

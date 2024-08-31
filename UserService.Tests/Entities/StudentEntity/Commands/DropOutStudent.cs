@@ -1,43 +1,60 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
 
-public class DropOutStudent(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class DropOutStudent
 {
-    [Fact]
-    public async void DropOutStudent_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+
+    public DropOutStudent()
     {
-        var student = Fixture.Create<Student>();
-        student.DroppedOutAt = null;
-
-        await AddStudentsToContext(student);
-
-        var command = Fixture.Build<DropOutStudentCommand>().With(x => x.Id, student.Id).Create();
-        var handler = new DropOutStudentCommandHandler(Context);
-
-        await handler.Handle(command, CancellationToken.None);
-
-        Context
-            .Students.FirstOrDefault(x => x.Id == student.Id)
-            .DroppedOutAt.Should()
-            .Be(command.DroppedOutTime);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
     }
 
     [Fact]
-    public async void DropOutStudent_ShouldBe_NotFoundException()
+    public async Task DropOutStudent_ShouldBe_Success()
     {
-        var student = Fixture.Create<Student>();
+        var student = _fixture.Build<Student>().Without(x => x.DroppedOutAt).Create();
 
-        await AddStudentsToContext(student);
+        _mockDbContext
+            .Setup(x => x.Students.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(student);
 
-        var command = Fixture.Create<DropOutStudentCommand>();
-        var handler = new DropOutStudentCommandHandler(Context);
+        var command = new DropOutStudentCommand(student.Id, DateTime.Now);
 
-        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
+        var handler = new DropOutStudentCommandHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(command, default);
+
+        _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+
+        student.DroppedOutAt.Should().NotBeNull();
+
+        result.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task DropOutStudent_ShouldBe_StudentNotFoundException_WhenStudentDoesNotExist()
+    {
+        var student = _fixture.Build<Student>().Without(x => x.DroppedOutAt).Create();
+
+        _mockDbContext
+            .Setup(x => x.Students.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Student?)null);
+
+        var command = new DropOutStudentCommand(student.Id, DateTime.Now);
+
+        var handler = new DropOutStudentCommandHandler(_mockDbContext.Object);
+
+        Func<Task> act = async () => await handler.Handle(command, default);
 
         await act.Should().ThrowAsync<StudentNotFoundException>();
     }

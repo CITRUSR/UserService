@@ -1,183 +1,195 @@
 ﻿using FluentAssertions;
-using UserService.Application.Common.Paging;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
+using UserService.Application.Enums;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Queries;
 
-public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class GetSpecialities
 {
-    [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithPageSize()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+    private readonly GetSpecialitiesQuery _query;
+
+    public GetSpecialities()
     {
-        await SeedDataForPageTests();
-
-        var query = CreateQuery();
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(10);
-        specialities.MaxPage.Should().Be(2);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
+        _query = new GetSpecialitiesQuery
+        {
+            Page = 1,
+            PageSize = 10,
+            SortState = SpecialitySortState.NameAsc,
+            SearchString = "",
+            DeletedStatus = DeletedStatus.All,
+        };
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithPageNumber()
+    public async Task GetSpecialities_ShouldBe_SuccessWithNameAscOrdering()
     {
-        await SeedDataForPageTests();
-
-        var query = CreateQuery(page: 2);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(2);
-        specialities.MaxPage.Should().Be(2);
+        await TestOrdering(
+            SpecialitySortState.NameAsc,
+            (speciality1, speciality2) => [speciality1, speciality2]
+        );
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithNameAscOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithNameDescOrdering()
     {
-        var (specialityA, specialityB) = await SeedDataForNameTests();
-
-        var query = CreateQuery();
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().BeEquivalentTo([specialityA, specialityB]);
+        await TestOrdering(
+            SpecialitySortState.NameDesc,
+            (speciality1, speciality2) => [speciality2, speciality1]
+        );
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithNameDescOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithAbbrAscOrdering()
     {
-        var (specialityA, specialityB) = await SeedDataForNameTests();
-
-        var query = CreateQuery(sortState: SpecialitySortState.NameDesc);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().BeEquivalentTo([specialityB, specialityA]);
+        await TestOrdering(
+            SpecialitySortState.AbbreviationAsc,
+            (speciality1, speciality2) => [speciality1, speciality2]
+        );
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithAbbrAscOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithAbbrDescOrdering()
     {
-        var (specialityA, specialityB) = await SeedDataForAbbrTests();
-
-        var query = CreateQuery(sortState: SpecialitySortState.AbbreviationAsc);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().BeEquivalentTo([specialityA, specialityB]);
+        await TestOrdering(
+            SpecialitySortState.AbbreviationDesc,
+            (speciality1, speciality2) => [speciality2, speciality1]
+        );
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithAbbrDescOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithCostAscOrdering()
     {
-        var (specialityA, specialityB) = await SeedDataForAbbrTests();
-
-        var query = CreateQuery(sortState: SpecialitySortState.AbbreviationDesc);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().BeEquivalentTo([specialityB, specialityA]);
+        await TestOrdering(
+            SpecialitySortState.CostAsc,
+            (speciality1, speciality2) => [speciality1, speciality2]
+        );
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithCostAscOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithCostDescOrdering()
     {
-        var (specialityA, specialityB) = await SeedDataForCostTests();
-
-        var query = CreateQuery(sortState: SpecialitySortState.CostAsc);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().BeEquivalentTo([specialityA, specialityB]);
+        await TestOrdering(
+            SpecialitySortState.CostDesc,
+            (speciality1, speciality2) => [speciality2, speciality1]
+        );
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithCostDescOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithDurationMonthsAscOrdering()
     {
-        var (specialityA, specialityB) = await SeedDataForCostTests();
-
-        var query = CreateQuery(sortState: SpecialitySortState.CostDesc);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().BeEquivalentTo([specialityB, specialityA]);
+        await TestOrdering(
+            SpecialitySortState.DurationMonthsAsc,
+            (speciality1, speciality2) => [speciality1, speciality2]
+        );
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithDurationMonthsAscOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithDurationMonthsDescOrdering()
     {
-        var (specialityA, specialityB) = await SeedDataForDurationMonthsTests();
-
-        var query = CreateQuery(sortState: SpecialitySortState.DurationMonthsAsc);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().BeEquivalentTo([specialityA, specialityB]);
+        await TestOrdering(
+            SpecialitySortState.DurationMonthsDesc,
+            (speciality1, speciality2) => [speciality2, speciality1]
+        );
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithDurationMonthsDescOrdering()
+    public async Task GetSpecialities_ShouldBe_SuccessWithDeletedStatus_All()
     {
-        var (specialityA, specialityB) = await SeedDataForDurationMonthsTests();
-
-        var query = CreateQuery(sortState: SpecialitySortState.DurationMonthsDesc);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().BeEquivalentTo([specialityB, specialityA]);
+        await TestDeletedStatus(DeletedStatus.All, (studentA, studentB) => [studentA, studentB]);
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithDeletedStatus_All()
+    public async Task GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyDeleted()
     {
-        await SeedDataForDeletedStatusTests();
-
-        var query = CreateQuery(deletedStatus: SpecialityDeletedStatus.All);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(2);
+        await TestDeletedStatus(DeletedStatus.OnlyDeleted, (studentA, studentB) => [studentA]);
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyDeleted()
+    public async Task GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyActive()
     {
-        var (speciality1, speciality2) = await SeedDataForDeletedStatusTests();
-
-        var query = CreateQuery(deletedStatus: SpecialityDeletedStatus.OnlyDeleted);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(1);
-        specialities.Items[0].Should().BeEquivalentTo(speciality1);
+        await TestDeletedStatus(DeletedStatus.OnlyActive, (studentA, studentB) => [studentB]);
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyActive()
-    {
-        var (speciality1, speciality2) = await SeedDataForDeletedStatusTests();
-
-        var query = CreateQuery(deletedStatus: SpecialityDeletedStatus.OnlyActive);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(1);
-        specialities.Items[0].Should().BeEquivalentTo(speciality2);
-    }
-
-    [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringName()
+    public async Task GetSpecialities_ShouldBe_SuccessWithSearchStringName()
     {
         await TestSearchString("AA", 1, speciality => speciality.Name == "AAA");
     }
 
     [Fact]
-    public async void GetSpecialities_ShouldBe_SuccessWithSearchStringAbbr()
+    public async Task GetSpecialities_ShouldBe_SuccessWithSearchStringAbbr()
     {
         await TestSearchString("CC", 1, speciality => speciality.Abbreavation == "CCC");
+    }
+
+    private async Task TestOrdering(
+        SpecialitySortState sortState,
+        Func<Speciality, Speciality, Speciality[]> predicate
+    )
+    {
+        Speciality specialityA = _fixture
+            .Build<Speciality>()
+            .With(x => x.Name, "AAA")
+            .With(x => x.Abbreavation, "CCC")
+            .With(x => x.Cost, 1)
+            .With(x => x.DurationMonths, 1)
+            .With(x => x.IsDeleted, true)
+            .Create();
+
+        Speciality specialityB = _fixture
+            .Build<Speciality>()
+            .With(x => x.Name, "BBB")
+            .With(x => x.Abbreavation, "DDD")
+            .With(x => x.Cost, 2)
+            .With(x => x.DurationMonths, 2)
+            .With(x => x.IsDeleted, false)
+            .Create();
+
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([specialityA, specialityB]);
+
+        var query = _query with { SortState = sortState };
+
+        var handler = new GetSpecialitiesQueryHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(query, default);
+
+        result
+            .Items.Select(x => x.Id)
+            .Should()
+            .BeEquivalentTo(
+                predicate(specialityA, specialityB).Select(x => x.Id),
+                options => options.WithStrictOrdering()
+            );
+    }
+
+    private async Task TestDeletedStatus(
+        DeletedStatus deletedStatus,
+        Func<Speciality, Speciality, Speciality[]> expectedSpeciality
+    )
+    {
+        var specialityA = _fixture.Build<Speciality>().With(x => x.IsDeleted, true).Create();
+        var specialityB = _fixture.Build<Speciality>().With(x => x.IsDeleted, false).Create();
+
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([specialityA, specialityB]);
+
+        var query = _query with { DeletedStatus = deletedStatus };
+
+        var handler = new GetSpecialitiesQueryHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(query, default);
+
+        result
+            .Items.Select(x => x.Id)
+            .Should()
+            .BeEquivalentTo(expectedSpeciality(specialityA, specialityB).Select(x => x.Id));
     }
 
     private async Task TestSearchString(
@@ -186,123 +198,20 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
         Func<Speciality, bool> predicate
     )
     {
-        var (speciality1, speciality2, query) = await SeedDataForSearchStringTests(searchString);
-        var specialities = await Action(query);
+        var specialityA = _fixture.Build<Speciality>().With(x => x.Name, "AAA").Create();
 
-        specialities.Items.Should().HaveCount(expectedCount);
-        specialities.Items.Should().ContainSingle(speciality => predicate(speciality));
-    }
+        var specialityB = _fixture.Build<Speciality>().With(x => x.Abbreavation, "CCC").Create();
 
-    private async Task<(Speciality, Speciality, GetSpecialitiesQuery)> SeedDataForSearchStringTests(
-        string searchString
-    )
-    {
-        Speciality specialityA = Fixture
-            .Build<Speciality>()
-            .With(x => x.Name, "AAA")
-            .With(x => x.Abbreavation, "CCC")
-            .Create();
-        Speciality specialityB = Fixture
-            .Build<Speciality>()
-            .With(x => x.Name, "BBB")
-            .With(x => x.Abbreavation, "DDD")
-            .Create();
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([specialityA, specialityB]);
 
-        await AddSpecialitiesToContext([specialityA, specialityB]);
+        var query = _query with { SearchString = searchString };
 
-        var query = CreateQuery(searchString: searchString);
+        var handler = new GetSpecialitiesQueryHandler(_mockDbContext.Object);
 
-        return (specialityA, specialityB, query);
-    }
+        var result = await handler.Handle(query, default);
 
-    private async Task<(Speciality, Speciality)> SeedDataForDeletedStatusTests()
-    {
-        var specialityA = Fixture.Build<Speciality>().With(x => x.IsDeleted, true).Create();
+        result.Items.Count.Should().Be(expectedCount);
 
-        var specialityB = Fixture.Build<Speciality>().With(x => x.IsDeleted, false).Create();
-
-        await AddSpecialitiesToContext([specialityA, specialityB]);
-
-        return (specialityA, specialityB);
-    }
-
-    private async Task<(Speciality, Speciality)> SeedDataForDurationMonthsTests()
-    {
-        Speciality specialityA = Fixture
-            .Build<Speciality>()
-            .With(x => x.DurationMonths, 1)
-            .Create();
-        Speciality specialityB = Fixture
-            .Build<Speciality>()
-            .With(x => x.DurationMonths, 2)
-            .Create();
-
-        await AddSpecialitiesToContext([specialityA, specialityB]);
-        return (specialityA, specialityB);
-    }
-
-    private async Task<(Speciality, Speciality)> SeedDataForCostTests()
-    {
-        Speciality specialityA = Fixture.Build<Speciality>().With(x => x.Cost, 1).Create();
-        Speciality specialityB = Fixture.Build<Speciality>().With(x => x.Cost, 2).Create();
-
-        await AddSpecialitiesToContext([specialityA, specialityB]);
-        return (specialityA, specialityB);
-    }
-
-    private async Task<(Speciality, Speciality)> SeedDataForAbbrTests()
-    {
-        Speciality specialityA = Fixture
-            .Build<Speciality>()
-            .With(x => x.Abbreavation, "ABC")
-            .Create();
-        Speciality specialityB = Fixture
-            .Build<Speciality>()
-            .With(x => x.Abbreavation, "BBC")
-            .Create();
-
-        await AddSpecialitiesToContext([specialityA, specialityB]);
-        return (specialityA, specialityB);
-    }
-
-    private async Task<(Speciality, Speciality)> SeedDataForNameTests()
-    {
-        Speciality specialityA = Fixture.Build<Speciality>().With(x => x.Name, "ABC").Create();
-        Speciality specialityB = Fixture.Build<Speciality>().With(x => x.Name, "BBC").Create();
-
-        await AddSpecialitiesToContext([specialityA, specialityB]);
-        return (specialityA, specialityB);
-    }
-
-    private async Task SeedDataForPageTests()
-    {
-        var specialities = Fixture.CreateMany<Speciality>(12);
-
-        await AddSpecialitiesToContext(specialities.ToArray());
-    }
-
-    private GetSpecialitiesQuery CreateQuery(
-        int page = 1,
-        int pageSize = 10,
-        string searchString = "",
-        SpecialitySortState sortState = SpecialitySortState.NameAsc,
-        SpecialityDeletedStatus deletedStatus = SpecialityDeletedStatus.All
-    )
-    {
-        return new GetSpecialitiesQuery
-        {
-            Page = page,
-            PageSize = pageSize,
-            SearchString = searchString,
-            DeletedStatus = deletedStatus,
-            SortState = sortState,
-        };
-    }
-
-    private async Task<PaginationList<Speciality>> Action(GetSpecialitiesQuery query)
-    {
-        var handler = new GetSpecialitiesQueryHandler(Context);
-
-        return await handler.Handle(query, CancellationToken.None);
+        result.Items.Should().Contain(speciality => predicate(speciality));
     }
 }

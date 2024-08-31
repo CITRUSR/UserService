@@ -1,23 +1,42 @@
 ﻿using FluentAssertions;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
+using UserService.Domain.Entities;
 using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 
-public class CreateSpeciality(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class CreateSpeciality
 {
-    [Fact]
-    public async void CreateSpeciality_ShouldBe_Success()
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+
+    public CreateSpeciality()
     {
-        var command = Fixture
-            .Build<CreateSpecialityCommand>()
-            .With(x => x.Abbreavation, "ASDASAS")
-            .Create();
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
+    }
 
-        var handler = new CreateSpecialityCommandHandler(Context);
+    [Fact]
+    public async Task CreateSpeciality_ShouldBe_Success()
+    {
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([]);
 
-        var speciality = await handler.Handle(command, CancellationToken.None);
+        var command = _fixture.Create<CreateSpecialityCommand>();
 
-        Context.Specialities.FindAsync(speciality.Id).Should().NotBeNull();
+        var handler = new CreateSpecialityCommandHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        _mockDbContext.Verify(
+            x => x.Specialities.AddAsync(It.IsAny<Speciality>(), It.IsAny<CancellationToken>()),
+            Times.Once()
+        );
+
+        _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+
+        result.Should().NotBeNull();
     }
 }

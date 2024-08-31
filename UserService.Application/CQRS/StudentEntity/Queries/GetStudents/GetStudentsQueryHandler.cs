@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
+using UserService.Application.Extensions;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
@@ -16,17 +17,20 @@ public class GetStudentsQueryHandler(IAppDbContext dbContext)
     {
         IQueryable<Student> students = DbContext.Students;
 
+        students = students.FilterByDeletedStatus<Student>(
+            request.DeletedStatus,
+            st => st.IsDeleted
+        );
+
         students = GetFilteredByDroppedOutStatus(students, request.DroppedOutStatus);
 
         if (!string.IsNullOrWhiteSpace(request.SearchString))
         {
             students = students.Where(x =>
-                x.FirstName.Contains(request.SearchString)
-                || x.LastName.Contains(request.SearchString)
-                || x.PatronymicName.Contains(request.SearchString)
-                || (
-                    x.Group.CurrentCourse + "-" + x.Group.Speciality.Abbreavation + x.Group.SubGroup
-                ).Contains(request.SearchString)
+                $"{x.FirstName}{x.LastName}{x.PatronymicName}{x.Group.CurrentCourse}-{x.Group.Speciality.Abbreavation}{x.Group.SubGroup}".Contains(
+                    request.SearchString,
+                    StringComparison.CurrentCultureIgnoreCase
+                )
             );
         }
 
@@ -63,10 +67,14 @@ public class GetStudentsQueryHandler(IAppDbContext dbContext)
             SortState.LastNameDesc => students.OrderByDescending(s => s.LastName),
             SortState.GroupAsc
                 => students
-                    .OrderBy(s => s.Group.CurrentSemester)
+                    .OrderBy(s => s.Group.CurrentCourse)
                     .ThenBy(s => s.Group.Speciality.Abbreavation)
                     .ThenBy(s => s.Group.SubGroup),
-            SortState.GroupDesc => students.OrderByDescending(s => s.Group.CurrentSemester)
+            SortState.GroupDesc
+                => students
+                    .OrderByDescending(s => s.Group.CurrentCourse)
+                    .ThenByDescending(s => s.Group.Speciality.Abbreavation)
+                    .ThenByDescending(s => s.Group.SubGroup),
         };
 
         return students;

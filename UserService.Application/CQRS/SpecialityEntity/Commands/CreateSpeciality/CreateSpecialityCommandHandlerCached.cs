@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpecialit
 
 public class CreateSpecialityCommandHandlerCached(
     ICacheService cacheService,
-    CreateSpecialityCommandHandler handler
+    IRequestHandler<CreateSpecialityCommand, Speciality> handler
 ) : IRequestHandler<CreateSpecialityCommand, Speciality>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly CreateSpecialityCommandHandler _handler = handler;
+    private readonly IRequestHandler<CreateSpecialityCommand, Speciality> _handler = handler;
 
     public async Task<Speciality> Handle(
         CreateSpecialityCommand request,
@@ -20,19 +20,7 @@ public class CreateSpecialityCommandHandlerCached(
     {
         var speciality = await _handler.Handle(request, cancellationToken);
 
-        await _cacheService.SetObjectAsync<Speciality>(
-            CacheKeys.ById<Speciality, int>(speciality.Id),
-            speciality,
-            cancellationToken
-        );
-
-        for (int i = 0; i < CacheConstants.PagesForCaching; i++)
-        {
-            await _cacheService.RemoveAsync(
-                CacheKeys.GetEntities<Speciality>(i, 10),
-                cancellationToken
-            );
-        }
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Speciality>(), cancellationToken);
 
         return speciality;
     }
