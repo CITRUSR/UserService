@@ -22,7 +22,8 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext)
         {
             groups = groups.Where(x =>
                 (x.CurrentCourse + "-" + x.Speciality.Abbreavation + x.SubGroup).Contains(
-                    request.SearchString
+                    request.SearchString,
+                    StringComparison.CurrentCultureIgnoreCase
                 )
             );
         }

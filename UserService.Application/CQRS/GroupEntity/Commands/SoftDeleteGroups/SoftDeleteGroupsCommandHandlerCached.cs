@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 
 public class SoftDeleteGroupsCommandHandlerCached(
     ICacheService cacheService,
-    SoftDeleteGroupsCommandHandler handler
+    IRequestHandler<SoftDeleteGroupsCommand, List<Group>> handler
 ) : IRequestHandler<SoftDeleteGroupsCommand, List<Group>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly SoftDeleteGroupsCommandHandler _handler = handler;
+    private readonly IRequestHandler<SoftDeleteGroupsCommand, List<Group>> _handler = handler;
 
     public async Task<List<Group>> Handle(
         SoftDeleteGroupsCommand request,

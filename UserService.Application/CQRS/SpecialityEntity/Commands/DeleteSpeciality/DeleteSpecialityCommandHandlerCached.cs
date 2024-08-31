@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialit
 
 public class DeleteSpecialityCommandHandlerCached(
     ICacheService cacheService,
-    DeleteSpecialityCommandHandler handler
+    IRequestHandler<DeleteSpecialityCommand, List<Speciality>> handler
 ) : IRequestHandler<DeleteSpecialityCommand, List<Speciality>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly DeleteSpecialityCommandHandler _handler = handler;
+    private readonly IRequestHandler<DeleteSpecialityCommand, List<Speciality>> _handler = handler;
 
     public async Task<List<Speciality>> Handle(
         DeleteSpecialityCommand request,

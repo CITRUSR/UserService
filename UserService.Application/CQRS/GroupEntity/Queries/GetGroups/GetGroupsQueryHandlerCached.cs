@@ -7,10 +7,12 @@ using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 
-public class GetGroupsQueryHandlerCached(GetGroupsQueryHandler handler, ICacheService cacheService)
-    : IRequestHandler<GetGroupsQuery, PaginationList<Group>>
+public class GetGroupsQueryHandlerCached(
+    IRequestHandler<GetGroupsQuery, PaginationList<Group>> handler,
+    ICacheService cacheService
+) : IRequestHandler<GetGroupsQuery, PaginationList<Group>>
 {
-    private readonly GetGroupsQueryHandler _handler = handler;
+    private readonly IRequestHandler<GetGroupsQuery, PaginationList<Group>> _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
 
     public async Task<PaginationList<Group>> Handle(

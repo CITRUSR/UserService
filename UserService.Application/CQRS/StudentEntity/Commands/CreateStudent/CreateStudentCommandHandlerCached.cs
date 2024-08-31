@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 
 public class CreateStudentCommandHandlerCached(
     ICacheService cache,
-    CreateStudentCommandHandler handler
+    IRequestHandler<CreateStudentCommand, Guid> handler
 ) : IRequestHandler<CreateStudentCommand, Guid>
 {
     private readonly ICacheService _cacheService = cache;
-    private readonly CreateStudentCommandHandler _handler = handler;
+    private readonly IRequestHandler<CreateStudentCommand, Guid> _handler = handler;
 
     public async Task<Guid> Handle(
         CreateStudentCommand request,

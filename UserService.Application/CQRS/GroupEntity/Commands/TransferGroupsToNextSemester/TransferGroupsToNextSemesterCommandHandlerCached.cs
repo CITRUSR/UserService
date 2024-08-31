@@ -6,12 +6,13 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 
 public class TransferGroupsToNextSemesterCommandHandlerCached(
-    TransferGroupsToNextSemesterCommandHandler handler,
+    IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>> handler,
     ICacheService cacheService
 ) : IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly TransferGroupsToNextSemesterCommandHandler _handler = handler;
+    private readonly IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>> _handler =
+        handler;
 
     public async Task<List<Group>> Handle(
         TransferGroupsToNextSemesterCommand request,

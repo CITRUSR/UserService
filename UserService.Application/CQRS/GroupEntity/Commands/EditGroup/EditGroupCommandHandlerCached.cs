@@ -6,11 +6,11 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 
 public class EditGroupCommandHandlerCached(
-    EditGroupCommandHandler handler,
+    IRequestHandler<EditGroupCommand, Group> handler,
     ICacheService cacheService
 ) : IRequestHandler<EditGroupCommand, Group>
 {
-    private readonly EditGroupCommandHandler _handler = handler;
+    private readonly IRequestHandler<EditGroupCommand, Group> _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
 
     public async Task<Group> Handle(EditGroupCommand request, CancellationToken cancellationToken)
