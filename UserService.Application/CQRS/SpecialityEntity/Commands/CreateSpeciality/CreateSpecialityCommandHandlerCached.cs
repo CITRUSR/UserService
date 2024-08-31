@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpecialit
 
 public class CreateSpecialityCommandHandlerCached(
     ICacheService cacheService,
-    CreateSpecialityCommandHandler handler
+    IRequestHandler<CreateSpecialityCommand, Speciality> handler
 ) : IRequestHandler<CreateSpecialityCommand, Speciality>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly CreateSpecialityCommandHandler _handler = handler;
+    private readonly IRequestHandler<CreateSpecialityCommand, Speciality> _handler = handler;
 
     public async Task<Speciality> Handle(
         CreateSpecialityCommand request,
