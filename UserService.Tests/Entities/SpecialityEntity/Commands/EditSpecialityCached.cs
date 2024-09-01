@@ -1,44 +1,62 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 
-public class EditSpecialityCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class EditSpecialityCached
 {
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<IRequestHandler<EditSpecialityCommand, Speciality>> _mockHandler;
+    private readonly EditSpecialityCommand _command;
+    private readonly IFixture _fixture;
+
+    public EditSpecialityCached()
+    {
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<EditSpecialityCommand, Speciality>>();
+        _fixture = new Fixture();
+        _command = _fixture.Create<EditSpecialityCommand>();
+    }
+
     [Fact]
     public async Task EditSpecialityCached_ShouldBe_Success()
     {
-        var speciality = Fixture.Create<Speciality>();
+        var speciality = _fixture.Build<Speciality>().With(x => x.Id, _command.Id).Create();
 
-        await DbHelper.AddSpecialitiesToContext(speciality);
-
-        var newSpeciality = Fixture.Build<Speciality>().With(x => x.Id, speciality.Id).Create();
-
-        var command = new EditSpecialityCommand(
-            speciality.Id,
-            newSpeciality.Name,
-            newSpeciality.Abbreavation,
-            newSpeciality.Cost,
-            newSpeciality.DurationMonths,
-            newSpeciality.IsDeleted
-        );
+        _mockHandler
+            .Setup(x => x.Handle(It.IsAny<EditSpecialityCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(speciality);
 
         var handler = new EditSpecialityCommandHandlerCached(
-            new EditSpecialityCommandHandler(Context),
-            CacheService
+            _mockHandler.Object,
+            _mockCacheService.Object
         );
 
-        var specialityRes = await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(_command, default);
 
-        var key = CacheKeys.ById<Speciality, int>(specialityRes.Id);
+        _mockCacheService.Verify(
+            x =>
+                x.RemoveAsync(
+                    It.Is<string>(x => x.Equals(CacheKeys.ById<Speciality, int>(_command.Id))),
+                    default
+                ),
+            Times.Once()
+        );
 
-        var cachedString = await CacheService.GetStringAsync(key);
-        var cachedObject = await CacheService.GetObjectAsync<Speciality>(key);
+        _mockCacheService.Verify(
+            x =>
+                x.RemoveAsync(
+                    It.Is<string>(x => x.Equals(CacheKeys.GetEntities<Speciality>())),
+                    default
+                ),
+            Times.Once()
+        );
 
-        cachedString.Should().NotBeNull();
-        cachedObject.Should().BeEquivalentTo(newSpeciality);
+        result.Should().NotBeNull();
     }
 }

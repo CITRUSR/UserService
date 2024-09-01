@@ -1,41 +1,68 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class SoftDeleteGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class SoftDeleteGroupsCached
 {
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<IRequestHandler<SoftDeleteGroupsCommand, List<Group>>> _mockHandler;
+    private readonly IFixture _fixture;
+
+    public SoftDeleteGroupsCached()
+    {
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<SoftDeleteGroupsCommand, List<Group>>>();
+        _fixture = new Fixture();
+    }
+
     [Fact]
     public async Task SoftDeleteGroupsCached_ShouldBe_Success()
     {
-        var groups = Fixture.CreateMany<Group>(5);
+        var groups = _fixture.CreateMany<Group>(3).ToList();
+        var ids = groups.Select(x => x.Id).ToList();
 
-        await DbHelper.AddGroupsToContext([.. groups]);
+        var command = _fixture.Build<SoftDeleteGroupsCommand>().With(x => x.GroupsId, ids).Create();
 
-        var command = new SoftDeleteGroupsCommand([.. groups.Select(x => x.Id)]);
+        _mockHandler
+            .Setup(x =>
+                x.Handle(
+                    It.Is<SoftDeleteGroupsCommand>(x => x.GroupsId == ids),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(groups);
 
         var handler = new SoftDeleteGroupsCommandHandlerCached(
-            CacheService,
-            new SoftDeleteGroupsCommandHandler(Context)
+            _mockCacheService.Object,
+            _mockHandler.Object
         );
 
-        var groupsRes = await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, default);
 
-        foreach (var group in groupsRes)
+        _mockHandler.Verify(x => x.Handle(command, default), Times.Once());
+
+        foreach (var group in groups)
         {
-            var specialityFromCache = await CacheService.GetObjectAsync<Group>(
-                CacheKeys.ById<Group, int>(group.Id)
+            _mockCacheService.Verify(
+                x =>
+                    x.RemoveAsync(
+                        It.Is<string>(x => x.Equals(CacheKeys.ById<Group, int>(group.Id))),
+                        default
+                    ),
+                Times.Once()
             );
-
-            specialityFromCache
-                .Should()
-                .BeEquivalentTo(
-                    group,
-                    options => options.Excluding(x => x.Curator).Excluding(x => x.Speciality)
-                );
         }
+
+        _mockCacheService.Verify(x =>
+            x.RemoveAsync(It.Is<string>(x => x.Equals(CacheKeys.GetEntities<Group>())), default)
+        );
+
+        result.Should().NotBeNull();
     }
 }

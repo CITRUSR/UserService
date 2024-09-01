@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 
 public class SoftDeleteGroupsCommandHandlerCached(
     ICacheService cacheService,
-    SoftDeleteGroupsCommandHandler handler
+    IRequestHandler<SoftDeleteGroupsCommand, List<Group>> handler
 ) : IRequestHandler<SoftDeleteGroupsCommand, List<Group>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly SoftDeleteGroupsCommandHandler _handler = handler;
+    private readonly IRequestHandler<SoftDeleteGroupsCommand, List<Group>> _handler = handler;
 
     public async Task<List<Group>> Handle(
         SoftDeleteGroupsCommand request,
@@ -24,14 +24,10 @@ public class SoftDeleteGroupsCommandHandlerCached(
         {
             var key = CacheKeys.ById<Group, int>(group.Id);
 
-            await _cacheService.SetObjectAsync<Group>(key, group, cancellationToken);
-
-            await _cacheService.RemovePagesWithObjectAsync<Group, int>(
-                group.Id,
-                (group1, i) => group1.Id == i,
-                cancellationToken
-            );
+            await _cacheService.RemoveAsync(key, cancellationToken);
         }
+
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return groups;
     }

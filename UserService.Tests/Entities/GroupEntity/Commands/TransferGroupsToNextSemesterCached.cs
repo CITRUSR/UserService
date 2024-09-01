@@ -1,60 +1,74 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class TransferGroupsToNextSemesterCached(DatabaseFixture databaseFixture)
-    : RedisTest(databaseFixture)
+public class TransferGroupsToNextSemesterCached
 {
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<
+        IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>
+    > _mockHandler;
+    private readonly IFixture _fixture;
+
+    public TransferGroupsToNextSemesterCached()
+    {
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler =
+            new Mock<IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>>();
+        _fixture = new Fixture();
+    }
+
     [Fact]
     public async Task TransferGroupsToNextSemesterCached_ShouldBe_Success()
     {
-        var speciality = Fixture.Build<Speciality>().With(x => x.DurationMonths, 48).Create();
+        var groups = _fixture.CreateMany<Group>(3).ToList();
+        var ids = groups.Select(x => x.Id).ToList();
 
-        await DbHelper.AddSpecialitiesToContext(speciality);
-
-        var group = Fixture
-            .Build<Group>()
-            .With(x => x.CurrentSemester, 2)
-            .With(x => x.Speciality, speciality)
+        var command = _fixture
+            .Build<TransferGroupsToNextSemesterCommand>()
+            .With(x => x.IdGroups, ids)
             .Create();
 
-        await DbHelper.AddGroupsToContext(group);
-
-        var command = new TransferGroupsToNextSemesterCommand([group.Id]);
+        _mockHandler
+            .Setup(x =>
+                x.Handle(
+                    It.Is<TransferGroupsToNextSemesterCommand>(x => x.IdGroups == ids),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(groups);
 
         var handler = new TransferGroupsToNextSemesterCommandHandlerCached(
-            new TransferGroupsToNextSemesterCommandHandler(Context),
-            CacheService
+            _mockHandler.Object,
+            _mockCacheService.Object
         );
 
-        var groups = await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, default);
 
-        var key = CacheKeys.ById<Group, int>(group.Id);
+        _mockHandler.Verify(x => x.Handle(command, default), Times.Once());
 
-        var cachedString = await CacheService.GetStringAsync(key);
-
-        var groupFromCache = await CacheService.GetObjectAsync<Group>(key);
-
-        cachedString.Should().NotBeNullOrEmpty();
-
-        for (int i = 0; i < CacheConstants.PagesForCaching; i++)
+        foreach (var group in groups)
         {
-            var cacheString = await CacheService.GetStringAsync(
-                CacheKeys.GetEntities<Group>(i, 10)
+            _mockCacheService.Verify(
+                x =>
+                    x.RemoveAsync(
+                        It.Is<string>(x => x.Equals(CacheKeys.ById<Group, int>(group.Id))),
+                        default
+                    ),
+                Times.Once()
             );
-
-            cacheString.Should().BeNull();
         }
 
-        groupFromCache
-            .Should()
-            .BeEquivalentTo(
-                group,
-                options => options.Excluding(x => x.Curator).Excluding(x => x.Speciality)
-            );
+        _mockCacheService.Verify(x =>
+            x.RemoveAsync(It.Is<string>(x => x.Equals(CacheKeys.GetEntities<Group>())), default)
+        );
+
+        result.Should().NotBeNull();
     }
 }

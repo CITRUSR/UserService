@@ -1,47 +1,58 @@
 using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
 
-public class CreateGroupCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class CreateGroupCached
 {
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<IRequestHandler<CreateGroupCommand, Group>> _mockHandler;
+    private readonly IFixture _fixture;
+
+    public CreateGroupCached()
+    {
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<CreateGroupCommand, Group>>();
+        _fixture = new Fixture();
+    }
+
     [Fact]
     public async Task CreateGroupCached_ShouldBe_Success()
     {
-        var speciality = Fixture.Create<Speciality>();
-        var curator = Fixture.Create<Teacher>();
+        var group = _fixture.Create<Group>();
 
-        await DbHelper.AddSpecialitiesToContext(speciality);
-        await DbHelper.AddTeachersToContext(curator);
+        _mockHandler
+            .Setup(x => x.Handle(It.IsAny<CreateGroupCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(group);
 
-        var command = Fixture
-            .Build<CreateGroupCommand>()
-            .With(x => x.CuratorId, curator.Id)
-            .With(x => x.SpecialityId, speciality.Id)
-            .Create();
+        var command = _fixture.Create<CreateGroupCommand>();
 
         var handler = new CreateGroupCommandHandlerCached(
-            CacheService,
-            new CreateGroupCommandHandler(Context)
+            _mockCacheService.Object,
+            _mockHandler.Object
         );
 
-        var group = await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, default);
 
-        var key = CacheKeys.ById<Group, int>(group.Id);
+        _mockHandler.Verify(
+            x => x.Handle(It.IsAny<CreateGroupCommand>(), It.IsAny<CancellationToken>()),
+            Times.Once()
+        );
 
-        var cacheString = await CacheService.GetStringAsync(key);
+        _mockCacheService.Verify(
+            x =>
+                x.RemoveAsync(
+                    It.Is<string>(x => x.Equals(CacheKeys.GetEntities<Group>())),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once()
+        );
 
-        var groupFromCache = await CacheService.GetObjectAsync<Group>(key);
-
-        cacheString.Should().NotBeNullOrEmpty();
-        groupFromCache
-            .Should()
-            .BeEquivalentTo(
-                group,
-                options => options.Excluding(x => x.Curator).Excluding(x => x.Speciality)
-            );
+        result.Should().NotBeNull();
     }
 }

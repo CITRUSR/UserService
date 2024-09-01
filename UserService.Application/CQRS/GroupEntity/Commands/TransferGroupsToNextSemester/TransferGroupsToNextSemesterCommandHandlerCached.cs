@@ -6,12 +6,13 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 
 public class TransferGroupsToNextSemesterCommandHandlerCached(
-    TransferGroupsToNextSemesterCommandHandler handler,
+    IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>> handler,
     ICacheService cacheService
 ) : IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly TransferGroupsToNextSemesterCommandHandler _handler = handler;
+    private readonly IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>> _handler =
+        handler;
 
     public async Task<List<Group>> Handle(
         TransferGroupsToNextSemesterCommand request,
@@ -22,18 +23,13 @@ public class TransferGroupsToNextSemesterCommandHandlerCached(
 
         foreach (var group in groups)
         {
-            await _cacheService.SetObjectAsync<Group>(
+            await _cacheService.RemoveAsync(
                 CacheKeys.ById<Group, int>(group.Id),
-                group,
-                cancellationToken
-            );
-
-            await _cacheService.RemovePagesWithObjectAsync<Group, int>(
-                group.Id,
-                (gr, i) => gr.Id == i,
                 cancellationToken
             );
         }
+
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return groups;
     }

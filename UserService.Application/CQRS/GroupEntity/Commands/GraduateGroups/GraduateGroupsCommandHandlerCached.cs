@@ -7,11 +7,11 @@ namespace UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
 
 public class GraduateGroupsCommandHandlerCached(
     ICacheService cacheService,
-    GraduateGroupsCommandHandler handler
+    IRequestHandler<GraduateGroupsCommand, List<Group>> handler
 ) : IRequestHandler<GraduateGroupsCommand, List<Group>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly GraduateGroupsCommandHandler _handler = handler;
+    private readonly IRequestHandler<GraduateGroupsCommand, List<Group>> _handler = handler;
 
     public async Task<List<Group>> Handle(
         GraduateGroupsCommand request,
@@ -22,17 +22,13 @@ public class GraduateGroupsCommandHandlerCached(
 
         foreach (var group in groups)
         {
-            await _cacheService.SetObjectAsync<Group>(
+            await _cacheService.RemoveAsync(
                 CacheKeys.ById<Group, int>(group.Id),
-                group,
-                cancellationToken
-            );
-            await _cacheService.RemovePagesWithObjectAsync<Group, int>(
-                group.Id,
-                (gr, i) => gr.Id == i,
                 cancellationToken
             );
         }
+
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return groups;
     }

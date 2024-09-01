@@ -1,165 +1,105 @@
 ﻿using FluentAssertions;
+using MediatR;
+using Moq;
+using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.GroupEntity.Queries;
 
-public class GetGroupsCached(DatabaseFixture databaseFixture) : RedisTest(databaseFixture)
+public class GetGroupsCached
 {
-    [Fact]
-    public async Task GetGroupsCached_ShouldBe_SuccessWithoutCache_WithValidatedQuery()
+    private readonly Mock<ICacheService> _mockCacheService;
+    private readonly Mock<IRequestHandler<GetGroupsQuery, PaginationList<Group>>> _mockHandler;
+    private readonly IFixture _fixture;
+    private readonly GetGroupsQuery _query;
+
+    public GetGroupsCached()
     {
-        var groups = await GetGroupsCachedWithValidatedQuery(
-            1,
-            GroupSortState.GroupAsc,
-            GroupGraduatedStatus.OnlyActive,
-            DeletedStatus.OnlyActive
-        );
-
-        var groupsFromCache = await CacheService.GetObjectAsync<PaginationList<Group>>(
-            CacheKeys.GetEntities<Group>(1, 10)
-        );
-
-        CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10)).Should().NotBeNull();
-
-        groupsFromCache
-            .Items.Should()
-            .BeEquivalentTo(
-                groups.Items,
-                options => options.Excluding(x => x.Speciality).Excluding(x => x.Curator)
-            );
-        groupsFromCache.Should().BeEquivalentTo(groups, options => options.Excluding(x => x.Items));
-    }
-
-    [Fact]
-    public async Task GetGroupsCached_ShouldBe_SuccessWithoutCache_WithOutValidatedQuery()
-    {
-        var groups = await GetGroupsCachedWithValidatedQuery(
-            1,
-            GroupSortState.GroupDesc,
-            GroupGraduatedStatus.OnlyActive,
-            DeletedStatus.All
-        );
-
-        var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10));
-        cacheString.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task GetGroupsCached_ShouldBe_SuccessWithCache()
-    {
-        await SeedDataForTestsWithValidatedQueryForCaching();
-
-        var query = CreateQuery();
-
-        var baseHandler = new GetGroupsQueryHandler(Context);
-
-        var groups = await baseHandler.Handle(query, CancellationToken.None);
-
-        await CacheService.SetObjectAsync(CacheKeys.GetEntities<Group>(1, 10), groups);
-
-        await Action(query);
-
-        var cacheString = await CacheService.GetStringAsync(CacheKeys.GetEntities<Group>(1, 10));
-        var groupsFromCache = await CacheService.GetObjectAsync<PaginationList<Group>>(
-            CacheKeys.GetEntities<Group>(1, 10)
-        );
-
-        cacheString.Should().NotBeNull();
-        groupsFromCache
-            .Items.Should()
-            .BeEquivalentTo(
-                groups.Items,
-                options => options.Excluding(x => x.Speciality).Excluding(x => x.Curator)
-            );
-        groupsFromCache.Should().BeEquivalentTo(groups, options => options.Excluding(x => x.Items));
-    }
-
-    private async Task<PaginationList<Group>> GetGroupsCachedWithValidatedQuery(
-        int page,
-        GroupSortState sortState,
-        GroupGraduatedStatus graduatedStatus,
-        DeletedStatus deletedStatus
-    )
-    {
-        await SeedDataForTestsWithValidatedQueryForCaching();
-        var query = CreateQuery(
-            page: page,
-            sortState: sortState,
-            graduatedStatus: graduatedStatus,
-            deletedStatus: deletedStatus
-        );
-
-        return await Action(query);
-    }
-
-    private async Task SeedDataForTestsWithValidatedQueryForCaching()
-    {
-        var speciality = Fixture.Create<Speciality>();
-
-        await DbHelper.AddSpecialitiesToContext(speciality);
-
-        var curator = Fixture.Create<Teacher>();
-
-        await DbHelper.AddTeachersToContext(curator);
-
-        var groups = CreateGroups(10, curator.Id, speciality);
-
-        await DbHelper.AddGroupsToContext(groups.ToArray());
-    }
-
-    private List<Group> CreateGroups(int count, Guid curatorId, Speciality speciality)
-    {
-        List<Group> groups = new List<Group>();
-
-        for (int i = 0; i < count; i++)
+        _mockCacheService = new Mock<ICacheService>();
+        _mockHandler = new Mock<IRequestHandler<GetGroupsQuery, PaginationList<Group>>>();
+        _fixture = new Fixture();
+        _query = new GetGroupsQuery
         {
-            groups.Add(
-                Fixture
-                    .Build<Group>()
-                    .Without(x => x.Curator)
-                    .Without(x => x.GraduatedAt)
-                    .Without(x => x.Id)
-                    .With(x => x.CuratorId, curatorId)
-                    .With(x => x.Speciality, speciality)
-                    .Create()
-            );
-        }
-
-        return groups;
-    }
-
-    private GetGroupsQuery CreateQuery(
-        int page = 1,
-        int pageSize = 10,
-        string searchString = "",
-        GroupSortState sortState = GroupSortState.GroupAsc,
-        GroupGraduatedStatus graduatedStatus = GroupGraduatedStatus.OnlyActive,
-        DeletedStatus deletedStatus = DeletedStatus.OnlyActive
-    )
-    {
-        return new GetGroupsQuery
-        {
-            Page = page,
-            PageSize = pageSize,
-            SearchString = searchString,
-            GraduatedStatus = graduatedStatus,
-            SortState = sortState,
-            DeletedStatus = deletedStatus,
+            Page = 1,
+            PageSize = 10,
+            DeletedStatus = DeletedStatus.All,
+            GraduatedStatus = GroupGraduatedStatus.All,
+            SearchString = "",
+            SortState = GroupSortState.GroupAsc
         };
     }
 
-    private async Task<PaginationList<Group>> Action(GetGroupsQuery query)
+    [Fact]
+    public async Task GetGroupsCached_ShouldBe_Success_WhenQueryIsValid()
     {
+        _mockCacheService
+            .Setup(x =>
+                x.GetOrCreateAsync<PaginationList<Group>>(
+                    It.IsAny<string>(),
+                    It.IsAny<Func<Task<PaginationList<Group>>>>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(new PaginationList<Group> { Items = new List<Group> { new Group() } });
+
         var handler = new GetGroupsQueryHandlerCached(
-            new GetGroupsQueryHandler(Context),
-            CacheService
+            _mockHandler.Object,
+            _mockCacheService.Object
         );
 
-        return await handler.Handle(query, CancellationToken.None);
+        var query = _query with
+        {
+            GraduatedStatus = GroupGraduatedStatus.OnlyActive,
+            DeletedStatus = DeletedStatus.OnlyActive
+        };
+
+        var result = await handler.Handle(query, CancellationToken.None);
+
+        _mockHandler.Verify(x => x.Handle(_query, CancellationToken.None), Times.Never());
+
+        _mockCacheService.Verify(
+            x =>
+                x.GetOrCreateAsync<PaginationList<Group>>(
+                    It.IsAny<string>(),
+                    It.IsAny<Func<Task<PaginationList<Group>>>>(),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once
+        );
+
+        result.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetGroupsCached_ShouldBe_Success_WhenQueryIsInvalid()
+    {
+        _mockHandler
+            .Setup(x => x.Handle(It.IsAny<GetGroupsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PaginationList<Group> { Items = new List<Group> { new Group() } });
+
+        var handler = new GetGroupsQueryHandlerCached(
+            _mockHandler.Object,
+            _mockCacheService.Object
+        );
+
+        var result = await handler.Handle(_query, CancellationToken.None);
+
+        _mockHandler.Verify(x => x.Handle(_query, CancellationToken.None), Times.Once());
+
+        _mockCacheService.Verify(
+            x =>
+                x.GetOrCreateAsync<PaginationList<Group>>(
+                    It.IsAny<string>(),
+                    It.IsAny<Func<Task<PaginationList<Group>>>>(),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Never()
+        );
+
+        result.Should().NotBeNull();
     }
 }

@@ -2,16 +2,14 @@
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Testcontainers.Redis;
 using UserService.Application.Abstraction;
-using UserService.Application.Common.Cache;
+using UserService.Persistance.Cache;
 using UserService.Tests.Common.Factories;
 
 namespace UserService.Tests.Common;
 
-public class RedisTest(DatabaseFixture databaseFixture)
-    : CommonTest(databaseFixture),
-        IAsyncLifetime
+public class RedisFixture : IAsyncLifetime
 {
-    protected ICacheService CacheService { get; private set; }
+    public ICacheService CacheService { get; private set; }
     private RedisCache _redisCache;
     private RedisContainer _redisContainer = new RedisBuilder()
         .WithImage("redis:7.4-rc")
@@ -20,7 +18,7 @@ public class RedisTest(DatabaseFixture databaseFixture)
         .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(6379))
         .Build();
 
-    public new async Task InitializeAsync()
+    public async Task InitializeAsync()
     {
         await _redisContainer.StartAsync();
 
@@ -28,7 +26,7 @@ public class RedisTest(DatabaseFixture databaseFixture)
         CacheService = new CacheService(_redisCache);
     }
 
-    public new async Task DisposeAsync()
+    public async Task DisposeAsync()
     {
         _redisCache.Dispose();
 

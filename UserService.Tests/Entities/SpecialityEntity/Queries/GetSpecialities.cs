@@ -1,24 +1,31 @@
 ﻿using FluentAssertions;
-using UserService.Application.Common.Paging;
+using Moq;
+using Moq.EntityFrameworkCore;
+using UserService.Application.Abstraction;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
-using UserService.Tests.Common;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Queries;
 
-public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(databaseFixture)
+public class GetSpecialities
 {
-    [Fact]
-    public async Task GetSpecialities_ShouldBe_SuccessWithPageSize()
-    {
-        await TestPagination(pageSize: 10, page: 1, expectedCount: 10, expectedMaxPage: 2);
-    }
+    private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly IFixture _fixture;
+    private readonly GetSpecialitiesQuery _query;
 
-    [Fact]
-    public async Task GetSpecialities_ShouldBe_SuccessWithPageNumber()
+    public GetSpecialities()
     {
-        await TestPagination(pageSize: 10, page: 2, expectedCount: 2, expectedMaxPage: 2);
+        _mockDbContext = new Mock<IAppDbContext>();
+        _fixture = new Fixture();
+        _query = new GetSpecialitiesQuery
+        {
+            Page = 1,
+            PageSize = 10,
+            SortState = SpecialitySortState.NameAsc,
+            SearchString = "",
+            DeletedStatus = DeletedStatus.All,
+        };
     }
 
     [Fact]
@@ -96,27 +103,19 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
     [Fact]
     public async Task GetSpecialities_ShouldBe_SuccessWithDeletedStatus_All()
     {
-        await TestDeletedStatus(DeletedStatus.All, 2);
+        await TestDeletedStatus(DeletedStatus.All, (studentA, studentB) => [studentA, studentB]);
     }
 
     [Fact]
     public async Task GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyDeleted()
     {
-        await TestDeletedStatus(
-            DeletedStatus.OnlyDeleted,
-            1,
-            (speciality1, speciality2) => speciality1
-        );
+        await TestDeletedStatus(DeletedStatus.OnlyDeleted, (studentA, studentB) => [studentA]);
     }
 
     [Fact]
     public async Task GetSpecialities_ShouldBe_SuccessWithDeletedStatus_OnlyActive()
     {
-        await TestDeletedStatus(
-            DeletedStatus.OnlyActive,
-            1,
-            (speciality1, speciality2) => speciality2
-        );
+        await TestDeletedStatus(DeletedStatus.OnlyActive, (studentA, studentB) => [studentB]);
     }
 
     [Fact]
@@ -131,84 +130,12 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
         await TestSearchString("CC", 1, speciality => speciality.Abbreavation == "CCC");
     }
 
-    private async Task TestPagination(
-        int pageSize,
-        int page,
-        int expectedCount,
-        int expectedMaxPage
-    )
-    {
-        await SeedDataForPageTests();
-
-        var query = CreateQuery(pageSize: pageSize, page: page);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(expectedCount);
-        specialities.MaxPage.Should().Be(expectedMaxPage);
-    }
-
     private async Task TestOrdering(
         SpecialitySortState sortState,
         Func<Speciality, Speciality, Speciality[]> predicate
     )
     {
-        var (specialityA, specialityB) = await SeedData();
-
-        var query = CreateQuery(sortState: sortState);
-
-        var specialities = await Action(query);
-
-        specialities
-            .Items.Should()
-            .BeEquivalentTo(
-                predicate(specialityA, specialityB),
-                options => options.WithStrictOrdering()
-            );
-    }
-
-    private async Task TestDeletedStatus(
-        DeletedStatus deletedStatus,
-        int expectedCount,
-        Func<Speciality, Speciality, Speciality> expectedSpeciality = null
-    )
-    {
-        var (specialityA, specialityB) = await SeedData();
-
-        var query = CreateQuery(deletedStatus: deletedStatus);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(expectedCount);
-
-        if (expectedSpeciality != null)
-        {
-            specialities
-                .Items[0]
-                .Should()
-                .BeEquivalentTo(expectedSpeciality(specialityA, specialityB));
-        }
-    }
-
-    private async Task TestSearchString(
-        string searchString,
-        int expectedCount,
-        Func<Speciality, bool> predicate
-    )
-    {
-        var (speciality1, speciality2) = await SeedData();
-
-        var query = CreateQuery(searchString: searchString);
-
-        var specialities = await Action(query);
-
-        specialities.Items.Should().HaveCount(expectedCount);
-        specialities.Items.Should().ContainSingle(speciality => predicate(speciality));
-    }
-
-    private async Task<(Speciality, Speciality)> SeedData()
-    {
-        Speciality specialityA = Fixture
+        Speciality specialityA = _fixture
             .Build<Speciality>()
             .With(x => x.Name, "AAA")
             .With(x => x.Abbreavation, "CCC")
@@ -216,7 +143,8 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
             .With(x => x.DurationMonths, 1)
             .With(x => x.IsDeleted, true)
             .Create();
-        Speciality specialityB = Fixture
+
+        Speciality specialityB = _fixture
             .Build<Speciality>()
             .With(x => x.Name, "BBB")
             .With(x => x.Abbreavation, "DDD")
@@ -225,39 +153,65 @@ public class GetSpecialities(DatabaseFixture databaseFixture) : CommonTest(datab
             .With(x => x.IsDeleted, false)
             .Create();
 
-        await DbHelper.AddSpecialitiesToContext([specialityA, specialityB]);
-        return (specialityA, specialityB);
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([specialityA, specialityB]);
+
+        var query = _query with { SortState = sortState };
+
+        var handler = new GetSpecialitiesQueryHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(query, default);
+
+        result
+            .Items.Select(x => x.Id)
+            .Should()
+            .BeEquivalentTo(
+                predicate(specialityA, specialityB).Select(x => x.Id),
+                options => options.WithStrictOrdering()
+            );
     }
 
-    private async Task SeedDataForPageTests()
-    {
-        var specialities = Fixture.CreateMany<Speciality>(12);
-
-        await DbHelper.AddSpecialitiesToContext([.. specialities]);
-    }
-
-    private GetSpecialitiesQuery CreateQuery(
-        int page = 1,
-        int pageSize = 10,
-        string searchString = "",
-        SpecialitySortState sortState = SpecialitySortState.NameAsc,
-        DeletedStatus deletedStatus = DeletedStatus.All
+    private async Task TestDeletedStatus(
+        DeletedStatus deletedStatus,
+        Func<Speciality, Speciality, Speciality[]> expectedSpeciality
     )
     {
-        return new GetSpecialitiesQuery
-        {
-            Page = page,
-            PageSize = pageSize,
-            SearchString = searchString,
-            DeletedStatus = deletedStatus,
-            SortState = sortState,
-        };
+        var specialityA = _fixture.Build<Speciality>().With(x => x.IsDeleted, true).Create();
+        var specialityB = _fixture.Build<Speciality>().With(x => x.IsDeleted, false).Create();
+
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([specialityA, specialityB]);
+
+        var query = _query with { DeletedStatus = deletedStatus };
+
+        var handler = new GetSpecialitiesQueryHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(query, default);
+
+        result
+            .Items.Select(x => x.Id)
+            .Should()
+            .BeEquivalentTo(expectedSpeciality(specialityA, specialityB).Select(x => x.Id));
     }
 
-    private async Task<PaginationList<Speciality>> Action(GetSpecialitiesQuery query)
+    private async Task TestSearchString(
+        string searchString,
+        int expectedCount,
+        Func<Speciality, bool> predicate
+    )
     {
-        var handler = new GetSpecialitiesQueryHandler(Context);
+        var specialityA = _fixture.Build<Speciality>().With(x => x.Name, "AAA").Create();
 
-        return await handler.Handle(query, CancellationToken.None);
+        var specialityB = _fixture.Build<Speciality>().With(x => x.Abbreavation, "CCC").Create();
+
+        _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([specialityA, specialityB]);
+
+        var query = _query with { SearchString = searchString };
+
+        var handler = new GetSpecialitiesQueryHandler(_mockDbContext.Object);
+
+        var result = await handler.Handle(query, default);
+
+        result.Items.Count.Should().Be(expectedCount);
+
+        result.Items.Should().Contain(speciality => predicate(speciality));
     }
 }

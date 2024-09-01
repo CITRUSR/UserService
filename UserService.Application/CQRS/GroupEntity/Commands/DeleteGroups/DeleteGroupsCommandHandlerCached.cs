@@ -6,11 +6,11 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 
 public class DeleteGroupsCommandHandlerCached(
-    DeleteGroupsCommandHandler handler,
+    IRequestHandler<DeleteGroupsCommand, List<Group>> handler,
     ICacheService cacheService
 ) : IRequestHandler<DeleteGroupsCommand, List<Group>>
 {
-    private readonly DeleteGroupsCommandHandler _handler = handler;
+    private readonly IRequestHandler<DeleteGroupsCommand, List<Group>> _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
 
     public async Task<List<Group>> Handle(
@@ -22,16 +22,13 @@ public class DeleteGroupsCommandHandlerCached(
 
         foreach (var group in groups)
         {
-            var key = CacheKeys.ById<Group, int>(group.Id);
-
-            await _cacheService.RemoveAsync(key, cancellationToken);
-
-            await _cacheService.RemovePagesWithObjectAsync<Group, int>(
-                group.Id,
-                (group, i) => group.Id == i,
+            await _cacheService.RemoveAsync(
+                CacheKeys.ById<Group, int>(group.Id),
                 cancellationToken
             );
         }
+
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return groups;
     }

@@ -6,28 +6,20 @@ using UserService.Domain.Entities;
 namespace UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 
 public class EditGroupCommandHandlerCached(
-    EditGroupCommandHandler handler,
+    IRequestHandler<EditGroupCommand, Group> handler,
     ICacheService cacheService
 ) : IRequestHandler<EditGroupCommand, Group>
 {
-    private readonly EditGroupCommandHandler _handler = handler;
+    private readonly IRequestHandler<EditGroupCommand, Group> _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
 
     public async Task<Group> Handle(EditGroupCommand request, CancellationToken cancellationToken)
     {
         var group = await _handler.Handle(request, cancellationToken);
 
-        await _cacheService.SetObjectAsync(
-            CacheKeys.ById<Group, int>(request.Id),
-            group,
-            cancellationToken
-        );
+        await _cacheService.RemoveAsync(CacheKeys.ById<Group, int>(request.Id), cancellationToken);
 
-        await _cacheService.RemovePagesWithObjectAsync<Group, int>(
-            group.Id,
-            (group1, i) => group1.Id == i,
-            cancellationToken
-        );
+        await _cacheService.RemoveAsync(CacheKeys.GetEntities<Group>(), cancellationToken);
 
         return group;
     }
