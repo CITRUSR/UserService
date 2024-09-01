@@ -84,7 +84,7 @@ public static class DependencyInjection
             GraduateGroupsCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>>,
+            IRequestHandler<TransferGroupsToNextCourseCommand, List<GroupShortInfoDto>>,
             TransferGroupsToNextCourseCommandHandlerCached
         >();
         services.Decorate<

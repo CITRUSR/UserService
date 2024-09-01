@@ -82,7 +82,7 @@ message TransferGroupsToNextCourseRequest{
 }
 
 message TransferGroupsToNextCourseResponse{
-  repeated ChangeGroupResponseModel Groups = 1;
+  repeated GroupShortInfo Groups = 1;
 }
 
 message DeleteGroupsRequest{

@@ -1,16 +1,18 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 
 public class TransferGroupsToNextCourseCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>>
+        IRequestHandler<TransferGroupsToNextCourseCommand, List<GroupShortInfoDto>>
 {
-    public async Task<List<Group>> Handle(
+    public async Task<List<GroupShortInfoDto>> Handle(
         TransferGroupsToNextCourseCommand request,
         CancellationToken cancellationToken
     )
@@ -43,7 +45,7 @@ public class TransferGroupsToNextCourseCommandHandler(IAppDbContext dbContext)
             throw;
         }
 
-        return groups;
+        return groups.Adapt<List<GroupShortInfoDto>>();
     }
 
     private bool TryIncreaseCourse(List<Group> groups, out ICollection<Group> invalidGroups)
