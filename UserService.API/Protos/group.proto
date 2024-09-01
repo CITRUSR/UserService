@@ -74,7 +74,7 @@ message TransferGroupsToNextSemesterRequest{
 }
 
 message TransferGroupsToNextSemesterResponse{
-  repeated ChangeGroupResponseModel Groups = 1;
+  repeated GroupShortInfo Groups = 1;
 }
 
 message TransferGroupsToNextCourseRequest{

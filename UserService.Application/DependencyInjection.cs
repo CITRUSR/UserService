@@ -88,7 +88,7 @@ public static class DependencyInjection
             TransferGroupsToNextCourseCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>,
+            IRequestHandler<TransferGroupsToNextSemesterCommand, List<GroupShortInfoDto>>,
             TransferGroupsToNextSemesterCommandHandlerCached
         >();
         services.Decorate<
