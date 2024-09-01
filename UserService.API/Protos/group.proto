@@ -34,6 +34,11 @@ message GroupModel{
   bool IsDeleted = 10;
 }
 
+message GroupShortInfo{
+  int32 Id = 1;
+  string GroupName = 2;
+}
+
 message CreateGroupRequest{
   int32 SpecialityId = 1;
   string CuratorId = 2;
