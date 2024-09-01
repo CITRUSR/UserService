@@ -12,7 +12,7 @@ service GroupService{
   rpc CreateGroup (CreateGroupRequest) returns (GroupShortInfo);
   rpc DeleteGroups (DeleteGroupsRequest) returns (DeleteGroupsResponse);
   rpc SoftDeleteGroups (SoftDeleteGroupsRequest) returns (SoftDeleteGroupsResponse);
-  rpc EditGroup (EditGroupRequest) returns (GroupModel);
+  rpc EditGroup (EditGroupRequest) returns (GroupShortInfo);
   rpc GraduateGroups (GraduateGroupsRequest) returns (GraduateGroupsResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
   rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);

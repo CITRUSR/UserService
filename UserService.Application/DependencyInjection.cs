@@ -76,7 +76,7 @@ public static class DependencyInjection
             SoftDeleteGroupsCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<EditGroupCommand, Group>,
+            IRequestHandler<EditGroupCommand, GroupShortInfoDto>,
             EditGroupCommandHandlerCached
         >();
         services.Decorate<

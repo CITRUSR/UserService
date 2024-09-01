@@ -72,7 +72,7 @@ public class GroupService(
         };
     }
 
-    public override async Task<GroupModel> EditGroup(
+    public override async Task<GroupShortInfo> EditGroup(
         EditGroupRequest request,
         ServerCallContext context
     )
@@ -89,7 +89,7 @@ public class GroupService(
 
         var group = await _mediator.Send(command);
 
-        return _mapper.Map(group);
+        return group.Adapt<GroupShortInfo>();
     }
 
     public override async Task<GraduateGroupsResponse> GraduateGroups(
