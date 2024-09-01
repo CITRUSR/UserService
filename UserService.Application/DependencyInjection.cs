@@ -42,6 +42,8 @@ public static class DependencyInjection
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+        MapsterConfig.Configure();
+
         DecorateHandlersToCacheVersion(services);
 
         return services;
