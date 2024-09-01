@@ -13,6 +13,7 @@ using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCour
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
@@ -91,7 +92,7 @@ public static class DependencyInjection
             TransferGroupsToNextSemesterCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<CreateGroupCommand, Group>,
+            IRequestHandler<CreateGroupCommand, GroupShortInfoDto>,
             CreateGroupCommandHandlerCached
         >();
     }

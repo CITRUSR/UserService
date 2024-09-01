@@ -9,7 +9,7 @@ import "google/protobuf/wrappers.proto";
 import "Protos/shared.proto";
 
 service GroupService{
-  rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
+  rpc CreateGroup (CreateGroupRequest) returns (GroupShortInfo);
   rpc DeleteGroups (DeleteGroupsRequest) returns (DeleteGroupsResponse);
   rpc SoftDeleteGroups (SoftDeleteGroupsRequest) returns (SoftDeleteGroupsResponse);
   rpc EditGroup (EditGroupRequest) returns (GroupModel);

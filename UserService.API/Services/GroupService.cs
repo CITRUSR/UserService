@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Mapster;
 using MediatR;
 using UserService.API.Mappers;
 using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
@@ -25,7 +26,7 @@ public class GroupService(
     private readonly IMapper<Group, ChangeGroupResponseModel> _changeGroupResponseMapper =
         changeGroupResponseMapper;
 
-    public override async Task<CreateGroupResponse> CreateGroup(
+    public override async Task<GroupShortInfo> CreateGroup(
         CreateGroupRequest request,
         ServerCallContext context
     )
@@ -41,7 +42,7 @@ public class GroupService(
 
         var group = await _mediator.Send(command);
 
-        return new CreateGroupResponse { Group = _changeGroupResponseMapper.Map(group) };
+        return group.Adapt<GroupShortInfo>();
     }
 
     public override async Task<DeleteGroupsResponse> DeleteGroups(
