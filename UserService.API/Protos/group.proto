@@ -98,7 +98,7 @@ message SoftDeleteGroupsRequest{
 }
 
 message SoftDeleteGroupsResponse{
-  repeated ChangeGroupResponseModel Group = 1;
+  repeated GroupShortInfo Groups = 1;
 }
 
 message EditGroupRequest{

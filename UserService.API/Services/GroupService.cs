@@ -66,10 +66,7 @@ public class GroupService(
 
         var groups = await _mediator.Send(command);
 
-        return new SoftDeleteGroupsResponse
-        {
-            Group = { groups.Select(x => _changeGroupResponseMapper.Map(x)) },
-        };
+        return groups.Adapt<SoftDeleteGroupsResponse>();
     }
 
     public override async Task<GroupShortInfo> EditGroup(

@@ -1,19 +1,21 @@
 using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 
 public class SoftDeleteGroupsCommandHandlerCached(
     ICacheService cacheService,
-    IRequestHandler<SoftDeleteGroupsCommand, List<Group>> handler
-) : IRequestHandler<SoftDeleteGroupsCommand, List<Group>>
+    IRequestHandler<SoftDeleteGroupsCommand, List<GroupShortInfoDto>> handler
+) : IRequestHandler<SoftDeleteGroupsCommand, List<GroupShortInfoDto>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly IRequestHandler<SoftDeleteGroupsCommand, List<Group>> _handler = handler;
+    private readonly IRequestHandler<SoftDeleteGroupsCommand, List<GroupShortInfoDto>> _handler =
+        handler;
 
-    public async Task<List<Group>> Handle(
+    public async Task<List<GroupShortInfoDto>> Handle(
         SoftDeleteGroupsCommand request,
         CancellationToken cancellationToken
     )

@@ -72,7 +72,7 @@ public static class DependencyInjection
             DeleteGroupsCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<SoftDeleteGroupsCommand, List<Group>>,
+            IRequestHandler<SoftDeleteGroupsCommand, List<GroupShortInfoDto>>,
             SoftDeleteGroupsCommandHandlerCached
         >();
         services.Decorate<
