@@ -104,10 +104,7 @@ public class GroupService(
 
         var groups = await _mediator.Send(command);
 
-        return new GraduateGroupsResponse
-        {
-            Groups = { groups.Select(x => _changeGroupResponseMapper.Map(x)) },
-        };
+        return groups.Adapt<GraduateGroupsResponse>();
     }
 
     public override async Task<TransferGroupsToNextSemesterResponse> TransferGroupsToNextSemester(

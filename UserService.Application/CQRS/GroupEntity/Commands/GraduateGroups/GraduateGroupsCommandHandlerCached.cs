@@ -1,19 +1,21 @@
 using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
 
 public class GraduateGroupsCommandHandlerCached(
     ICacheService cacheService,
-    IRequestHandler<GraduateGroupsCommand, List<Group>> handler
-) : IRequestHandler<GraduateGroupsCommand, List<Group>>
+    IRequestHandler<GraduateGroupsCommand, List<GroupShortInfoDto>> handler
+) : IRequestHandler<GraduateGroupsCommand, List<GroupShortInfoDto>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly IRequestHandler<GraduateGroupsCommand, List<Group>> _handler = handler;
+    private readonly IRequestHandler<GraduateGroupsCommand, List<GroupShortInfoDto>> _handler =
+        handler;
 
-    public async Task<List<Group>> Handle(
+    public async Task<List<GroupShortInfoDto>> Handle(
         GraduateGroupsCommand request,
         CancellationToken cancellationToken
     )

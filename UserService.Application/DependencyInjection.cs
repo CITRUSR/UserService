@@ -80,7 +80,7 @@ public static class DependencyInjection
             EditGroupCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<GraduateGroupsCommand, List<Group>>,
+            IRequestHandler<GraduateGroupsCommand, List<GroupShortInfoDto>>,
             GraduateGroupsCommandHandlerCached
         >();
         services.Decorate<

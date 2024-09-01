@@ -65,7 +65,7 @@ message ChangeGroupResponseModel{
 }
 
 message GraduateGroupsResponse{
-  repeated ChangeGroupResponseModel groups = 1;
+  repeated GroupShortInfo Groups = 1;
 }
 
 //If be empty then will be taking every group
