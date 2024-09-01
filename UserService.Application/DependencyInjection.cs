@@ -60,7 +60,7 @@ public static class DependencyInjection
     private static void DecorateGroupsHandlersToCacheVersion(IServiceCollection services)
     {
         services.Decorate<
-            IRequestHandler<GetGroupByIdQuery, Group>,
+            IRequestHandler<GetGroupByIdQuery, GroupDto>,
             GetGroupByIdQueryHandlerCached
         >();
         services.Decorate<

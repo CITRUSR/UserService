@@ -137,7 +137,7 @@ public class GroupService(
 
         var group = await _mediator.Send(query);
 
-        return _mapper.Map(group);
+        return group.Adapt<GroupModel>();
     }
 
     public override async Task<GetGroupsResponse> GetGroups(
