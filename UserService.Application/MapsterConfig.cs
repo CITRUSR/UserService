@@ -19,5 +19,9 @@ public static class MapsterConfig
             .Map(dest => dest.CuratorLastName, src => src.Curator.LastName)
             .Map(dest => dest.CuratorPatronymicName, src => src.Curator.PatronymicName)
             .Map(dest => dest.GroupName, src => src.ToString());
+        TypeAdapterConfig<PaginationList<Group>, GetGroupsResponse>
+            .NewConfig()
+            .Map(dest => dest.LastPage, src => src.MaxPage)
+            .Map(dest => dest.Groups, src => src.Items.Adapt<List<GroupViewModel>>());
     }
 }
