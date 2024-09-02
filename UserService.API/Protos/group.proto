@@ -39,6 +39,15 @@ message GroupShortInfo{
   string GroupName = 2;
 }
 
+message GroupViewModel{
+  int32 Id = 1;
+  int32 StudentCount = 2;
+  string CuratorFirstName = 3;
+  string CuratorLastName = 4;
+  google.protobuf.StringValue CuratorPatronymicName = 5;
+  string GroupName = 6;
+}
+
 message CreateGroupRequest{
   int32 SpecialityId = 1;
   string CuratorId = 2;
