@@ -157,10 +157,6 @@ public class GroupService(
 
         var groups = await _mediator.Send(query);
 
-        return new GetGroupsResponse
-        {
-            Groups = { groups.Items.Select(x => _mapper.Map(x)) },
-            LastPage = groups.MaxPage,
-        };
+        return groups.Adapt<GetGroupsResponse>();
     }
 }

@@ -1,11 +1,10 @@
 ﻿using MediatR;
-using UserService.Application.Common.Paging;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.Enums;
-using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 
-public record GetGroupsQuery : IRequest<PaginationList<Group>>
+public record GetGroupsQuery : IRequest<GetGroupsResponse>
 {
     public string? SearchString { get; set; } = String.Empty;
     public int Page { get; set; } = 1;

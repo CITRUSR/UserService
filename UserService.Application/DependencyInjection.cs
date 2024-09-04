@@ -64,7 +64,7 @@ public static class DependencyInjection
             GetGroupByIdQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<GetGroupsQuery, PaginationList<Group>>,
+            IRequestHandler<GetGroupsQuery, GetGroupsResponse>,
             GetGroupsQueryHandlerCached
         >();
         services.Decorate<

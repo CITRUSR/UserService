@@ -2,9 +2,8 @@
 using MediatR;
 using Moq;
 using UserService.Application.Abstraction;
-using UserService.Application.Common.Cache;
-using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
@@ -13,15 +12,13 @@ namespace UserService.Tests.Entities.GroupEntity.Queries;
 public class GetGroupsCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
-    private readonly Mock<IRequestHandler<GetGroupsQuery, PaginationList<Group>>> _mockHandler;
-    private readonly IFixture _fixture;
+    private readonly Mock<IRequestHandler<GetGroupsQuery, GetGroupsResponse>> _mockHandler;
     private readonly GetGroupsQuery _query;
 
     public GetGroupsCached()
     {
         _mockCacheService = new Mock<ICacheService>();
-        _mockHandler = new Mock<IRequestHandler<GetGroupsQuery, PaginationList<Group>>>();
-        _fixture = new Fixture();
+        _mockHandler = new Mock<IRequestHandler<GetGroupsQuery, GetGroupsResponse>>();
         _query = new GetGroupsQuery
         {
             Page = 1,
@@ -38,13 +35,19 @@ public class GetGroupsCached
     {
         _mockCacheService
             .Setup(x =>
-                x.GetOrCreateAsync<PaginationList<Group>>(
+                x.GetOrCreateAsync<GetGroupsResponse>(
                     It.IsAny<string>(),
-                    It.IsAny<Func<Task<PaginationList<Group>>>>(),
+                    It.IsAny<Func<Task<GetGroupsResponse>>>(),
                     It.IsAny<CancellationToken>()
                 )
             )
-            .ReturnsAsync(new PaginationList<Group> { Items = new List<Group> { new Group() } });
+            .ReturnsAsync(
+                new GetGroupsResponse
+                {
+                    LastPage = 1,
+                    Groups = new List<GroupViewModel> { new GroupViewModel() }
+                }
+            );
 
         var handler = new GetGroupsQueryHandlerCached(
             _mockHandler.Object,
@@ -63,9 +66,9 @@ public class GetGroupsCached
 
         _mockCacheService.Verify(
             x =>
-                x.GetOrCreateAsync<PaginationList<Group>>(
+                x.GetOrCreateAsync<GetGroupsResponse>(
                     It.IsAny<string>(),
-                    It.IsAny<Func<Task<PaginationList<Group>>>>(),
+                    It.IsAny<Func<Task<GetGroupsResponse>>>(),
                     It.IsAny<CancellationToken>()
                 ),
             Times.Once
@@ -79,7 +82,13 @@ public class GetGroupsCached
     {
         _mockHandler
             .Setup(x => x.Handle(It.IsAny<GetGroupsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PaginationList<Group> { Items = new List<Group> { new Group() } });
+            .ReturnsAsync(
+                new GetGroupsResponse
+                {
+                    LastPage = 1,
+                    Groups = new List<GroupViewModel> { new GroupViewModel() }
+                }
+            );
 
         var handler = new GetGroupsQueryHandlerCached(
             _mockHandler.Object,
@@ -92,9 +101,9 @@ public class GetGroupsCached
 
         _mockCacheService.Verify(
             x =>
-                x.GetOrCreateAsync<PaginationList<Group>>(
+                x.GetOrCreateAsync<GetGroupsResponse>(
                     It.IsAny<string>(),
-                    It.IsAny<Func<Task<PaginationList<Group>>>>(),
+                    It.IsAny<Func<Task<GetGroupsResponse>>>(),
                     It.IsAny<CancellationToken>()
                 ),
             Times.Never()

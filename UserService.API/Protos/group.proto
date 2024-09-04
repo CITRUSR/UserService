@@ -138,6 +138,6 @@ message GetGroupsRequest{
 }
 
 message GetGroupsResponse{
-  repeated GroupModel Groups = 1;
+  repeated GroupViewModel Groups = 1;
   int32 LastPage = 2;
 }

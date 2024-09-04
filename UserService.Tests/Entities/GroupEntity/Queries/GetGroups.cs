@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
+using UserService.Application;
 using UserService.Application.Abstraction;
-using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
@@ -28,6 +28,8 @@ public class GetGroups
             SearchString = "",
             SortState = GroupSortState.GroupAsc
         };
+
+        MapsterConfig.Configure();
     }
 
     [Fact]
@@ -116,8 +118,21 @@ public class GetGroups
         Func<Group, Group, Group[]> expectedOrder
     )
     {
-        var groupA = _fixture.Build<Group>().With(x => x.CurrentCourse, 1).Create();
-        var groupB = _fixture.Build<Group>().With(x => x.CurrentCourse, 2).Create();
+        var speciality = _fixture.Create<Speciality>();
+
+        var groupA = _fixture
+            .Build<Group>()
+            .With(x => x.CurrentCourse, 1)
+            .With(x => x.Speciality, speciality)
+            .Create();
+        var groupB = _fixture
+            .Build<Group>()
+            .With(x => x.CurrentCourse, 2)
+            .With(x => x.Speciality, speciality)
+            .Create();
+
+        groupA.Students.Add(_fixture.Create<Student>());
+        groupA.Students.Add(_fixture.Create<Student>());
 
         _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([groupA, groupB]);
 
@@ -128,7 +143,7 @@ public class GetGroups
         var result = await handler.Handle(query, default);
 
         result
-            .Items.Select(x => x.Id)
+            .Groups.Select(x => x.Id)
             .Should()
             .BeEquivalentTo(
                 expectedOrder(groupA, groupB).Select(x => x.Id),
@@ -153,7 +168,7 @@ public class GetGroups
         var result = await handler.Handle(query, default);
 
         result
-            .Items.Select(x => x.Id)
+            .Groups.Select(x => x.Id)
             .Should()
             .BeEquivalentTo(expectedGroup(groupA, groupB).Select(x => x.Id));
     }
@@ -175,7 +190,7 @@ public class GetGroups
         var result = await handler.Handle(query, default);
 
         result
-            .Items.Select(x => x.Id)
+            .Groups.Select(x => x.Id)
             .Should()
             .BeEquivalentTo(expectedGroup(groupA, groupB).Select(x => x.Id));
     }
@@ -209,7 +224,7 @@ public class GetGroups
         var result = await handler.Handle(query, default);
 
         result
-            .Items.Select(x => x.Id)
+            .Groups.Select(x => x.Id)
             .Should()
             .BeEquivalentTo(expectedGroup(groupA, groupB).Select(x => x.Id));
     }
