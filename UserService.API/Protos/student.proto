@@ -30,6 +30,12 @@ message StudentModel{
   bool IsDropped = 8;
 }
 
+message StudentShortInfo{
+  string Id = 1;
+  string FirstName = 2;
+  string LastName = 3;
+}
+
 message CreateStudentRequest{
   string SsoId = 1;
   string FirstName = 2;
