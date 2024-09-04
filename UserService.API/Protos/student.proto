@@ -9,7 +9,7 @@ import "google/protobuf/timestamp.proto";
 import "Protos/shared.proto";
 
 service StudentService{
-  rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
+  rpc CreateStudent(CreateStudentRequest) returns (StudentShortInfo);
   rpc DropOutStudent(DropOutStudentRequest) returns (DropOutStudentResponse);
   rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
   rpc EditStudent(EditStudentRequest) returns (EditStudentResponse);

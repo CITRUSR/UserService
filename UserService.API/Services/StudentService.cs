@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Mapster;
 using MediatR;
 using UserService.API.Mappers;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
@@ -18,7 +19,7 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
     private readonly IMediator _mediator = mediator;
     private readonly IMapper<Student, StudentModel> _mapper = mapper;
 
-    public override async Task<CreateStudentResponse> CreateStudent(
+    public override async Task<StudentShortInfo> CreateStudent(
         CreateStudentRequest request,
         ServerCallContext context
     )
@@ -31,9 +32,9 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
             request.GroupId
         );
 
-        var id = await _mediator.Send(command);
+        var student = await _mediator.Send(command);
 
-        return new CreateStudentResponse { Id = id.ToString() };
+        return student.Adapt<StudentShortInfo>();
     }
 
     public override async Task<DropOutStudentResponse> DropOutStudent(

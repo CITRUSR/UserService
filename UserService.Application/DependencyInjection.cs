@@ -27,6 +27,7 @@ using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application;
@@ -128,7 +129,7 @@ public static class DependencyInjection
     private static void DecorateStudentsHandlerToCacheVersion(IServiceCollection services)
     {
         services.Decorate<
-            IRequestHandler<CreateStudentCommand, Guid>,
+            IRequestHandler<CreateStudentCommand, StudentShortInfoDto>,
             CreateStudentCommandHandlerCached
         >();
         services.Decorate<
