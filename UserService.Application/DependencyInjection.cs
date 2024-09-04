@@ -133,7 +133,7 @@ public static class DependencyInjection
             CreateStudentCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<DeleteStudentCommand, Guid>,
+            IRequestHandler<DeleteStudentCommand, StudentShortInfoDto>,
             DeleteStudentCommandHandlerCached
         >();
         services.Decorate<

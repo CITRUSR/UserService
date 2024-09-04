@@ -4,6 +4,7 @@ using Moq;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
@@ -11,24 +12,24 @@ namespace UserService.Tests.Entities.StudentEntity.Commands;
 public class DeleteStudentCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
-    private readonly Mock<IRequestHandler<DeleteStudentCommand, Guid>> _mockHandler;
+    private readonly Mock<IRequestHandler<DeleteStudentCommand, StudentShortInfoDto>> _mockHandler;
     private readonly IFixture _fixture;
 
     public DeleteStudentCached()
     {
         _mockCacheService = new Mock<ICacheService>();
-        _mockHandler = new Mock<IRequestHandler<DeleteStudentCommand, Guid>>();
+        _mockHandler = new Mock<IRequestHandler<DeleteStudentCommand, StudentShortInfoDto>>();
         _fixture = new Fixture();
     }
 
     [Fact]
     public async Task DeleteStudentCached_ShouldBe_Success()
     {
-        var student = _fixture.Create<Student>();
+        var student = _fixture.Create<StudentShortInfoDto>();
 
         _mockHandler
             .Setup(x => x.Handle(It.IsAny<DeleteStudentCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(student.Id);
+            .ReturnsAsync(student);
 
         var command = new DeleteStudentCommand(student.Id);
 
@@ -59,6 +60,6 @@ public class DeleteStudentCached
             Times.Once()
         );
 
-        result.Should().NotBeEmpty();
+        result.Should().NotBeNull();
     }
 }

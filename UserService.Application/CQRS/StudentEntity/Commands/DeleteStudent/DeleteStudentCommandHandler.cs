@@ -1,15 +1,17 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Application.CQRS.StudentEntity.Responses;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
 
 public class DeleteStudentCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<DeleteStudentCommand, Guid>
+        IRequestHandler<DeleteStudentCommand, StudentShortInfoDto>
 {
-    public async Task<Guid> Handle(
+    public async Task<StudentShortInfoDto> Handle(
         DeleteStudentCommand request,
         CancellationToken cancellationToken
     )
@@ -36,6 +38,6 @@ public class DeleteStudentCommandHandler(IAppDbContext dbContext)
 
         Log.Information($"The student with Id:{request.Id} is deleted");
 
-        return request.Id;
+        return student.Adapt<StudentShortInfoDto>();
     }
 }

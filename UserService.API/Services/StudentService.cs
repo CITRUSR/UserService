@@ -52,16 +52,16 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
         return new DropOutStudentResponse { Id = id.ToString(), };
     }
 
-    public override async Task<DeleteStudentResponse> DeleteStudent(
+    public override async Task<StudentShortInfo> DeleteStudent(
         DeleteStudentRequest request,
         ServerCallContext context
     )
     {
         var command = new DeleteStudentCommand(Guid.Parse(request.Id));
 
-        var id = await _mediator.Send(command);
+        var student = await _mediator.Send(command);
 
-        return new DeleteStudentResponse { Id = id.ToString(), };
+        return student.Adapt<StudentShortInfo>();
     }
 
     public override async Task<EditStudentResponse> EditStudent(

@@ -11,7 +11,7 @@ import "Protos/shared.proto";
 service StudentService{
   rpc CreateStudent(CreateStudentRequest) returns (StudentShortInfo);
   rpc DropOutStudent(DropOutStudentRequest) returns (DropOutStudentResponse);
-  rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
+  rpc DeleteStudent(DeleteStudentRequest) returns (StudentShortInfo);
   rpc EditStudent(EditStudentRequest) returns (EditStudentResponse);
   rpc GetStudentById(GetStudentByIdRequest) returns (StudentModel);
   rpc GetStudentBySsoId (GetStudentBySsoIdRequest) returns (StudentModel);
@@ -58,10 +58,6 @@ message DropOutStudentResponse{
 }
 
 message DeleteStudentRequest{
-  string Id = 1;
-}
-
-message DeleteStudentResponse{
   string Id = 1;
 }
 
