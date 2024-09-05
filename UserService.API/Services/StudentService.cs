@@ -37,7 +37,7 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
         return student.Adapt<StudentShortInfo>();
     }
 
-    public override async Task<DropOutStudentResponse> DropOutStudent(
+    public override async Task<StudentShortInfo> DropOutStudent(
         DropOutStudentRequest request,
         ServerCallContext context
     )
@@ -47,9 +47,9 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
             request.DroppedTime.ToDateTime()
         );
 
-        var id = await _mediator.Send(command);
+        var student = await _mediator.Send(command);
 
-        return new DropOutStudentResponse { Id = id.ToString(), };
+        return student.Adapt<StudentShortInfo>();
     }
 
     public override async Task<DeleteStudentsResponse> DeleteStudents(

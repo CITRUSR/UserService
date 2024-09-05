@@ -4,6 +4,7 @@ using Moq;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
@@ -11,24 +12,26 @@ namespace UserService.Tests.Entities.StudentEntity.Commands;
 public class DropOutStudentCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
-    private readonly Mock<IRequestHandler<DropOutStudentCommand, Guid>> _mockHandler;
+    private readonly Mock<IRequestHandler<DropOutStudentCommand, StudentShortInfoDto>> _mockHandler;
+    private readonly IFixture _fixture;
 
     public DropOutStudentCached()
     {
         _mockCacheService = new Mock<ICacheService>();
-        _mockHandler = new Mock<IRequestHandler<DropOutStudentCommand, Guid>>();
+        _mockHandler = new Mock<IRequestHandler<DropOutStudentCommand, StudentShortInfoDto>>();
+        _fixture = new Fixture();
     }
 
     [Fact]
     public async Task DropOutStudentCached_ShouldBe_Success()
     {
-        var id = Guid.NewGuid();
+        var student = _fixture.Create<StudentShortInfoDto>();
 
         _mockHandler
             .Setup(x => x.Handle(It.IsAny<DropOutStudentCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(id);
+            .ReturnsAsync(student);
 
-        var command = new DropOutStudentCommand(id, DateTime.Now);
+        var command = new DropOutStudentCommand(student.Id, DateTime.Now);
 
         var handler = new DropOutStudentCommandHandlerCached(
             _mockHandler.Object,
@@ -40,7 +43,7 @@ public class DropOutStudentCached
         _mockCacheService.Verify(
             x =>
                 x.RemoveAsync(
-                    It.Is<string>(x => x.Equals(CacheKeys.ById<Student, Guid>(id))),
+                    It.Is<string>(x => x.Equals(CacheKeys.ById<Student, Guid>(student.Id))),
                     It.IsAny<CancellationToken>()
                 ),
             Times.Once()
@@ -55,6 +58,6 @@ public class DropOutStudentCached
             Times.Once()
         );
 
-        result.Should().NotBeEmpty();
+        result.Should().NotBeNull();
     }
 }

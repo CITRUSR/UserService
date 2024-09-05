@@ -1,29 +1,33 @@
 using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
 
 public class DropOutStudentCommandHandlerCached(
-    IRequestHandler<DropOutStudentCommand, Guid> handler,
+    IRequestHandler<DropOutStudentCommand, StudentShortInfoDto> handler,
     ICacheService cacheService
-) : IRequestHandler<DropOutStudentCommand, Guid>
+) : IRequestHandler<DropOutStudentCommand, StudentShortInfoDto>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly IRequestHandler<DropOutStudentCommand, Guid> _handler = handler;
+    private readonly IRequestHandler<DropOutStudentCommand, StudentShortInfoDto> _handler = handler;
 
-    public async Task<Guid> Handle(
+    public async Task<StudentShortInfoDto> Handle(
         DropOutStudentCommand request,
         CancellationToken cancellationToken
     )
     {
-        var id = await _handler.Handle(request, cancellationToken);
+        var student = await _handler.Handle(request, cancellationToken);
 
-        await _cacheService.RemoveAsync(CacheKeys.ById<Student, Guid>(id), cancellationToken);
+        await _cacheService.RemoveAsync(
+            CacheKeys.ById<Student, Guid>(student.Id),
+            cancellationToken
+        );
 
         await _cacheService.RemoveAsync(CacheKeys.GetEntities<Student>(), cancellationToken);
 
-        return id;
+        return student;
     }
 }

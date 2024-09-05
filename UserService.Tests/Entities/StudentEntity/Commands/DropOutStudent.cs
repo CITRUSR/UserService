@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Moq;
-using Moq.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
@@ -38,7 +37,7 @@ public class DropOutStudent
 
         student.DroppedOutAt.Should().NotBeNull();
 
-        result.Should().NotBeEmpty();
+        result.Should().NotBeNull();
     }
 
     [Fact]

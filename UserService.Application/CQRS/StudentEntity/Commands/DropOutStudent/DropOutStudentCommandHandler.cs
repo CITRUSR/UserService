@@ -1,15 +1,17 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Application.CQRS.StudentEntity.Responses;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
 
 public class DropOutStudentCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<DropOutStudentCommand, Guid>
+        IRequestHandler<DropOutStudentCommand, StudentShortInfoDto>
 {
-    public async Task<Guid> Handle(
+    public async Task<StudentShortInfoDto> Handle(
         DropOutStudentCommand request,
         CancellationToken cancellationToken
     )
@@ -29,6 +31,6 @@ public class DropOutStudentCommandHandler(IAppDbContext dbContext)
 
         Log.Information($"The student with Id:{request.Id} is dropped out");
 
-        return request.Id;
+        return student.Adapt<StudentShortInfoDto>();
     }
 }
