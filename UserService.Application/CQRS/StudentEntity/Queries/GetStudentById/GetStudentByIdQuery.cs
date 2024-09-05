@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using UserService.Domain.Entities;
+using UserService.Application.CQRS.StudentEntity.Responses;
 
 namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 
-public record GetStudentByIdQuery(Guid Id) : IRequest<Student>;
+public record GetStudentByIdQuery(Guid Id) : IRequest<StudentDto>;

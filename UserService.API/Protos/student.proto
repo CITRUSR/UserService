@@ -22,11 +22,12 @@ service StudentService{
 message StudentModel{
   string Id = 1;
   string SsoId = 2;
-  string FistName = 3;
+  string FirstName = 3;
   string LastName = 4;
   google.protobuf.StringValue PatronymicName = 5;
   int32  GroupId = 6;
-  google.protobuf.Timestamp DroppedTime = 7;
+  google.protobuf.Timestamp DroppedOutAt = 7;
+  bool IsDeleted = 9;
   bool IsDropped = 8;
 }
 

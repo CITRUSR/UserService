@@ -92,7 +92,7 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
 
         var student = await _mediator.Send(query);
 
-        return _mapper.Map(student);
+        return student.Adapt<StudentModel>();
     }
 
     public override async Task<StudentModel> GetStudentBySsoId(

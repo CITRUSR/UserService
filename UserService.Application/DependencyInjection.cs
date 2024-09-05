@@ -145,7 +145,7 @@ public static class DependencyInjection
             EditStudentCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<GetStudentByIdQuery, Student>,
+            IRequestHandler<GetStudentByIdQuery, StudentDto>,
             GetStudentByIdQueryHandlerCached
         >();
         services.Decorate<
