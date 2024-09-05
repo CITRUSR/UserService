@@ -64,7 +64,7 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
         return student.Adapt<DeleteStudentsResponse>();
     }
 
-    public override async Task<EditStudentResponse> EditStudent(
+    public override async Task<StudentShortInfo> EditStudent(
         EditStudentRequest request,
         ServerCallContext context
     )
@@ -80,7 +80,7 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
 
         var student = await _mediator.Send(command);
 
-        return new EditStudentResponse { Student = _mapper.Map(student), };
+        return student.Adapt<StudentShortInfo>();
     }
 
     public override async Task<StudentModel> GetStudentById(

@@ -1,16 +1,18 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 
 public class EditStudentCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<EditStudentCommand, Student>
+        IRequestHandler<EditStudentCommand, StudentShortInfoDto>
 {
-    public async Task<Student> Handle(
+    public async Task<StudentShortInfoDto> Handle(
         EditStudentCommand request,
         CancellationToken cancellationToken
     )
@@ -71,6 +73,6 @@ public class EditStudentCommandHandler(IAppDbContext dbContext)
                 + "Old state: {@oldStudent}. New state: {@student}"
         );
 
-        return student;
+        return student.Adapt<StudentShortInfoDto>();
     }
 }

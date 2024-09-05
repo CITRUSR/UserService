@@ -141,7 +141,7 @@ public static class DependencyInjection
             DropOutStudentsCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<EditStudentCommand, Student>,
+            IRequestHandler<EditStudentCommand, StudentShortInfoDto>,
             EditStudentCommandHandlerCached
         >();
         services.Decorate<

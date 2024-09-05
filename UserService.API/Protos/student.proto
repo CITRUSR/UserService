@@ -12,7 +12,7 @@ service StudentService{
   rpc CreateStudent(CreateStudentRequest) returns (StudentShortInfo);
   rpc DropOutStudents(DropOutStudentsRequest) returns (DropOutStudentsResponse);
   rpc DeleteStudents(DeleteStudentsRequest) returns (DeleteStudentsResponse);
-  rpc EditStudent(EditStudentRequest) returns (EditStudentResponse);
+  rpc EditStudent(EditStudentRequest) returns (StudentShortInfo);
   rpc GetStudentById(GetStudentByIdRequest) returns (StudentModel);
   rpc GetStudentBySsoId (GetStudentBySsoIdRequest) returns (StudentModel);
   rpc GetStudents(GetStudentsRequest) returns (GetStudentsResponse);
@@ -72,10 +72,6 @@ message EditStudentRequest{
   google.protobuf.StringValue PatronymicName = 4;
   int32 GroupId = 5;
   bool IsDeleted = 6;
-}
-
-message EditStudentResponse{
-  StudentModel Student = 1;
 }
 
 message GetStudentByIdRequest{
