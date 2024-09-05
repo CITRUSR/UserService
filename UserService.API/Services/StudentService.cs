@@ -3,7 +3,7 @@ using Mapster;
 using MediatR;
 using UserService.API.Mappers;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
-using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudents;
 using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
 using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
@@ -52,16 +52,16 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
         return new DropOutStudentResponse { Id = id.ToString(), };
     }
 
-    public override async Task<StudentShortInfo> DeleteStudent(
-        DeleteStudentRequest request,
+    public override async Task<DeleteStudentsResponse> DeleteStudents(
+        DeleteStudentsRequest request,
         ServerCallContext context
     )
     {
-        var command = new DeleteStudentCommand(Guid.Parse(request.Id));
+        var command = new DeleteStudentsCommand([.. request.Ids.Select(x => Guid.Parse(x))]);
 
         var student = await _mediator.Send(command);
 
-        return student.Adapt<StudentShortInfo>();
+        return student.Adapt<DeleteStudentsResponse>();
     }
 
     public override async Task<EditStudentResponse> EditStudent(
