@@ -22,7 +22,7 @@ using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudents;
-using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudents;
 using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
@@ -137,8 +137,8 @@ public static class DependencyInjection
             DeleteStudentsCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<DropOutStudentCommand, StudentShortInfoDto>,
-            DropOutStudentCommandHandlerCached
+            IRequestHandler<DropOutStudentsCommand, List<StudentShortInfoDto>>,
+            DropOutStudentsCommandHandlerCached
         >();
         services.Decorate<
             IRequestHandler<EditStudentCommand, Student>,

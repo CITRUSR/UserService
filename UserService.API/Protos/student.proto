@@ -10,7 +10,7 @@ import "Protos/shared.proto";
 
 service StudentService{
   rpc CreateStudent(CreateStudentRequest) returns (StudentShortInfo);
-  rpc DropOutStudent(DropOutStudentRequest) returns (StudentShortInfo);
+  rpc DropOutStudents(DropOutStudentsRequest) returns (DropOutStudentsResponse);
   rpc DeleteStudents(DeleteStudentsRequest) returns (DeleteStudentsResponse);
   rpc EditStudent(EditStudentRequest) returns (EditStudentResponse);
   rpc GetStudentById(GetStudentByIdRequest) returns (StudentModel);
@@ -48,9 +48,13 @@ message CreateStudentResponse{
   string Id = 1;
 }
 
-message DropOutStudentRequest{
-  string Id = 1;
+message DropOutStudentsRequest{
+  repeated string Ids = 1;
   google.protobuf.Timestamp DroppedTime = 3;
+}
+
+message DropOutStudentsResponse{
+  repeated StudentShortInfo Students = 1;
 }
 
 message DeleteStudentsRequest{
