@@ -11,7 +11,7 @@ service SpecialityService{
   rpc CreateSpeciality(CreateSpecialityRequest) returns (SpecialityShortInfo);
   rpc DeleteSpecialities(DeleteSpecialitiesRequest) returns (DeleteSpecialitiesResponse);
   rpc SoftDeleteSpecialities(SoftDeleteSpecialitiesRequest) returns (SoftDeleteSpecialitiesResponse);
-  rpc EditSpeciality(EditSpecialityRequest) returns (EditSpecialityResponse);
+  rpc EditSpeciality(EditSpecialityRequest) returns (SpecialityShortInfo);
   rpc GetSpecialityById(GetSpecialityByIdRequest) returns (SpecialityModel);
   rpc GetSpecialities(GetSpecialitiesRequest) returns (GetSpecialitiesResponse);
 }
@@ -74,10 +74,6 @@ message EditSpecialityRequest{
   DecimalValue Cost = 4;
   uint32 DurationMonths = 5;
   bool IsDeleted = 6;
-}
-
-message EditSpecialityResponse{
-  SpecialityModel Speciality = 1;
 }
 
 message GetSpecialityByIdRequest{

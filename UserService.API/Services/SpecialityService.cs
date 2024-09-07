@@ -105,7 +105,7 @@ public class SpecialityService(
         };
     }
 
-    public override async Task<EditSpecialityResponse> EditSpeciality(
+    public override async Task<SpecialityShortInfo> EditSpeciality(
         EditSpecialityRequest request,
         ServerCallContext context
     )
@@ -123,6 +123,6 @@ public class SpecialityService(
 
         var speciality = await _mediator.Send(command);
 
-        return new EditSpecialityResponse { Speciality = _mapper.Map(speciality) };
+        return speciality.Adapt<SpecialityShortInfo>();
     }
 }
