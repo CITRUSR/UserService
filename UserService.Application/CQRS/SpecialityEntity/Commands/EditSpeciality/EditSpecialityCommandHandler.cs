@@ -31,14 +31,14 @@ public class EditSpecialityCommandHandler(IAppDbContext dbContext)
         {
             Id = speciality.Id,
             Name = speciality.Name,
-            Abbreavation = speciality.Abbreavation,
+            Abbreviation = speciality.Abbreviation,
             Cost = speciality.Cost,
             DurationMonths = speciality.DurationMonths,
             IsDeleted = speciality.IsDeleted,
         };
 
         speciality.Name = request.Name;
-        speciality.Abbreavation = request.Abbrevation;
+        speciality.Abbreviation = request.Abbrevation;
         speciality.Cost = request.Cost;
         speciality.DurationMonths = request.DurationMonths;
         speciality.IsDeleted = request.IsDeleted;

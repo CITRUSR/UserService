@@ -27,7 +27,7 @@ public class GetSpecialitiesQueryHandler(IAppDbContext dbContext)
         {
             specialities = specialities.Where(x =>
                 x.Name.Contains(request.SearchString)
-                || x.Abbreavation.Contains(request.SearchString)
+                || x.Abbreviation.Contains(request.SearchString)
             );
         }
 
@@ -49,9 +49,9 @@ public class GetSpecialitiesQueryHandler(IAppDbContext dbContext)
         {
             SpecialitySortState.NameAsc => specialities.OrderBy(x => x.Name),
             SpecialitySortState.NameDesc => specialities.OrderByDescending(x => x.Name),
-            SpecialitySortState.AbbreviationAsc => specialities.OrderBy(x => x.Abbreavation),
+            SpecialitySortState.AbbreviationAsc => specialities.OrderBy(x => x.Abbreviation),
             SpecialitySortState.AbbreviationDesc
-                => specialities.OrderByDescending(x => x.Abbreavation),
+                => specialities.OrderByDescending(x => x.Abbreviation),
             SpecialitySortState.CostAsc => specialities.OrderBy(x => x.Cost),
             SpecialitySortState.CostDesc => specialities.OrderByDescending(x => x.Cost),
             SpecialitySortState.DurationMonthsAsc => specialities.OrderBy(x => x.DurationMonths),

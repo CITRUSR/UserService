@@ -21,7 +21,7 @@ public class CreateSpecialityCommandHandler(IAppDbContext dbContext)
             DurationMonths = request.DurationMonths,
             Cost = request.Cost,
             Name = request.Name,
-            Abbreavation = request.Abbreavation,
+            Abbreviation = request.Abbreavation,
         };
 
         await DbContext.Specialities.AddAsync(speciality, cancellationToken);

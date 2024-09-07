@@ -200,7 +200,7 @@ public class GetGroups
         Func<Group, Group, Group[]> expectedGroup
     )
     {
-        var specaility = _fixture.Build<Speciality>().With(x => x.Abbreavation, "AG").Create();
+        var specaility = _fixture.Build<Speciality>().With(x => x.Abbreviation, "AG").Create();
 
         var groupA = _fixture
             .Build<Group>()

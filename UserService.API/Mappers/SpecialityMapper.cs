@@ -12,7 +12,7 @@ public class SpecialityMapper : IMapper<Speciality, SpecialityModel>
         {
             Id = from.Id,
             Name = from.Name,
-            Abbreavation = from.Abbreavation,
+            Abbreavation = from.Abbreviation,
             Cost = cost,
             DurationMonths = from.DurationMonths,
             IsDeleted = from.IsDeleted,

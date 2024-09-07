@@ -144,8 +144,8 @@ public class GetStudents
         Func<Student, Student, Student[]> expectedOrder
     )
     {
-        var specialityA = _fixture.Build<Speciality>().With(x => x.Abbreavation, "AAA").Create();
-        var specialityB = _fixture.Build<Speciality>().With(x => x.Abbreavation, "BBB").Create();
+        var specialityA = _fixture.Build<Speciality>().With(x => x.Abbreviation, "AAA").Create();
+        var specialityB = _fixture.Build<Speciality>().With(x => x.Abbreviation, "BBB").Create();
 
         var groupA = _fixture
             .Build<Group>()
@@ -242,7 +242,7 @@ public class GetStudents
         Func<StudentViewModel, bool> predicate
     )
     {
-        var speciality = _fixture.Build<Speciality>().With(x => x.Abbreavation, "H").Create();
+        var speciality = _fixture.Build<Speciality>().With(x => x.Abbreviation, "H").Create();
 
         var group = _fixture
             .Build<Group>()

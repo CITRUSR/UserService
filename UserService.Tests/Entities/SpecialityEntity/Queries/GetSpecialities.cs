@@ -127,7 +127,7 @@ public class GetSpecialities
     [Fact]
     public async Task GetSpecialities_ShouldBe_SuccessWithSearchStringAbbr()
     {
-        await TestSearchString("CC", 1, speciality => speciality.Abbreavation == "CCC");
+        await TestSearchString("CC", 1, speciality => speciality.Abbreviation == "CCC");
     }
 
     private async Task TestOrdering(
@@ -138,7 +138,7 @@ public class GetSpecialities
         Speciality specialityA = _fixture
             .Build<Speciality>()
             .With(x => x.Name, "AAA")
-            .With(x => x.Abbreavation, "CCC")
+            .With(x => x.Abbreviation, "CCC")
             .With(x => x.Cost, 1)
             .With(x => x.DurationMonths, 1)
             .With(x => x.IsDeleted, true)
@@ -147,7 +147,7 @@ public class GetSpecialities
         Speciality specialityB = _fixture
             .Build<Speciality>()
             .With(x => x.Name, "BBB")
-            .With(x => x.Abbreavation, "DDD")
+            .With(x => x.Abbreviation, "DDD")
             .With(x => x.Cost, 2)
             .With(x => x.DurationMonths, 2)
             .With(x => x.IsDeleted, false)
@@ -200,7 +200,7 @@ public class GetSpecialities
     {
         var specialityA = _fixture.Build<Speciality>().With(x => x.Name, "AAA").Create();
 
-        var specialityB = _fixture.Build<Speciality>().With(x => x.Abbreavation, "CCC").Create();
+        var specialityB = _fixture.Build<Speciality>().With(x => x.Abbreviation, "CCC").Create();
 
         _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([specialityA, specialityB]);
 

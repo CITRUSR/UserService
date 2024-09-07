@@ -30,7 +30,7 @@ public class GetStudentsQueryHandler(IAppDbContext dbContext)
         if (!string.IsNullOrWhiteSpace(request.SearchString))
         {
             students = students.Where(x =>
-                $"{x.FirstName}{x.LastName}{x.PatronymicName}{x.Group.CurrentCourse}-{x.Group.Speciality.Abbreavation}{x.Group.SubGroup}".Contains(
+                $"{x.FirstName}{x.LastName}{x.PatronymicName}{x.Group.CurrentCourse}-{x.Group.Speciality.Abbreviation}{x.Group.SubGroup}".Contains(
                     request.SearchString,
                     StringComparison.CurrentCultureIgnoreCase
                 )
@@ -77,12 +77,12 @@ public class GetStudentsQueryHandler(IAppDbContext dbContext)
             SortState.GroupAsc
                 => students
                     .OrderBy(s => s.Group.CurrentCourse)
-                    .ThenBy(s => s.Group.Speciality.Abbreavation)
+                    .ThenBy(s => s.Group.Speciality.Abbreviation)
                     .ThenBy(s => s.Group.SubGroup),
             SortState.GroupDesc
                 => students
                     .OrderByDescending(s => s.Group.CurrentCourse)
-                    .ThenByDescending(s => s.Group.Speciality.Abbreavation)
+                    .ThenByDescending(s => s.Group.Speciality.Abbreviation)
                     .ThenByDescending(s => s.Group.SubGroup),
         };
 

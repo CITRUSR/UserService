@@ -10,7 +10,7 @@ public class SpeicalityViewModelMapper : IMapper<Speciality, SpecialityViewModel
         {
             Id = from.Id,
             Name = from.Name,
-            Abbreviation = from.Abbreavation,
+            Abbreviation = from.Abbreviation,
         };
     }
 }

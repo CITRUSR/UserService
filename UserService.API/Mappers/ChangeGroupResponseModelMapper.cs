@@ -8,7 +8,7 @@ public class ChangeGroupResponseModelMapper : IMapper<Group, ChangeGroupResponse
     {
         return new ChangeGroupResponseModel
         {
-            Abbr = from.Speciality.Abbreavation,
+            Abbr = from.Speciality.Abbreviation,
             CurrentCourse = from.CurrentCourse,
             SubGroup = from.SubGroup,
             Id = from.Id,

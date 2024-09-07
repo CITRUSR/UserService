@@ -22,7 +22,7 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext)
         if (String.IsNullOrWhiteSpace(request.SearchString) == false)
         {
             groups = groups.Where(x =>
-                (x.CurrentCourse + "-" + x.Speciality.Abbreavation + x.SubGroup).Contains(
+                (x.CurrentCourse + "-" + x.Speciality.Abbreviation + x.SubGroup).Contains(
                     request.SearchString,
                     StringComparison.CurrentCultureIgnoreCase
                 )
@@ -69,12 +69,12 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext)
             GroupSortState.GroupAsc
                 => groups
                     .OrderBy(x => x.CurrentCourse)
-                    .ThenBy(x => x.Speciality.Abbreavation)
+                    .ThenBy(x => x.Speciality.Abbreviation)
                     .ThenBy(x => x.SubGroup),
             GroupSortState.GroupDesc
                 => groups
                     .OrderByDescending(x => x.CurrentCourse)
-                    .ThenBy(x => x.Speciality.Abbreavation)
+                    .ThenBy(x => x.Speciality.Abbreviation)
                     .ThenBy(x => x.SubGroup),
         };
 

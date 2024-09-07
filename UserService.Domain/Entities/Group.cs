@@ -38,6 +38,6 @@ public class Group
 
     public override string ToString()
     {
-        return $"{CurrentCourse}-{Speciality.Abbreavation}{SubGroup}";
+        return $"{CurrentCourse}-{Speciality.Abbreviation}{SubGroup}";
     }
 }
