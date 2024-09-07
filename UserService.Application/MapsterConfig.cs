@@ -1,6 +1,7 @@
 using Mapster;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Responses;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application;
@@ -23,5 +24,8 @@ public static class MapsterConfig
             .NewConfig()
             .Map(dest => dest.LastPage, src => src.MaxPage)
             .Map(dest => dest.Groups, src => src.Items.Adapt<List<GroupViewModel>>());
+        TypeAdapterConfig<Student, StudentViewModel>
+            .NewConfig()
+            .Map(dest => dest.GroupName, src => src.Group.ToString());
     }
 }
