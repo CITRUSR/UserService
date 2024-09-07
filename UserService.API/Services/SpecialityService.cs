@@ -62,7 +62,7 @@ public class SpecialityService(
 
         var speciality = await _mediator.Send(query);
 
-        return _mapper.Map(speciality);
+        return speciality.Adapt<SpecialityModel>();
     }
 
     public override async Task<GetSpecialitiesResponse> GetSpecialities(

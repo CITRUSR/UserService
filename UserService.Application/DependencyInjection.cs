@@ -102,7 +102,7 @@ public static class DependencyInjection
     private static void DecorateSpecialitiesHandlersToCacheVersion(IServiceCollection services)
     {
         services.Decorate<
-            IRequestHandler<GetSpecialityByIdQuery, Speciality>,
+            IRequestHandler<GetSpecialityByIdQuery, SpecialityDto>,
             GetSpecialityByIdQueryHandlerCached
         >();
         services.Decorate<

@@ -27,7 +27,7 @@ message DecimalValue {
 message SpecialityModel{
   int32 Id = 1;
   string Name = 2;
-  string Abbreavation = 3;
+  string Abbreviation = 3;
   DecimalValue Cost = 4;
   uint32 DurationMonths = 5;
   bool IsDeleted = 6;

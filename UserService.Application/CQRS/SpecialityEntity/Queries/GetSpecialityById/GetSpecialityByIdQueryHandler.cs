@@ -1,15 +1,16 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
-using UserService.Domain.Entities;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
 
 public class GetSpecialityByIdQueryHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<GetSpecialityByIdQuery, Speciality>
+        IRequestHandler<GetSpecialityByIdQuery, SpecialityDto>
 {
-    public async Task<Speciality> Handle(
+    public async Task<SpecialityDto> Handle(
         GetSpecialityByIdQuery request,
         CancellationToken cancellationToken
     )
@@ -24,6 +25,6 @@ public class GetSpecialityByIdQueryHandler(IAppDbContext dbContext)
             throw new SpecialityNotFoundException(request.Id);
         }
 
-        return speciality;
+        return speciality.Adapt<SpecialityDto>();
     }
 }
