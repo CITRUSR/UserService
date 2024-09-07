@@ -125,10 +125,6 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
 
         var students = await _mediator.Send(query);
 
-        return new GetStudentsResponse
-        {
-            Students = { students.Items.Select(x => _mapper.Map(x)) },
-            LastPage = students.MaxPage,
-        };
+        return students.Adapt<GetStudentsResponse>();
     }
 }

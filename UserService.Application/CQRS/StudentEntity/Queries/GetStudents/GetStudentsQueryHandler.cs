@@ -1,6 +1,9 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Application.Extensions;
 using UserService.Domain.Entities;
 
@@ -8,14 +11,14 @@ namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
 
 public class GetStudentsQueryHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<GetStudentsQuery, PaginationList<Student>>
+        IRequestHandler<GetStudentsQuery, GetStudentsResponse>
 {
-    public async Task<PaginationList<Student>> Handle(
+    public async Task<GetStudentsResponse> Handle(
         GetStudentsQuery request,
         CancellationToken cancellationToken
     )
     {
-        IQueryable<Student> students = DbContext.Students;
+        IQueryable<Student> students = DbContext.Students.Include(x => x.Group);
 
         students = students.FilterByDeletedStatus<Student>(
             request.DeletedStatus,
@@ -36,7 +39,13 @@ public class GetStudentsQueryHandler(IAppDbContext dbContext)
 
         students = GetSortedBySortState(students, request.SortState);
 
-        return await PaginationList<Student>.CreateAsync(students, request.Page, request.PageSize);
+        var pagList = await PaginationList<Student>.CreateAsync(
+            students,
+            request.Page,
+            request.PageSize
+        );
+
+        return pagList.Adapt<GetStudentsResponse>();
     }
 
     private IQueryable<Student> GetFilteredByDroppedOutStatus(

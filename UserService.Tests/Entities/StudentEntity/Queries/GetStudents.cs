@@ -3,6 +3,7 @@ using Moq;
 using Moq.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
@@ -134,8 +135,7 @@ public class GetStudents
         await TestSearchString(
             "2-H",
             2,
-            student =>
-                student.Group.Speciality.Abbreavation == "H" && student.Group.CurrentCourse == 2
+            student => student.GroupName.Contains('H') && student.GroupName.Contains('2')
         );
     }
 
@@ -184,7 +184,7 @@ public class GetStudents
         var result = await handler.Handle(query, default);
 
         result
-            .Items.Select(x => x.Id)
+            .Students.Select(x => x.Id)
             .Should()
             .BeEquivalentTo(
                 expectedOrder(studentA, studentB).Select(x => x.Id),
@@ -208,7 +208,10 @@ public class GetStudents
 
         var result = await handler.Handle(query, default);
 
-        result.Items.Select(x => x.Id).Should().BeEquivalentTo(result.Items.Select(x => x.Id));
+        result
+            .Students.Select(x => x.Id)
+            .Should()
+            .BeEquivalentTo(expectedStudent(studentA, studentB).Select(x => x.Id));
     }
 
     private async Task TestDeletedStatus(
@@ -227,13 +230,16 @@ public class GetStudents
 
         var result = await handler.Handle(query, default);
 
-        result.Items.Select(x => x.Id).Should().BeEquivalentTo(result.Items.Select(x => x.Id));
+        result
+            .Students.Select(x => x.Id)
+            .Should()
+            .BeEquivalentTo(expectedStudent(studentA, studentB).Select(x => x.Id));
     }
 
     private async Task TestSearchString(
         string searchString,
         int expectedCount,
-        Func<Student, bool> predicate
+        Func<StudentViewModel, bool> predicate
     )
     {
         var speciality = _fixture.Build<Speciality>().With(x => x.Abbreavation, "H").Create();
@@ -268,7 +274,7 @@ public class GetStudents
 
         var result = await handler.Handle(query, default);
 
-        result.Items.Count.Should().Be(expectedCount);
-        result.Items.Should().Contain(student => predicate(student));
+        result.Students.Count.Should().Be(expectedCount);
+        result.Students.Should().Contain(student => predicate(student));
     }
 }

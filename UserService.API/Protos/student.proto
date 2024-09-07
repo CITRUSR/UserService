@@ -112,7 +112,7 @@ message GetStudentsRequest{
 }
 
 message GetStudentsResponse{
-  repeated StudentModel Students = 1;
+  repeated StudentViewModel Students = 1;
   int32 LastPage = 2;
 }
 
