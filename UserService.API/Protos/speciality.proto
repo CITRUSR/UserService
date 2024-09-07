@@ -33,6 +33,11 @@ message SpecialityModel{
   bool IsDeleted = 6;
 }
 
+message SpecialityShortInfo{
+  int32 Id = 1;
+  string Name = 2;
+}
+
 message SpecialityViewModel{
   int32 Id = 1;
   string Name = 2;
