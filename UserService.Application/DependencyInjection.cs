@@ -114,7 +114,7 @@ public static class DependencyInjection
             DeleteSpecialitiesCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>,
+            IRequestHandler<SoftDeleteSpecialitiesCommand, List<SpecialityShortInfoDto>>,
             SoftDeleteSpecialitiesCommandHandlerCached
         >();
         services.Decorate<

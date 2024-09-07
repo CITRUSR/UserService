@@ -64,7 +64,7 @@ message SoftDeleteSpecialitiesRequest{
 }
 
 message SoftDeleteSpecialitiesResponse{
-  repeated SpecialityViewModel Specialities = 1;
+  repeated SpecialityShortInfo Specialities = 1;
 }
 
 message EditSpecialityRequest{

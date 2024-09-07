@@ -99,10 +99,7 @@ public class SpecialityService(
 
         var specialities = await _mediator.Send(command);
 
-        return new SoftDeleteSpecialitiesResponse
-        {
-            Specialities = { specialities.Select(x => _mapperViewModel.Map(x)) },
-        };
+        return specialities.Adapt<SoftDeleteSpecialitiesResponse>();
     }
 
     public override async Task<SpecialityShortInfo> EditSpeciality(
