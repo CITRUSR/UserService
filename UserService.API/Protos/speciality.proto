@@ -9,7 +9,7 @@ import "Protos/shared.proto";
 
 service SpecialityService{
   rpc CreateSpeciality(CreateSpecialityRequest) returns (SpecialityShortInfo);
-  rpc DeleteSpeciality(DeleteSpecialityRequest) returns (DeleteSpecialityResponse);
+  rpc DeleteSpecialities(DeleteSpecialitiesRequest) returns (DeleteSpecialitiesResponse);
   rpc SoftDeleteSpecialities(SoftDeleteSpecialitiesRequest) returns (SoftDeleteSpecialitiesResponse);
   rpc EditSpeciality(EditSpecialityRequest) returns (EditSpecialityResponse);
   rpc GetSpecialityById(GetSpecialityByIdRequest) returns (SpecialityModel);
@@ -51,12 +51,12 @@ message CreateSpecialityRequest{
   uint32 DurationMonths = 4;
 }
 
-message DeleteSpecialityRequest{
+message DeleteSpecialitiesRequest{
   repeated int32 Ids = 1;
 }
 
-message DeleteSpecialityResponse{
-  repeated SpecialityViewModel specialities = 1;
+message DeleteSpecialitiesResponse{
+  repeated SpecialityShortInfo pecialities = 1;
 }
 
 message SoftDeleteSpecialitiesRequest{

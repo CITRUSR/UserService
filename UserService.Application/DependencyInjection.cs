@@ -15,7 +15,7 @@ using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
-using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
@@ -110,8 +110,8 @@ public static class DependencyInjection
             GetSpecialitiesQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<DeleteSpecialityCommand, List<Speciality>>,
-            DeleteSpecialityCommandHandlerCached
+            IRequestHandler<DeleteSpecialitiesCommand, List<SpecialityShortInfoDto>>,
+            DeleteSpecialitiesCommandHandlerCached
         >();
         services.Decorate<
             IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>,

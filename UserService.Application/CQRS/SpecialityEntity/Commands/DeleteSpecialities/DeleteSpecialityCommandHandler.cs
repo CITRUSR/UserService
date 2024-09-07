@@ -1,18 +1,19 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
-using UserService.Domain.Entities;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 
-namespace UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
+namespace UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialities;
 
-public class DeleteSpecialityCommandHandler(IAppDbContext dbContext)
+public class DeleteSpecialitiesCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<DeleteSpecialityCommand, List<Speciality>>
+        IRequestHandler<DeleteSpecialitiesCommand, List<SpecialityShortInfoDto>>
 {
-    public async Task<List<Speciality>> Handle(
-        DeleteSpecialityCommand request,
+    public async Task<List<SpecialityShortInfoDto>> Handle(
+        DeleteSpecialitiesCommand request,
         CancellationToken cancellationToken
     )
     {
@@ -29,6 +30,8 @@ public class DeleteSpecialityCommandHandler(IAppDbContext dbContext)
 
         try
         {
+            await DbContext.BeginTransactionAsync();
+
             DbContext.Specialities.RemoveRange(specialities);
 
             await DbContext.SaveChangesAsync(cancellationToken);
@@ -45,6 +48,6 @@ public class DeleteSpecialityCommandHandler(IAppDbContext dbContext)
             $"The specialities with id:{string.Join(", ", request.SpecialitiesId)} is deleted"
         );
 
-        return specialities;
+        return specialities.Adapt<List<SpecialityShortInfoDto>>();
     }
 }

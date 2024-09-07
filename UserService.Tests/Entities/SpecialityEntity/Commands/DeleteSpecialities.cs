@@ -3,7 +3,7 @@ using Moq;
 using Moq.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
-using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialities;
 using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
@@ -27,11 +27,11 @@ public class DeleteSpecialities
         _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([.. specialitites]);
 
         var command = _fixture
-            .Build<DeleteSpecialityCommand>()
+            .Build<DeleteSpecialitiesCommand>()
             .With(x => x.SpecialitiesId, [.. specialitites.Select(x => x.Id)])
             .Create();
 
-        var handler = new DeleteSpecialityCommandHandler(_mockDbContext.Object);
+        var handler = new DeleteSpecialitiesCommandHandler(_mockDbContext.Object);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -55,11 +55,11 @@ public class DeleteSpecialities
         _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([]);
 
         var command = _fixture
-            .Build<DeleteSpecialityCommand>()
+            .Build<DeleteSpecialitiesCommand>()
             .With(x => x.SpecialitiesId, [123, 512, 46])
             .Create();
 
-        var handler = new DeleteSpecialityCommandHandler(_mockDbContext.Object);
+        var handler = new DeleteSpecialitiesCommandHandler(_mockDbContext.Object);
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
@@ -77,11 +77,11 @@ public class DeleteSpecialities
             .Throws(new Exception());
 
         var command = _fixture
-            .Build<DeleteSpecialityCommand>()
+            .Build<DeleteSpecialitiesCommand>()
             .With(x => x.SpecialitiesId, [.. specialities.Select(x => x.Id)])
             .Create();
 
-        var handler = new DeleteSpecialityCommandHandler(_mockDbContext.Object);
+        var handler = new DeleteSpecialitiesCommandHandler(_mockDbContext.Object);
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
