@@ -31,6 +31,14 @@ message StudentModel{
   bool IsDropped = 8;
 }
 
+message StudentViewModel{
+  string Id = 1;
+  string FirstName = 2;
+  string LastName = 3;
+  google.protobuf.StringValue PatronymicName = 4;
+  string GroupName = 5;
+}
+
 message StudentShortInfo{
   string Id = 1;
   string FirstName = 2;
