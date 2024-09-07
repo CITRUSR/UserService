@@ -1,15 +1,17 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Serilog;
 using UserService.Application.Abstraction;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 
 public class CreateSpecialityCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<CreateSpecialityCommand, Speciality>
+        IRequestHandler<CreateSpecialityCommand, SpecialityShortInfoDto>
 {
-    public async Task<Speciality> Handle(
+    public async Task<SpecialityShortInfoDto> Handle(
         CreateSpecialityCommand request,
         CancellationToken cancellationToken
     )
@@ -27,6 +29,6 @@ public class CreateSpecialityCommandHandler(IAppDbContext dbContext)
 
         Log.Information($"The speciality with id{speciality.Id} is created");
 
-        return speciality;
+        return speciality.Adapt<SpecialityShortInfoDto>();
     }
 }

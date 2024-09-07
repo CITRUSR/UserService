@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Mapster;
 using MediatR;
 using UserService.API.Mappers;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
@@ -21,7 +22,7 @@ public class SpecialityService(
     private readonly IMapper<Speciality, SpecialityModel> _mapper = mapper;
     private readonly IMapper<Speciality, SpecialityViewModel> _mapperViewModel = mapperViewModel;
 
-    public override async Task<CreateSpecialityResponse> CreateSpeciality(
+    public override async Task<SpecialityShortInfo> CreateSpeciality(
         CreateSpecialityRequest request,
         ServerCallContext context
     )
@@ -37,7 +38,7 @@ public class SpecialityService(
 
         var speciality = await _mediator.Send(command);
 
-        return new CreateSpecialityResponse { Speciality = _mapperViewModel.Map(speciality), };
+        return speciality.Adapt<SpecialityShortInfo>();
     }
 
     public override async Task<DeleteSpecialityResponse> DeleteSpeciality(

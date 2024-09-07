@@ -8,7 +8,7 @@ import "google/protobuf/wrappers.proto";
 import "Protos/shared.proto";
 
 service SpecialityService{
-  rpc CreateSpeciality(CreateSpecialityRequest) returns (CreateSpecialityResponse);
+  rpc CreateSpeciality(CreateSpecialityRequest) returns (SpecialityShortInfo);
   rpc DeleteSpeciality(DeleteSpecialityRequest) returns (DeleteSpecialityResponse);
   rpc SoftDeleteSpecialities(SoftDeleteSpecialitiesRequest) returns (SoftDeleteSpecialitiesResponse);
   rpc EditSpeciality(EditSpecialityRequest) returns (EditSpecialityResponse);
@@ -49,10 +49,6 @@ message CreateSpecialityRequest{
   string Abbreavation = 2;
   DecimalValue Cost = 3;
   uint32 DurationMonths = 4;
-}
-
-message CreateSpecialityResponse{
-  SpecialityViewModel Speciality = 1;
 }
 
 message DeleteSpecialityRequest{

@@ -20,6 +20,7 @@ using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudents;
 using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudents;
@@ -121,7 +122,7 @@ public static class DependencyInjection
             EditSpecialityCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<CreateSpecialityCommand, Speciality>,
+            IRequestHandler<CreateSpecialityCommand, SpecialityShortInfoDto>,
             CreateSpecialityCommandHandlerCached
         >();
     }
