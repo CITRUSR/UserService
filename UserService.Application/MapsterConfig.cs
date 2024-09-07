@@ -27,5 +27,9 @@ public static class MapsterConfig
         TypeAdapterConfig<Student, StudentViewModel>
             .NewConfig()
             .Map(dest => dest.GroupName, src => src.Group.ToString());
+        TypeAdapterConfig<PaginationList<Student>, GetStudentsResponse>
+            .NewConfig()
+            .Map(dest => dest.LastPage, src => src.MaxPage)
+            .Map(dest => dest.Students, src => src.Items.Adapt<List<StudentViewModel>>());
     }
 }
