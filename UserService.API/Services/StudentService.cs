@@ -1,7 +1,6 @@
 ﻿using Grpc.Core;
 using Mapster;
 using MediatR;
-using UserService.API.Mappers;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudents;
 using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudents;
@@ -9,15 +8,12 @@ using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
-using UserService.Domain.Entities;
 
 namespace UserService.API.Services;
 
-public class StudentService(IMediator mediator, IMapper<Student, StudentModel> mapper)
-    : UserService.StudentService.StudentServiceBase
+public class StudentService(IMediator mediator) : UserService.StudentService.StudentServiceBase
 {
     private readonly IMediator _mediator = mediator;
-    private readonly IMapper<Student, StudentModel> _mapper = mapper;
 
     public override async Task<StudentShortInfo> CreateStudent(
         CreateStudentRequest request,

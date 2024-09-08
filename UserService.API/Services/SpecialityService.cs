@@ -1,26 +1,19 @@
 ﻿using Grpc.Core;
 using Mapster;
 using MediatR;
-using UserService.API.Mappers;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
-using UserService.Domain.Entities;
 
 namespace UserService.API.Services;
 
-public class SpecialityService(
-    IMediator mediator,
-    IMapper<Speciality, SpecialityModel> mapper,
-    IMapper<Speciality, SpecialityViewModel> mapperViewModel
-) : UserService.SpecialityService.SpecialityServiceBase
+public class SpecialityService(IMediator mediator)
+    : UserService.SpecialityService.SpecialityServiceBase
 {
     private readonly IMediator _mediator = mediator;
-    private readonly IMapper<Speciality, SpecialityModel> _mapper = mapper;
-    private readonly IMapper<Speciality, SpecialityViewModel> _mapperViewModel = mapperViewModel;
 
     public override async Task<SpecialityShortInfo> CreateSpeciality(
         CreateSpecialityRequest request,
