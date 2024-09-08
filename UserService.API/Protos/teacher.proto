@@ -10,6 +10,12 @@ service TeacherService{
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
 }
 
+message TeacherShortInfo{
+  string Id = 1;
+  string FirstName = 2;
+  string LastName = 3;
+}
+
 message CreateTeacherRequest{
   string SsoId = 1;
   string FirstName = 2;
