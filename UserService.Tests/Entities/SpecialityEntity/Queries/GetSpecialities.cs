@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
+using UserService.Application;
 using UserService.Application.Abstraction;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
@@ -26,6 +28,8 @@ public class GetSpecialities
             SearchString = "",
             DeletedStatus = DeletedStatus.All,
         };
+
+        MapsterConfig.Configure();
     }
 
     [Fact]
@@ -162,7 +166,7 @@ public class GetSpecialities
         var result = await handler.Handle(query, default);
 
         result
-            .Items.Select(x => x.Id)
+            .Specialities.Select(x => x.Id)
             .Should()
             .BeEquivalentTo(
                 predicate(specialityA, specialityB).Select(x => x.Id),
@@ -187,7 +191,7 @@ public class GetSpecialities
         var result = await handler.Handle(query, default);
 
         result
-            .Items.Select(x => x.Id)
+            .Specialities.Select(x => x.Id)
             .Should()
             .BeEquivalentTo(expectedSpeciality(specialityA, specialityB).Select(x => x.Id));
     }
@@ -195,7 +199,7 @@ public class GetSpecialities
     private async Task TestSearchString(
         string searchString,
         int expectedCount,
-        Func<Speciality, bool> predicate
+        Func<SpecialityViewModel, bool> predicate
     )
     {
         var specialityA = _fixture.Build<Speciality>().With(x => x.Name, "AAA").Create();
@@ -210,8 +214,8 @@ public class GetSpecialities
 
         var result = await handler.Handle(query, default);
 
-        result.Items.Count.Should().Be(expectedCount);
+        result.Specialities.Count.Should().Be(expectedCount);
 
-        result.Items.Should().Contain(speciality => predicate(speciality));
+        result.Specialities.Should().Contain(speciality => predicate(speciality));
     }
 }

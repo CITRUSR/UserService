@@ -2,10 +2,9 @@ using FluentAssertions;
 using MediatR;
 using Moq;
 using UserService.Application.Abstraction;
-using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Application.Enums;
-using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Queries;
 
@@ -13,15 +12,14 @@ public class GetSpecialitiesCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
     private readonly Mock<
-        IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>>
+        IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse>
     > _mockHandler;
     private readonly GetSpecialitiesQuery _query;
 
     public GetSpecialitiesCached()
     {
         _mockCacheService = new Mock<ICacheService>();
-        _mockHandler =
-            new Mock<IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>>>();
+        _mockHandler = new Mock<IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse>>();
         _query = new GetSpecialitiesQuery
         {
             Page = 1,
@@ -37,14 +35,18 @@ public class GetSpecialitiesCached
     {
         _mockCacheService
             .Setup(x =>
-                x.GetOrCreateAsync<PaginationList<Speciality>>(
+                x.GetOrCreateAsync<GetSpecialitiesResponse>(
                     It.IsAny<string>(),
-                    It.IsAny<Func<Task<PaginationList<Speciality>>>>(),
+                    It.IsAny<Func<Task<GetSpecialitiesResponse>>>(),
                     It.IsAny<CancellationToken>()
                 )
             )
             .ReturnsAsync(
-                new PaginationList<Speciality> { Items = new List<Speciality> { new Speciality() } }
+                new GetSpecialitiesResponse
+                {
+                    LastPage = 1,
+                    Specialities = new List<SpecialityViewModel> { new SpecialityViewModel() }
+                }
             );
 
         var handler = new GetSpecialitiesQueryHandlerCached(
@@ -64,9 +66,9 @@ public class GetSpecialitiesCached
 
         _mockCacheService.Verify(
             x =>
-                x.GetOrCreateAsync<PaginationList<Speciality>>(
+                x.GetOrCreateAsync<GetSpecialitiesResponse>(
                     It.IsAny<string>(),
-                    It.IsAny<Func<Task<PaginationList<Speciality>>>>(),
+                    It.IsAny<Func<Task<GetSpecialitiesResponse>>>(),
                     It.IsAny<CancellationToken>()
                 ),
             Times.Once
@@ -81,7 +83,11 @@ public class GetSpecialitiesCached
         _mockHandler
             .Setup(x => x.Handle(It.IsAny<GetSpecialitiesQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
-                new PaginationList<Speciality> { Items = new List<Speciality> { new Speciality() } }
+                new GetSpecialitiesResponse
+                {
+                    LastPage = 1,
+                    Specialities = new List<SpecialityViewModel> { new SpecialityViewModel() }
+                }
             );
 
         var handler = new GetSpecialitiesQueryHandlerCached(
@@ -95,9 +101,9 @@ public class GetSpecialitiesCached
 
         _mockCacheService.Verify(
             x =>
-                x.GetOrCreateAsync<PaginationList<Speciality>>(
+                x.GetOrCreateAsync<GetSpecialitiesQuery>(
                     It.IsAny<string>(),
-                    It.IsAny<Func<Task<PaginationList<Speciality>>>>(),
+                    It.IsAny<Func<Task<GetSpecialitiesQuery>>>(),
                     It.IsAny<CancellationToken>()
                 ),
             Times.Never()

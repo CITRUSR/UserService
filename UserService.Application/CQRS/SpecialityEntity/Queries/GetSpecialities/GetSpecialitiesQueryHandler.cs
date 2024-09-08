@@ -1,7 +1,8 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
-using UserService.Application.Enums;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Application.Extensions;
 using UserService.Domain.Entities;
 
@@ -9,9 +10,9 @@ namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 
 public class GetSpecialitiesQueryHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>>
+        IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse>
 {
-    public async Task<PaginationList<Speciality>> Handle(
+    public async Task<GetSpecialitiesResponse> Handle(
         GetSpecialitiesQuery request,
         CancellationToken cancellationToken
     )
@@ -33,11 +34,13 @@ public class GetSpecialitiesQueryHandler(IAppDbContext dbContext)
 
         specialities = GetSortedBySortState(specialities, request.SortState);
 
-        return await PaginationList<Speciality>.CreateAsync(
+        var pagList = await PaginationList<Speciality>.CreateAsync(
             specialities,
             request.Page,
             request.PageSize
         );
+
+        return pagList.Adapt<GetSpecialitiesResponse>();
     }
 
     private IQueryable<Speciality> GetSortedBySortState(

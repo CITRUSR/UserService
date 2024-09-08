@@ -83,11 +83,7 @@ public class SpecialityService(
 
         var specialities = await _mediator.Send(query);
 
-        return new GetSpecialitiesResponse
-        {
-            Specialities = { specialities.Items.Select(x => _mapper.Map(x)) },
-            LastPage = specialities.MaxPage,
-        };
+        return specialities.Adapt<GetSpecialitiesResponse>();
     }
 
     public override async Task<SoftDeleteSpecialitiesResponse> SoftDeleteSpecialities(

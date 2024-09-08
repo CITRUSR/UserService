@@ -106,7 +106,7 @@ public static class DependencyInjection
             GetSpecialityByIdQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>>,
+            IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse>,
             GetSpecialitiesQueryHandlerCached
         >();
         services.Decorate<

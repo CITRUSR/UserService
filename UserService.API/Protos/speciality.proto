@@ -100,6 +100,6 @@ message GetSpecialitiesRequest{
 }
 
 message GetSpecialitiesResponse{
-  repeated SpecialityModel Specialities = 1;
+  repeated SpecialityViewModel Specialities = 1;
   int32 LastPage = 2;
 }
