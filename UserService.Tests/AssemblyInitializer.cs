@@ -1,3 +1,4 @@
+using UserService.Application;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -8,5 +9,8 @@ namespace UserService.Tests;
 public class AssemblyInitializer : XunitTestFramework
 {
     public AssemblyInitializer(IMessageSink messageSink)
-        : base(messageSink) { }
+        : base(messageSink)
+    {
+        MapsterConfig.Configure();
+    }
 }

@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
-using UserService.Application;
 using UserService.Application.Abstraction;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Responses;
@@ -28,8 +27,6 @@ public class GetSpecialities
             SearchString = "",
             DeletedStatus = DeletedStatus.All,
         };
-
-        MapsterConfig.Configure();
     }
 
     [Fact]

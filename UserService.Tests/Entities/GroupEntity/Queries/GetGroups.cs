@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
-using UserService.Application;
 using UserService.Application.Abstraction;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 using UserService.Application.Enums;
@@ -28,8 +27,6 @@ public class GetGroups
             SearchString = "",
             SortState = GroupSortState.GroupAsc
         };
-
-        MapsterConfig.Configure();
     }
 
     [Fact]
