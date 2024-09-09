@@ -4,6 +4,7 @@ using Moq;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
@@ -11,20 +12,22 @@ namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 public class CreateSpecialityCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
-    private readonly Mock<IRequestHandler<CreateSpecialityCommand, Speciality>> _mockHandler;
+    private readonly Mock<
+        IRequestHandler<CreateSpecialityCommand, SpecialityShortInfoDto>
+    > _mockHandler;
     private readonly IFixture _fixture;
 
     public CreateSpecialityCached()
     {
         _mockCacheService = new Mock<ICacheService>();
-        _mockHandler = new Mock<IRequestHandler<CreateSpecialityCommand, Speciality>>();
+        _mockHandler = new Mock<IRequestHandler<CreateSpecialityCommand, SpecialityShortInfoDto>>();
         _fixture = new Fixture();
     }
 
     [Fact]
     public async Task CreateSpecialityCached_ShouldBe_Success()
     {
-        var group = _fixture.Create<Speciality>();
+        var group = _fixture.Create<SpecialityShortInfoDto>();
 
         _mockHandler
             .Setup(x =>

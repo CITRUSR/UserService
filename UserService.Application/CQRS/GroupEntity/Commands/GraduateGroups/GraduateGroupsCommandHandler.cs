@@ -1,17 +1,18 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
 
 public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<GraduateGroupsCommand, List<Group>>
+        IRequestHandler<GraduateGroupsCommand, List<GroupShortInfoDto>>
 {
-    public async Task<List<Group>> Handle(
+    public async Task<List<GroupShortInfoDto>> Handle(
         GraduateGroupsCommand request,
         CancellationToken cancellationToken
     )
@@ -19,9 +20,9 @@ public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
         var groups = await DbContext
             .Groups.Where(x => request.GroupsId.Contains(x.Id))
             .Include(x => x.Speciality)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
-        if (groups.Count() < request.GroupsId.Count)
+        if (groups.Count < request.GroupsId.Count)
         {
             var notFoundGroups = groups.Where(x => !request.GroupsId.Contains(x.Id));
             throw new GroupNotFoundException(notFoundGroups.Select(x => x.Id).ToArray());
@@ -44,7 +45,7 @@ public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
             throw;
         }
 
-        return groups;
+        return groups.Adapt<List<GroupShortInfoDto>>();
     }
 
     private bool TryGraduateGroups(

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
@@ -10,4 +11,4 @@ public record EditStudentCommand(
     string? PatronymicName,
     int GroupId,
     bool IsDeleted
-) : IRequest<Student>;
+) : IRequest<StudentShortInfoDto>;

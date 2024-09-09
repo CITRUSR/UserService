@@ -9,10 +9,10 @@ import "google/protobuf/wrappers.proto";
 import "Protos/shared.proto";
 
 service GroupService{
-  rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse);
+  rpc CreateGroup (CreateGroupRequest) returns (GroupShortInfo);
   rpc DeleteGroups (DeleteGroupsRequest) returns (DeleteGroupsResponse);
   rpc SoftDeleteGroups (SoftDeleteGroupsRequest) returns (SoftDeleteGroupsResponse);
-  rpc EditGroup (EditGroupRequest) returns (GroupModel);
+  rpc EditGroup (EditGroupRequest) returns (GroupShortInfo);
   rpc GraduateGroups (GraduateGroupsRequest) returns (GraduateGroupsResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
   rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);
@@ -32,6 +32,20 @@ message GroupModel{
   google.protobuf.Timestamp GraduatedAt = 8;
   bool IsGraduated = 9;
   bool IsDeleted = 10;
+}
+
+message GroupShortInfo{
+  int32 Id = 1;
+  string GroupName = 2;
+}
+
+message GroupViewModel{
+  int32 Id = 1;
+  int32 StudentCount = 2;
+  string CuratorFirstName = 3;
+  string CuratorLastName = 4;
+  google.protobuf.StringValue CuratorPatronymicName = 5;
+  string GroupName = 6;
 }
 
 message CreateGroupRequest{
@@ -60,7 +74,7 @@ message ChangeGroupResponseModel{
 }
 
 message GraduateGroupsResponse{
-  repeated ChangeGroupResponseModel groups = 1;
+  repeated GroupShortInfo Groups = 1;
 }
 
 //If be empty then will be taking every group
@@ -69,7 +83,7 @@ message TransferGroupsToNextSemesterRequest{
 }
 
 message TransferGroupsToNextSemesterResponse{
-  repeated ChangeGroupResponseModel Groups = 1;
+  repeated GroupShortInfo Groups = 1;
 }
 
 message TransferGroupsToNextCourseRequest{
@@ -77,7 +91,7 @@ message TransferGroupsToNextCourseRequest{
 }
 
 message TransferGroupsToNextCourseResponse{
-  repeated ChangeGroupResponseModel Groups = 1;
+  repeated GroupShortInfo Groups = 1;
 }
 
 message DeleteGroupsRequest{
@@ -85,7 +99,7 @@ message DeleteGroupsRequest{
 }
 
 message DeleteGroupsResponse{
-  repeated ChangeGroupResponseModel Group = 1;
+  repeated GroupShortInfo Groups = 1;
 }
 
 message SoftDeleteGroupsRequest{
@@ -93,7 +107,7 @@ message SoftDeleteGroupsRequest{
 }
 
 message SoftDeleteGroupsResponse{
-  repeated ChangeGroupResponseModel Group = 1;
+  repeated GroupShortInfo Groups = 1;
 }
 
 message EditGroupRequest{
@@ -124,6 +138,6 @@ message GetGroupsRequest{
 }
 
 message GetGroupsResponse{
-  repeated GroupModel Groups = 1;
+  repeated GroupViewModel Groups = 1;
   int32 LastPage = 2;
 }

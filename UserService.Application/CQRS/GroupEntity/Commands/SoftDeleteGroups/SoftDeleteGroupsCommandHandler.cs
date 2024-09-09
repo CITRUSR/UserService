@@ -1,17 +1,18 @@
+using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
-using UserService.Domain.Entities;
+using UserService.Application.CQRS.GroupEntity.Responses;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 
 public class SoftDeleteGroupsCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<SoftDeleteGroupsCommand, List<Group>>
+        IRequestHandler<SoftDeleteGroupsCommand, List<GroupShortInfoDto>>
 {
-    public async Task<List<Group>> Handle(
+    public async Task<List<GroupShortInfoDto>> Handle(
         SoftDeleteGroupsCommand request,
         CancellationToken cancellationToken
     )
@@ -51,6 +52,6 @@ public class SoftDeleteGroupsCommandHandler(IAppDbContext dbContext)
             $"The groups with id:{string.Join(", ", request.GroupsId)} are soft deleted"
         );
 
-        return groups;
+        return groups.Adapt<List<GroupShortInfoDto>>();
     }
 }

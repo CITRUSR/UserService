@@ -4,6 +4,7 @@ using Moq;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.SpecialityEntity.Commands;
@@ -12,21 +13,24 @@ public class SoftDeleteSpecialitiesCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
     private readonly Mock<
-        IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>
+        IRequestHandler<SoftDeleteSpecialitiesCommand, List<SpecialityShortInfoDto>>
     > _mockHandler;
     private readonly IFixture _fixture;
 
     public SoftDeleteSpecialitiesCached()
     {
         _mockCacheService = new Mock<ICacheService>();
-        _mockHandler = new Mock<IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>>();
+        _mockHandler =
+            new Mock<
+                IRequestHandler<SoftDeleteSpecialitiesCommand, List<SpecialityShortInfoDto>>
+            >();
         _fixture = new Fixture();
     }
 
     [Fact]
     public async Task SoftDeleteSpecialititesCached_ShouldBe_Success()
     {
-        var groups = _fixture.CreateMany<Speciality>(3).ToList();
+        var groups = _fixture.CreateMany<SpecialityShortInfoDto>(3).ToList();
         var ids = groups.Select(x => x.Id).ToList();
 
         var command = _fixture

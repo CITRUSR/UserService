@@ -1,23 +1,27 @@
 ﻿using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 
 public class GetGroupByIdQueryHandlerCached(
-    IRequestHandler<GetGroupByIdQuery, Group> handler,
+    IRequestHandler<GetGroupByIdQuery, GroupDto> handler,
     ICacheService cacheService
-) : IRequestHandler<GetGroupByIdQuery, Group>
+) : IRequestHandler<GetGroupByIdQuery, GroupDto>
 {
-    private readonly IRequestHandler<GetGroupByIdQuery, Group> _handler = handler;
+    private readonly IRequestHandler<GetGroupByIdQuery, GroupDto> _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
 
-    public async Task<Group> Handle(GetGroupByIdQuery request, CancellationToken cancellationToken)
+    public async Task<GroupDto> Handle(
+        GetGroupByIdQuery request,
+        CancellationToken cancellationToken
+    )
     {
         var key = CacheKeys.ById<Group, int>(request.Id);
 
-        Group group = await _cacheService.GetOrCreateAsync<Group>(
+        GroupDto group = await _cacheService.GetOrCreateAsync<GroupDto>(
             key,
             async () => await _handler.Handle(request, cancellationToken),
             cancellationToken

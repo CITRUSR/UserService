@@ -9,10 +9,10 @@ import "google/protobuf/timestamp.proto";
 import "Protos/shared.proto";
 
 service StudentService{
-  rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
-  rpc DropOutStudent(DropOutStudentRequest) returns (DropOutStudentResponse);
-  rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
-  rpc EditStudent(EditStudentRequest) returns (EditStudentResponse);
+  rpc CreateStudent(CreateStudentRequest) returns (StudentShortInfo);
+  rpc DropOutStudents(DropOutStudentsRequest) returns (DropOutStudentsResponse);
+  rpc DeleteStudents(DeleteStudentsRequest) returns (DeleteStudentsResponse);
+  rpc EditStudent(EditStudentRequest) returns (StudentShortInfo);
   rpc GetStudentById(GetStudentByIdRequest) returns (StudentModel);
   rpc GetStudentBySsoId (GetStudentBySsoIdRequest) returns (StudentModel);
   rpc GetStudents(GetStudentsRequest) returns (GetStudentsResponse);
@@ -22,12 +22,27 @@ service StudentService{
 message StudentModel{
   string Id = 1;
   string SsoId = 2;
-  string FistName = 3;
+  string FirstName = 3;
   string LastName = 4;
   google.protobuf.StringValue PatronymicName = 5;
   int32  GroupId = 6;
-  google.protobuf.Timestamp DroppedTime = 7;
+  google.protobuf.Timestamp DroppedOutAt = 7;
+  bool IsDeleted = 9;
   bool IsDropped = 8;
+}
+
+message StudentViewModel{
+  string Id = 1;
+  string FirstName = 2;
+  string LastName = 3;
+  google.protobuf.StringValue PatronymicName = 4;
+  string GroupName = 5;
+}
+
+message StudentShortInfo{
+  string Id = 1;
+  string FirstName = 2;
+  string LastName = 3;
 }
 
 message CreateStudentRequest{
@@ -42,21 +57,21 @@ message CreateStudentResponse{
   string Id = 1;
 }
 
-message DropOutStudentRequest{
-  string Id = 1;
+message DropOutStudentsRequest{
+  repeated string Ids = 1;
   google.protobuf.Timestamp DroppedTime = 3;
 }
 
-message DropOutStudentResponse{
-  string Id = 1;
+message DropOutStudentsResponse{
+  repeated StudentShortInfo Students = 1;
 }
 
-message DeleteStudentRequest{
-  string Id = 1;
+message DeleteStudentsRequest{
+  repeated string Ids = 1;
 }
 
-message DeleteStudentResponse{
-  string Id = 1;
+message DeleteStudentsResponse{
+  repeated StudentShortInfo Students = 1;
 }
 
 message EditStudentRequest{
@@ -66,10 +81,6 @@ message EditStudentRequest{
   google.protobuf.StringValue PatronymicName = 4;
   int32 GroupId = 5;
   bool IsDeleted = 6;
-}
-
-message EditStudentResponse{
-  StudentModel Student = 1;
 }
 
 message GetStudentByIdRequest{
@@ -101,7 +112,7 @@ message GetStudentsRequest{
 }
 
 message GetStudentsResponse{
-  repeated StudentModel Students = 1;
+  repeated StudentViewModel Students = 1;
   int32 LastPage = 2;
 }
 

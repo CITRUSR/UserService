@@ -1,7 +1,7 @@
 using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
-using UserService.Application.Common.Paging;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
@@ -9,14 +9,14 @@ namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 
 public class GetSpecialitiesQueryHandlerCached(
     ICacheService cacheService,
-    IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>> handler
-) : IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>>
+    IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse> handler
+) : IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>> _handler =
+    private readonly IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse> _handler =
         handler;
 
-    public async Task<PaginationList<Speciality>> Handle(
+    public async Task<GetSpecialitiesResponse> Handle(
         GetSpecialitiesQuery request,
         CancellationToken cancellationToken
     )
@@ -32,7 +32,7 @@ public class GetSpecialitiesQueryHandlerCached(
         {
             var key = CacheKeys.GetEntities<Speciality>();
 
-            var entities = await _cacheService.GetOrCreateAsync<PaginationList<Speciality>>(
+            var entities = await _cacheService.GetOrCreateAsync<GetSpecialitiesResponse>(
                 key,
                 async () =>
                     await _handler.Handle(
@@ -46,7 +46,7 @@ public class GetSpecialitiesQueryHandlerCached(
                 cancellationToken
             );
 
-            entities.Items = [.. entities.Items.Take(request.PageSize)];
+            entities.Specialities = [.. entities.Specialities.Take(request.PageSize)];
 
             return entities;
         }

@@ -1,17 +1,22 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 
 public class EditGroupCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<EditGroupCommand, Group>
+        IRequestHandler<EditGroupCommand, GroupShortInfoDto>
 {
-    public async Task<Group> Handle(EditGroupCommand request, CancellationToken cancellationToken)
+    public async Task<GroupShortInfoDto> Handle(
+        EditGroupCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var group = await DbContext.Groups.FirstOrDefaultAsync(
             x => x.Id == request.Id,
@@ -70,6 +75,6 @@ public class EditGroupCommandHandler(IAppDbContext dbContext)
                 + "old state:{@oldGroup} new state:{@group}"
         );
 
-        return group;
+        return group.Adapt<GroupShortInfoDto>();
     }
 }

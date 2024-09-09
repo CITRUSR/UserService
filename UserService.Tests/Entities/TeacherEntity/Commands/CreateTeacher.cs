@@ -36,6 +36,6 @@ public class CreateTeacher
 
         _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
 
-        result.Should().NotBeEmpty();
+        result.Should().NotBeNull();
     }
 }

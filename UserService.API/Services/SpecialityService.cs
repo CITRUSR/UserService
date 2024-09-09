@@ -1,27 +1,21 @@
 ﻿using Grpc.Core;
+using Mapster;
 using MediatR;
-using UserService.API.Mappers;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
-using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
-using UserService.Domain.Entities;
 
 namespace UserService.API.Services;
 
-public class SpecialityService(
-    IMediator mediator,
-    IMapper<Speciality, SpecialityModel> mapper,
-    IMapper<Speciality, SpecialityViewModel> mapperViewModel
-) : UserService.SpecialityService.SpecialityServiceBase
+public class SpecialityService(IMediator mediator)
+    : UserService.SpecialityService.SpecialityServiceBase
 {
     private readonly IMediator _mediator = mediator;
-    private readonly IMapper<Speciality, SpecialityModel> _mapper = mapper;
-    private readonly IMapper<Speciality, SpecialityViewModel> _mapperViewModel = mapperViewModel;
 
-    public override async Task<CreateSpecialityResponse> CreateSpeciality(
+    public override async Task<SpecialityShortInfo> CreateSpeciality(
         CreateSpecialityRequest request,
         ServerCallContext context
     )
@@ -37,22 +31,19 @@ public class SpecialityService(
 
         var speciality = await _mediator.Send(command);
 
-        return new CreateSpecialityResponse { Speciality = _mapperViewModel.Map(speciality), };
+        return speciality.Adapt<SpecialityShortInfo>();
     }
 
-    public override async Task<DeleteSpecialityResponse> DeleteSpeciality(
-        DeleteSpecialityRequest request,
+    public override async Task<DeleteSpecialitiesResponse> DeleteSpecialities(
+        DeleteSpecialitiesRequest request,
         ServerCallContext context
     )
     {
-        var command = new DeleteSpecialityCommand([.. request.Ids]);
+        var command = new DeleteSpecialitiesCommand([.. request.Ids]);
 
         var specialities = await _mediator.Send(command);
 
-        return new DeleteSpecialityResponse
-        {
-            Specialities = { specialities.Select(x => _mapperViewModel.Map(x)) },
-        };
+        return specialities.Adapt<DeleteSpecialitiesResponse>();
     }
 
     public override async Task<SpecialityModel> GetSpecialityById(
@@ -64,7 +55,7 @@ public class SpecialityService(
 
         var speciality = await _mediator.Send(query);
 
-        return _mapper.Map(speciality);
+        return speciality.Adapt<SpecialityModel>();
     }
 
     public override async Task<GetSpecialitiesResponse> GetSpecialities(
@@ -85,11 +76,7 @@ public class SpecialityService(
 
         var specialities = await _mediator.Send(query);
 
-        return new GetSpecialitiesResponse
-        {
-            Specialities = { specialities.Items.Select(x => _mapper.Map(x)) },
-            LastPage = specialities.MaxPage,
-        };
+        return specialities.Adapt<GetSpecialitiesResponse>();
     }
 
     public override async Task<SoftDeleteSpecialitiesResponse> SoftDeleteSpecialities(
@@ -101,13 +88,10 @@ public class SpecialityService(
 
         var specialities = await _mediator.Send(command);
 
-        return new SoftDeleteSpecialitiesResponse
-        {
-            Specialities = { specialities.Select(x => _mapperViewModel.Map(x)) },
-        };
+        return specialities.Adapt<SoftDeleteSpecialitiesResponse>();
     }
 
-    public override async Task<EditSpecialityResponse> EditSpeciality(
+    public override async Task<SpecialityShortInfo> EditSpeciality(
         EditSpecialityRequest request,
         ServerCallContext context
     )
@@ -125,6 +109,6 @@ public class SpecialityService(
 
         var speciality = await _mediator.Send(command);
 
-        return new EditSpecialityResponse { Speciality = _mapper.Map(speciality) };
+        return speciality.Adapt<SpecialityShortInfo>();
     }
 }

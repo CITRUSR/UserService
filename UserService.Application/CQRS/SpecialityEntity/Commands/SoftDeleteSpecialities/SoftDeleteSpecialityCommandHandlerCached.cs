@@ -1,21 +1,23 @@
 using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
-using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 
 public class SoftDeleteSpecialitiesCommandHandlerCached(
-    IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>> handler,
+    IRequestHandler<SoftDeleteSpecialitiesCommand, List<SpecialityShortInfoDto>> handler,
     ICacheService cacheService
-) : IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>
+) : IRequestHandler<SoftDeleteSpecialitiesCommand, List<SpecialityShortInfoDto>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>> _handler =
-        handler;
+    private readonly IRequestHandler<
+        SoftDeleteSpecialitiesCommand,
+        List<SpecialityShortInfoDto>
+    > _handler = handler;
 
-    public async Task<List<Speciality>> Handle(
+    public async Task<List<SpecialityShortInfoDto>> Handle(
         SoftDeleteSpecialitiesCommand request,
         CancellationToken cancellationToken
     )

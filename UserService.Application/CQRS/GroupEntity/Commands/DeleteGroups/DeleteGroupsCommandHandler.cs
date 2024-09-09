@@ -1,17 +1,18 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
-using UserService.Domain.Entities;
+using UserService.Application.CQRS.GroupEntity.Responses;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 
 public class DeleteGroupsCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<DeleteGroupsCommand, List<Group>>
+        IRequestHandler<DeleteGroupsCommand, List<GroupShortInfoDto>>
 {
-    public async Task<List<Group>> Handle(
+    public async Task<List<GroupShortInfoDto>> Handle(
         DeleteGroupsCommand request,
         CancellationToken cancellationToken
     )
@@ -45,6 +46,6 @@ public class DeleteGroupsCommandHandler(IAppDbContext dbContext)
 
         Log.Information($"The groups with id:{string.Join(", ", request.Ids)} are deleted");
 
-        return groups;
+        return groups.Adapt<List<GroupShortInfoDto>>();
     }
 }

@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using UserService.Domain.Entities;
+using UserService.Application.CQRS.GroupEntity.Responses;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 
@@ -10,4 +10,4 @@ public record CreateGroupCommand(
     byte CurrentSemester,
     byte SubGroup,
     DateTime StartedAt
-) : IRequest<Group>;
+) : IRequest<GroupShortInfoDto>;

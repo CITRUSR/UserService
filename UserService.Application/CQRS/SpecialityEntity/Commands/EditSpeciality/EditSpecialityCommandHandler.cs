@@ -1,16 +1,18 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 
 public class EditSpecialityCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<EditSpecialityCommand, Speciality>
+        IRequestHandler<EditSpecialityCommand, SpecialityShortInfoDto>
 {
-    public async Task<Speciality> Handle(
+    public async Task<SpecialityShortInfoDto> Handle(
         EditSpecialityCommand request,
         CancellationToken cancellationToken
     )
@@ -29,14 +31,14 @@ public class EditSpecialityCommandHandler(IAppDbContext dbContext)
         {
             Id = speciality.Id,
             Name = speciality.Name,
-            Abbreavation = speciality.Abbreavation,
+            Abbreviation = speciality.Abbreviation,
             Cost = speciality.Cost,
             DurationMonths = speciality.DurationMonths,
             IsDeleted = speciality.IsDeleted,
         };
 
         speciality.Name = request.Name;
-        speciality.Abbreavation = request.Abbrevation;
+        speciality.Abbreviation = request.Abbrevation;
         speciality.Cost = request.Cost;
         speciality.DurationMonths = request.DurationMonths;
         speciality.IsDeleted = request.IsDeleted;
@@ -48,6 +50,6 @@ public class EditSpecialityCommandHandler(IAppDbContext dbContext)
                 + "old state:{@oldSpeciality} new state:{@speciality}"
         );
 
-        return speciality;
+        return speciality.Adapt<SpecialityShortInfoDto>();
     }
 }

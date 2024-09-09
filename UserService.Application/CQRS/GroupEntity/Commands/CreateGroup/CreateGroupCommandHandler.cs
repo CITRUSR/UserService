@@ -1,16 +1,21 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 
 public class CreateGroupCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<CreateGroupCommand, Group>
+        IRequestHandler<CreateGroupCommand, GroupShortInfoDto>
 {
-    public async Task<Group> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
+    public async Task<GroupShortInfoDto> Handle(
+        CreateGroupCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var speciality = await DbContext.Specialities.FindAsync(
             new object?[] { request.SpecialityId, cancellationToken },
@@ -48,6 +53,6 @@ public class CreateGroupCommandHandler(IAppDbContext dbContext)
 
         Log.Information($"The group with id:{group.Id} is created");
 
-        return group;
+        return group.Adapt<GroupShortInfoDto>();
     }
 }

@@ -1,16 +1,20 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
-using UserService.Domain.Entities;
+using UserService.Application.CQRS.GroupEntity.Responses;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 
 public class GetGroupByIdQueryHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<GetGroupByIdQuery, Group>
+        IRequestHandler<GetGroupByIdQuery, GroupDto>
 {
-    public async Task<Group> Handle(GetGroupByIdQuery request, CancellationToken cancellationToken)
+    public async Task<GroupDto> Handle(
+        GetGroupByIdQuery request,
+        CancellationToken cancellationToken
+    )
     {
         var group = await DbContext.Groups.FirstOrDefaultAsync(
             x => x.Id == request.Id,
@@ -22,6 +26,6 @@ public class GetGroupByIdQueryHandler(IAppDbContext dbContext)
             throw new GroupNotFoundException(request.Id);
         }
 
-        return group;
+        return group.Adapt<GroupDto>();
     }
 }

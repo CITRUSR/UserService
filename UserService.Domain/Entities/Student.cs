@@ -26,4 +26,9 @@ public class Student
     public int GroupId { get; set; }
     public DateTime? DroppedOutAt { get; set; } = null;
     public bool IsDeleted { get; set; } = false;
+
+    public override string ToString()
+    {
+        return $"{LastName} {FirstName} {PatronymicName}";
+    }
 }

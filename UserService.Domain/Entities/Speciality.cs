@@ -14,7 +14,7 @@ public class Speciality
 
     [MaxLength(10)]
     [Required]
-    public string Abbreavation { get; set; }
+    public string Abbreviation { get; set; }
 
     [DefaultValue(0)]
     public Decimal Cost { get; set; }

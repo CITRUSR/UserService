@@ -13,19 +13,22 @@ using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCour
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
-using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
-using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
-using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudents;
+using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudents;
 using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application;
@@ -42,6 +45,8 @@ public static class DependencyInjection
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+        MapsterConfig.Configure();
+
         DecorateHandlersToCacheVersion(services);
 
         return services;
@@ -57,39 +62,39 @@ public static class DependencyInjection
     private static void DecorateGroupsHandlersToCacheVersion(IServiceCollection services)
     {
         services.Decorate<
-            IRequestHandler<GetGroupByIdQuery, Group>,
+            IRequestHandler<GetGroupByIdQuery, GroupDto>,
             GetGroupByIdQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<GetGroupsQuery, PaginationList<Group>>,
+            IRequestHandler<GetGroupsQuery, GetGroupsResponse>,
             GetGroupsQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<DeleteGroupsCommand, List<Group>>,
+            IRequestHandler<DeleteGroupsCommand, List<GroupShortInfoDto>>,
             DeleteGroupsCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<SoftDeleteGroupsCommand, List<Group>>,
+            IRequestHandler<SoftDeleteGroupsCommand, List<GroupShortInfoDto>>,
             SoftDeleteGroupsCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<EditGroupCommand, Group>,
+            IRequestHandler<EditGroupCommand, GroupShortInfoDto>,
             EditGroupCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<GraduateGroupsCommand, List<Group>>,
+            IRequestHandler<GraduateGroupsCommand, List<GroupShortInfoDto>>,
             GraduateGroupsCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>>,
+            IRequestHandler<TransferGroupsToNextCourseCommand, List<GroupShortInfoDto>>,
             TransferGroupsToNextCourseCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>,
+            IRequestHandler<TransferGroupsToNextSemesterCommand, List<GroupShortInfoDto>>,
             TransferGroupsToNextSemesterCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<CreateGroupCommand, Group>,
+            IRequestHandler<CreateGroupCommand, GroupShortInfoDto>,
             CreateGroupCommandHandlerCached
         >();
     }
@@ -97,27 +102,27 @@ public static class DependencyInjection
     private static void DecorateSpecialitiesHandlersToCacheVersion(IServiceCollection services)
     {
         services.Decorate<
-            IRequestHandler<GetSpecialityByIdQuery, Speciality>,
+            IRequestHandler<GetSpecialityByIdQuery, SpecialityDto>,
             GetSpecialityByIdQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<GetSpecialitiesQuery, PaginationList<Speciality>>,
+            IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse>,
             GetSpecialitiesQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<DeleteSpecialityCommand, List<Speciality>>,
-            DeleteSpecialityCommandHandlerCached
+            IRequestHandler<DeleteSpecialitiesCommand, List<SpecialityShortInfoDto>>,
+            DeleteSpecialitiesCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<SoftDeleteSpecialitiesCommand, List<Speciality>>,
+            IRequestHandler<SoftDeleteSpecialitiesCommand, List<SpecialityShortInfoDto>>,
             SoftDeleteSpecialitiesCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<EditSpecialityCommand, Speciality>,
+            IRequestHandler<EditSpecialityCommand, SpecialityShortInfoDto>,
             EditSpecialityCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<CreateSpecialityCommand, Speciality>,
+            IRequestHandler<CreateSpecialityCommand, SpecialityShortInfoDto>,
             CreateSpecialityCommandHandlerCached
         >();
     }
@@ -125,31 +130,31 @@ public static class DependencyInjection
     private static void DecorateStudentsHandlerToCacheVersion(IServiceCollection services)
     {
         services.Decorate<
-            IRequestHandler<CreateStudentCommand, Guid>,
+            IRequestHandler<CreateStudentCommand, StudentShortInfoDto>,
             CreateStudentCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<DeleteStudentCommand, Guid>,
-            DeleteStudentCommandHandlerCached
+            IRequestHandler<DeleteStudentsCommand, List<StudentShortInfoDto>>,
+            DeleteStudentsCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<DropOutStudentCommand, Guid>,
-            DropOutStudentCommandHandlerCached
+            IRequestHandler<DropOutStudentsCommand, List<StudentShortInfoDto>>,
+            DropOutStudentsCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<EditStudentCommand, Student>,
+            IRequestHandler<EditStudentCommand, StudentShortInfoDto>,
             EditStudentCommandHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<GetStudentByIdQuery, Student>,
+            IRequestHandler<GetStudentByIdQuery, StudentDto>,
             GetStudentByIdQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<GetStudentBySsoIdQuery, Student>,
+            IRequestHandler<GetStudentBySsoIdQuery, StudentDto>,
             GetStudentBySsoIdQueryHandlerCached
         >();
         services.Decorate<
-            IRequestHandler<GetStudentsQuery, PaginationList<Student>>,
+            IRequestHandler<GetStudentsQuery, GetStudentsResponse>,
             GetStudentsQueryHandlerCached
         >();
     }

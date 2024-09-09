@@ -1,21 +1,21 @@
 using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
-using UserService.Application.Common.Paging;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
 
 public class GetStudentsQueryHandlerCached(
-    IRequestHandler<GetStudentsQuery, PaginationList<Student>> handler,
+    IRequestHandler<GetStudentsQuery, GetStudentsResponse> handler,
     ICacheService cacheService
-) : IRequestHandler<GetStudentsQuery, PaginationList<Student>>
+) : IRequestHandler<GetStudentsQuery, GetStudentsResponse>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly IRequestHandler<GetStudentsQuery, PaginationList<Student>> _handler = handler;
+    private readonly IRequestHandler<GetStudentsQuery, GetStudentsResponse> _handler = handler;
 
-    public async Task<PaginationList<Student>> Handle(
+    public async Task<GetStudentsResponse> Handle(
         GetStudentsQuery request,
         CancellationToken cancellationToken
     )
@@ -32,7 +32,7 @@ public class GetStudentsQueryHandlerCached(
         {
             var key = CacheKeys.GetEntities<Student>();
 
-            var entities = await _cacheService.GetOrCreateAsync<PaginationList<Student>>(
+            var entities = await _cacheService.GetOrCreateAsync<GetStudentsResponse>(
                 key,
                 async () =>
                     await _handler.Handle(
@@ -46,7 +46,7 @@ public class GetStudentsQueryHandlerCached(
                 cancellationToken
             );
 
-            entities.Items = [.. entities.Items.Take(request.PageSize)];
+            entities.Students = [.. entities.Students.Take(request.PageSize)];
 
             return entities;
         }

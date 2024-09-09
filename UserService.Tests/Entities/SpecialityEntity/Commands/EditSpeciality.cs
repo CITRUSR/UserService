@@ -38,7 +38,7 @@ public class EditSpeciality
 
         _mockDbContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
 
-        speciality.Abbreavation.Should().Be(_command.Abbrevation);
+        speciality.Abbreviation.Should().Be(_command.Abbrevation);
         speciality.Cost.Should().Be(_command.Cost);
         speciality.DurationMonths.Should().Be(_command.DurationMonths);
         speciality.Name.Should().Be(_command.Name);
