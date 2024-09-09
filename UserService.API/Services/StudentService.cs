@@ -1,24 +1,21 @@
 ﻿using Grpc.Core;
+using Mapster;
 using MediatR;
-using UserService.API.Mappers;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
-using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudent;
-using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudents;
+using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudents;
 using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
-using UserService.Domain.Entities;
 
 namespace UserService.API.Services;
 
-public class StudentService(IMediator mediator, IMapper<Student, StudentModel> mapper)
-    : UserService.StudentService.StudentServiceBase
+public class StudentService(IMediator mediator) : UserService.StudentService.StudentServiceBase
 {
     private readonly IMediator _mediator = mediator;
-    private readonly IMapper<Student, StudentModel> _mapper = mapper;
 
-    public override async Task<CreateStudentResponse> CreateStudent(
+    public override async Task<StudentShortInfo> CreateStudent(
         CreateStudentRequest request,
         ServerCallContext context
     )
@@ -31,39 +28,39 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
             request.GroupId
         );
 
-        var id = await _mediator.Send(command);
+        var student = await _mediator.Send(command);
 
-        return new CreateStudentResponse { Id = id.ToString() };
+        return student.Adapt<StudentShortInfo>();
     }
 
-    public override async Task<DropOutStudentResponse> DropOutStudent(
-        DropOutStudentRequest request,
+    public override async Task<DropOutStudentsResponse> DropOutStudents(
+        DropOutStudentsRequest request,
         ServerCallContext context
     )
     {
-        var command = new DropOutStudentCommand(
-            Guid.Parse(request.Id),
+        var command = new DropOutStudentsCommand(
+            [.. request.Ids.Select(x => Guid.Parse(x))],
             request.DroppedTime.ToDateTime()
         );
 
-        var id = await _mediator.Send(command);
+        var students = await _mediator.Send(command);
 
-        return new DropOutStudentResponse { Id = id.ToString(), };
+        return students.Adapt<DropOutStudentsResponse>();
     }
 
-    public override async Task<DeleteStudentResponse> DeleteStudent(
-        DeleteStudentRequest request,
+    public override async Task<DeleteStudentsResponse> DeleteStudents(
+        DeleteStudentsRequest request,
         ServerCallContext context
     )
     {
-        var command = new DeleteStudentCommand(Guid.Parse(request.Id));
+        var command = new DeleteStudentsCommand([.. request.Ids.Select(x => Guid.Parse(x))]);
 
-        var id = await _mediator.Send(command);
+        var student = await _mediator.Send(command);
 
-        return new DeleteStudentResponse { Id = id.ToString(), };
+        return student.Adapt<DeleteStudentsResponse>();
     }
 
-    public override async Task<EditStudentResponse> EditStudent(
+    public override async Task<StudentShortInfo> EditStudent(
         EditStudentRequest request,
         ServerCallContext context
     )
@@ -79,7 +76,7 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
 
         var student = await _mediator.Send(command);
 
-        return new EditStudentResponse { Student = _mapper.Map(student), };
+        return student.Adapt<StudentShortInfo>();
     }
 
     public override async Task<StudentModel> GetStudentById(
@@ -91,7 +88,7 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
 
         var student = await _mediator.Send(query);
 
-        return _mapper.Map(student);
+        return student.Adapt<StudentModel>();
     }
 
     public override async Task<StudentModel> GetStudentBySsoId(
@@ -103,7 +100,7 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
 
         var student = await _mediator.Send(query);
 
-        return _mapper.Map(student);
+        return student.Adapt<StudentModel>();
     }
 
     public override async Task<GetStudentsResponse> GetStudents(
@@ -124,10 +121,6 @@ public class StudentService(IMediator mediator, IMapper<Student, StudentModel> m
 
         var students = await _mediator.Send(query);
 
-        return new GetStudentsResponse
-        {
-            Students = { students.Items.Select(x => _mapper.Map(x)) },
-            LastPage = students.MaxPage,
-        };
+        return students.Adapt<GetStudentsResponse>();
     }
 }

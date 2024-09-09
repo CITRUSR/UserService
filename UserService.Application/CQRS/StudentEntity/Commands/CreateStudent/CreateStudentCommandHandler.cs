@@ -1,16 +1,18 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 
 public class CreateStudentCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<CreateStudentCommand, Guid>
+        IRequestHandler<CreateStudentCommand, StudentShortInfoDto>
 {
-    public async Task<Guid> Handle(
+    public async Task<StudentShortInfoDto> Handle(
         CreateStudentCommand request,
         CancellationToken cancellationToken
     )
@@ -41,6 +43,6 @@ public class CreateStudentCommandHandler(IAppDbContext dbContext)
 
         Log.Information($"The student with Id:{student.Id} is created");
 
-        return student.Id;
+        return student.Adapt<StudentShortInfoDto>();
     }
 }

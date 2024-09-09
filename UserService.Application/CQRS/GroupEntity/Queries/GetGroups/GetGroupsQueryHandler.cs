@@ -1,7 +1,8 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
-using UserService.Application.Enums;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.Extensions;
 using UserService.Domain.Entities;
 
@@ -9,9 +10,9 @@ namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 
 public class GetGroupsQueryHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<GetGroupsQuery, PaginationList<Group>>
+        IRequestHandler<GetGroupsQuery, GetGroupsResponse>
 {
-    public async Task<PaginationList<Group>> Handle(
+    public async Task<GetGroupsResponse> Handle(
         GetGroupsQuery request,
         CancellationToken cancellationToken
     )
@@ -21,7 +22,7 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext)
         if (String.IsNullOrWhiteSpace(request.SearchString) == false)
         {
             groups = groups.Where(x =>
-                (x.CurrentCourse + "-" + x.Speciality.Abbreavation + x.SubGroup).Contains(
+                (x.CurrentCourse + "-" + x.Speciality.Abbreviation + x.SubGroup).Contains(
                     request.SearchString,
                     StringComparison.CurrentCultureIgnoreCase
                 )
@@ -34,7 +35,13 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext)
 
         groups = GetSortedBySortState(groups, request.SortState);
 
-        return await PaginationList<Group>.CreateAsync(groups, request.Page, request.PageSize);
+        var pagList = await PaginationList<Group>.CreateAsync(
+            groups,
+            request.Page,
+            request.PageSize
+        );
+
+        return pagList.Adapt<GetGroupsResponse>();
     }
 
     private IQueryable<Group> GetFilteredByGraduatedStatus(
@@ -62,12 +69,12 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext)
             GroupSortState.GroupAsc
                 => groups
                     .OrderBy(x => x.CurrentCourse)
-                    .ThenBy(x => x.Speciality.Abbreavation)
+                    .ThenBy(x => x.Speciality.Abbreviation)
                     .ThenBy(x => x.SubGroup),
             GroupSortState.GroupDesc
                 => groups
                     .OrderByDescending(x => x.CurrentCourse)
-                    .ThenBy(x => x.Speciality.Abbreavation)
+                    .ThenBy(x => x.Speciality.Abbreviation)
                     .ThenBy(x => x.SubGroup),
         };
 

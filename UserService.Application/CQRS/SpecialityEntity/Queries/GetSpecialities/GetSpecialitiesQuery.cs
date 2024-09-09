@@ -1,11 +1,10 @@
 ﻿using MediatR;
-using UserService.Application.Common.Paging;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Application.Enums;
-using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 
-public record GetSpecialitiesQuery : IRequest<PaginationList<Speciality>>
+public record GetSpecialitiesQuery : IRequest<GetSpecialitiesResponse>
 {
     public string? SearchString { get; set; } = String.Empty;
     public int Page { get; set; } = 1;

@@ -1,6 +1,7 @@
 ﻿using MediatR;
-using UserService.Domain.Entities;
+using UserService.Application.CQRS.GroupEntity.Responses;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 
-public record TransferGroupsToNextCourseCommand(List<int> IdGroups) : IRequest<List<Group>>;
+public record TransferGroupsToNextCourseCommand(List<int> IdGroups)
+    : IRequest<List<GroupShortInfoDto>>;

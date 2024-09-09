@@ -3,6 +3,7 @@ using Moq;
 using Moq.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
@@ -127,7 +128,7 @@ public class GetSpecialities
     [Fact]
     public async Task GetSpecialities_ShouldBe_SuccessWithSearchStringAbbr()
     {
-        await TestSearchString("CC", 1, speciality => speciality.Abbreavation == "CCC");
+        await TestSearchString("CC", 1, speciality => speciality.Abbreviation == "CCC");
     }
 
     private async Task TestOrdering(
@@ -138,7 +139,7 @@ public class GetSpecialities
         Speciality specialityA = _fixture
             .Build<Speciality>()
             .With(x => x.Name, "AAA")
-            .With(x => x.Abbreavation, "CCC")
+            .With(x => x.Abbreviation, "CCC")
             .With(x => x.Cost, 1)
             .With(x => x.DurationMonths, 1)
             .With(x => x.IsDeleted, true)
@@ -147,7 +148,7 @@ public class GetSpecialities
         Speciality specialityB = _fixture
             .Build<Speciality>()
             .With(x => x.Name, "BBB")
-            .With(x => x.Abbreavation, "DDD")
+            .With(x => x.Abbreviation, "DDD")
             .With(x => x.Cost, 2)
             .With(x => x.DurationMonths, 2)
             .With(x => x.IsDeleted, false)
@@ -162,7 +163,7 @@ public class GetSpecialities
         var result = await handler.Handle(query, default);
 
         result
-            .Items.Select(x => x.Id)
+            .Specialities.Select(x => x.Id)
             .Should()
             .BeEquivalentTo(
                 predicate(specialityA, specialityB).Select(x => x.Id),
@@ -187,7 +188,7 @@ public class GetSpecialities
         var result = await handler.Handle(query, default);
 
         result
-            .Items.Select(x => x.Id)
+            .Specialities.Select(x => x.Id)
             .Should()
             .BeEquivalentTo(expectedSpeciality(specialityA, specialityB).Select(x => x.Id));
     }
@@ -195,12 +196,12 @@ public class GetSpecialities
     private async Task TestSearchString(
         string searchString,
         int expectedCount,
-        Func<Speciality, bool> predicate
+        Func<SpecialityViewModel, bool> predicate
     )
     {
         var specialityA = _fixture.Build<Speciality>().With(x => x.Name, "AAA").Create();
 
-        var specialityB = _fixture.Build<Speciality>().With(x => x.Abbreavation, "CCC").Create();
+        var specialityB = _fixture.Build<Speciality>().With(x => x.Abbreviation, "CCC").Create();
 
         _mockDbContext.Setup(x => x.Specialities).ReturnsDbSet([specialityA, specialityB]);
 
@@ -210,8 +211,8 @@ public class GetSpecialities
 
         var result = await handler.Handle(query, default);
 
-        result.Items.Count.Should().Be(expectedCount);
+        result.Specialities.Count.Should().Be(expectedCount);
 
-        result.Items.Should().Contain(speciality => predicate(speciality));
+        result.Specialities.Should().Contain(speciality => predicate(speciality));
     }
 }

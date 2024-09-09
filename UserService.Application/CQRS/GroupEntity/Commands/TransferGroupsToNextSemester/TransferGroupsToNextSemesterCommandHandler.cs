@@ -1,16 +1,18 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 
 public class TransferGroupsToNextSemesterCommandHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>
+        IRequestHandler<TransferGroupsToNextSemesterCommand, List<GroupShortInfoDto>>
 {
-    public async Task<List<Group>> Handle(
+    public async Task<List<GroupShortInfoDto>> Handle(
         TransferGroupsToNextSemesterCommand request,
         CancellationToken cancellationToken
     )
@@ -43,7 +45,7 @@ public class TransferGroupsToNextSemesterCommandHandler(IAppDbContext dbContext)
             throw;
         }
 
-        return groups;
+        return groups.Adapt<List<GroupShortInfoDto>>();
     }
 
     private bool TryIncreaseSemester(List<Group> groups, out List<Group> invalidGroups)

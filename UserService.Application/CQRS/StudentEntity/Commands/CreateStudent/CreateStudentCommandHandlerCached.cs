@@ -1,19 +1,20 @@
 using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 
 public class CreateStudentCommandHandlerCached(
     ICacheService cache,
-    IRequestHandler<CreateStudentCommand, Guid> handler
-) : IRequestHandler<CreateStudentCommand, Guid>
+    IRequestHandler<CreateStudentCommand, StudentShortInfoDto> handler
+) : IRequestHandler<CreateStudentCommand, StudentShortInfoDto>
 {
     private readonly ICacheService _cacheService = cache;
-    private readonly IRequestHandler<CreateStudentCommand, Guid> _handler = handler;
+    private readonly IRequestHandler<CreateStudentCommand, StudentShortInfoDto> _handler = handler;
 
-    public async Task<Guid> Handle(
+    public async Task<StudentShortInfoDto> Handle(
         CreateStudentCommand request,
         CancellationToken cancellationToken
     )

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
@@ -11,4 +12,4 @@ public record EditGroupCommand(
     byte CurrentSemester,
     byte SubGroup,
     bool IsDeleted
-) : IRequest<Group>;
+) : IRequest<GroupShortInfoDto>;

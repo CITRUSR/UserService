@@ -1,6 +1,6 @@
 ﻿using Grpc.Core;
+using Mapster;
 using MediatR;
-using UserService.API.Mappers;
 using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
@@ -10,22 +10,14 @@ using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCour
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroupById;
 using UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
-using UserService.Domain.Entities;
 
 namespace UserService.API.Services;
 
-public class GroupService(
-    IMediator mediator,
-    IMapper<Group, GroupModel> mapper,
-    IMapper<Group, ChangeGroupResponseModel> changeGroupResponseMapper
-) : UserService.GroupService.GroupServiceBase
+public class GroupService(IMediator mediator) : UserService.GroupService.GroupServiceBase
 {
     private readonly IMediator _mediator = mediator;
-    private readonly IMapper<Group, GroupModel> _mapper = mapper;
-    private readonly IMapper<Group, ChangeGroupResponseModel> _changeGroupResponseMapper =
-        changeGroupResponseMapper;
 
-    public override async Task<CreateGroupResponse> CreateGroup(
+    public override async Task<GroupShortInfo> CreateGroup(
         CreateGroupRequest request,
         ServerCallContext context
     )
@@ -41,7 +33,7 @@ public class GroupService(
 
         var group = await _mediator.Send(command);
 
-        return new CreateGroupResponse { Group = _changeGroupResponseMapper.Map(group) };
+        return group.Adapt<GroupShortInfo>();
     }
 
     public override async Task<DeleteGroupsResponse> DeleteGroups(
@@ -53,10 +45,7 @@ public class GroupService(
 
         var groups = await _mediator.Send(command);
 
-        return new DeleteGroupsResponse
-        {
-            Group = { groups.Select(x => _changeGroupResponseMapper.Map(x)) }
-        };
+        return groups.Adapt<DeleteGroupsResponse>();
     }
 
     public override async Task<SoftDeleteGroupsResponse> SoftDeleteGroups(
@@ -68,13 +57,10 @@ public class GroupService(
 
         var groups = await _mediator.Send(command);
 
-        return new SoftDeleteGroupsResponse
-        {
-            Group = { groups.Select(x => _changeGroupResponseMapper.Map(x)) },
-        };
+        return groups.Adapt<SoftDeleteGroupsResponse>();
     }
 
-    public override async Task<GroupModel> EditGroup(
+    public override async Task<GroupShortInfo> EditGroup(
         EditGroupRequest request,
         ServerCallContext context
     )
@@ -91,7 +77,7 @@ public class GroupService(
 
         var group = await _mediator.Send(command);
 
-        return _mapper.Map(group);
+        return group.Adapt<GroupShortInfo>();
     }
 
     public override async Task<GraduateGroupsResponse> GraduateGroups(
@@ -106,10 +92,7 @@ public class GroupService(
 
         var groups = await _mediator.Send(command);
 
-        return new GraduateGroupsResponse
-        {
-            Groups = { groups.Select(x => _changeGroupResponseMapper.Map(x)) },
-        };
+        return groups.Adapt<GraduateGroupsResponse>();
     }
 
     public override async Task<TransferGroupsToNextSemesterResponse> TransferGroupsToNextSemester(
@@ -121,10 +104,7 @@ public class GroupService(
 
         var groups = await _mediator.Send(command);
 
-        return new TransferGroupsToNextSemesterResponse
-        {
-            Groups = { groups.Select(x => _changeGroupResponseMapper.Map(x)) }
-        };
+        return groups.Adapt<TransferGroupsToNextSemesterResponse>();
     }
 
     public override async Task<TransferGroupsToNextCourseResponse> TransferGroupsToNextCourse(
@@ -136,10 +116,7 @@ public class GroupService(
 
         var groups = await _mediator.Send(command);
 
-        return new TransferGroupsToNextCourseResponse
-        {
-            Groups = { groups.Select(x => _changeGroupResponseMapper.Map(x)) }
-        };
+        return groups.Adapt<TransferGroupsToNextCourseResponse>();
     }
 
     public override async Task<GroupModel> GetGroupById(
@@ -151,7 +128,7 @@ public class GroupService(
 
         var group = await _mediator.Send(query);
 
-        return _mapper.Map(group);
+        return group.Adapt<GroupModel>();
     }
 
     public override async Task<GetGroupsResponse> GetGroups(
@@ -171,10 +148,6 @@ public class GroupService(
 
         var groups = await _mediator.Send(query);
 
-        return new GetGroupsResponse
-        {
-            Groups = { groups.Items.Select(x => _mapper.Map(x)) },
-            LastPage = groups.MaxPage,
-        };
+        return groups.Adapt<GetGroupsResponse>();
     }
 }

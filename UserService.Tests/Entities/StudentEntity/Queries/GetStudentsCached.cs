@@ -2,24 +2,22 @@ using FluentAssertions;
 using MediatR;
 using Moq;
 using UserService.Application.Abstraction;
-using UserService.Application.Common.Cache;
-using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Application.Enums;
-using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.StudentEntity.Queries;
 
 public class GetStudentsCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
-    private readonly Mock<IRequestHandler<GetStudentsQuery, PaginationList<Student>>> _mockHandler;
+    private readonly Mock<IRequestHandler<GetStudentsQuery, GetStudentsResponse>> _mockHandler;
     private readonly GetStudentsQuery _query;
 
     public GetStudentsCached()
     {
         _mockCacheService = new Mock<ICacheService>();
-        _mockHandler = new Mock<IRequestHandler<GetStudentsQuery, PaginationList<Student>>>();
+        _mockHandler = new Mock<IRequestHandler<GetStudentsQuery, GetStudentsResponse>>();
         _query = new GetStudentsQuery
         {
             Page = 1,
@@ -36,14 +34,18 @@ public class GetStudentsCached
     {
         _mockCacheService
             .Setup(x =>
-                x.GetOrCreateAsync<PaginationList<Student>>(
+                x.GetOrCreateAsync<GetStudentsResponse>(
                     It.IsAny<string>(),
-                    It.IsAny<Func<Task<PaginationList<Student>>>>(),
+                    It.IsAny<Func<Task<GetStudentsResponse>>>(),
                     It.IsAny<CancellationToken>()
                 )
             )
             .ReturnsAsync(
-                new PaginationList<Student> { Items = new List<Student> { new Student() } }
+                new GetStudentsResponse
+                {
+                    LastPage = 1,
+                    Students = new List<StudentViewModel> { new StudentViewModel() }
+                }
             );
 
         var handler = new GetStudentsQueryHandlerCached(
@@ -63,9 +65,9 @@ public class GetStudentsCached
 
         _mockCacheService.Verify(
             x =>
-                x.GetOrCreateAsync<PaginationList<Student>>(
+                x.GetOrCreateAsync<GetStudentsResponse>(
                     It.IsAny<string>(),
-                    It.IsAny<Func<Task<PaginationList<Student>>>>(),
+                    It.IsAny<Func<Task<GetStudentsResponse>>>(),
                     It.IsAny<CancellationToken>()
                 ),
             Times.Once
@@ -80,7 +82,11 @@ public class GetStudentsCached
         _mockHandler
             .Setup(x => x.Handle(It.IsAny<GetStudentsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
-                new PaginationList<Student> { Items = new List<Student> { new Student() } }
+                new GetStudentsResponse
+                {
+                    LastPage = 1,
+                    Students = new List<StudentViewModel> { new StudentViewModel() }
+                }
             );
 
         var handler = new GetStudentsQueryHandlerCached(
@@ -94,9 +100,9 @@ public class GetStudentsCached
 
         _mockCacheService.Verify(
             x =>
-                x.GetOrCreateAsync<PaginationList<Student>>(
+                x.GetOrCreateAsync<GetStudentsResponse>(
                     It.IsAny<string>(),
-                    It.IsAny<Func<Task<PaginationList<Student>>>>(),
+                    It.IsAny<Func<Task<GetStudentsResponse>>>(),
                     It.IsAny<CancellationToken>()
                 ),
             Times.Never()

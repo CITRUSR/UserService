@@ -4,6 +4,7 @@ using Moq;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
@@ -11,20 +12,20 @@ namespace UserService.Tests.Entities.GroupEntity.Commands;
 public class CreateGroupCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
-    private readonly Mock<IRequestHandler<CreateGroupCommand, Group>> _mockHandler;
+    private readonly Mock<IRequestHandler<CreateGroupCommand, GroupShortInfoDto>> _mockHandler;
     private readonly IFixture _fixture;
 
     public CreateGroupCached()
     {
         _mockCacheService = new Mock<ICacheService>();
-        _mockHandler = new Mock<IRequestHandler<CreateGroupCommand, Group>>();
+        _mockHandler = new Mock<IRequestHandler<CreateGroupCommand, GroupShortInfoDto>>();
         _fixture = new Fixture();
     }
 
     [Fact]
     public async Task CreateGroupCached_ShouldBe_Success()
     {
-        var group = _fixture.Create<Group>();
+        var group = _fixture.Create<GroupShortInfoDto>();
 
         _mockHandler
             .Setup(x => x.Handle(It.IsAny<CreateGroupCommand>(), It.IsAny<CancellationToken>()))

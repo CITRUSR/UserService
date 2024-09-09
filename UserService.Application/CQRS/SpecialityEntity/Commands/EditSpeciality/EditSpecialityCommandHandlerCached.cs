@@ -1,19 +1,21 @@
 using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
 
 public class EditSpecialityCommandHandlerCached(
-    IRequestHandler<EditSpecialityCommand, Speciality> handler,
+    IRequestHandler<EditSpecialityCommand, SpecialityShortInfoDto> handler,
     ICacheService cacheService
-) : IRequestHandler<EditSpecialityCommand, Speciality>
+) : IRequestHandler<EditSpecialityCommand, SpecialityShortInfoDto>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly IRequestHandler<EditSpecialityCommand, Speciality> _handler = handler;
+    private readonly IRequestHandler<EditSpecialityCommand, SpecialityShortInfoDto> _handler =
+        handler;
 
-    public async Task<Speciality> Handle(
+    public async Task<SpecialityShortInfoDto> Handle(
         EditSpecialityCommand request,
         CancellationToken cancellationToken
     )

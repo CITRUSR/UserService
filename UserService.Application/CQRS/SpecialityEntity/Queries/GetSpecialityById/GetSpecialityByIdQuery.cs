@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using UserService.Domain.Entities;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 
 namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
 
-public record GetSpecialityByIdQuery(int Id) : IRequest<Speciality>;
+public record GetSpecialityByIdQuery(int Id) : IRequest<SpecialityDto>;

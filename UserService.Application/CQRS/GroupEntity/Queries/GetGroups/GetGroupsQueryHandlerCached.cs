@@ -1,21 +1,21 @@
 ﻿using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
-using UserService.Application.Common.Paging;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.Enums;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 
 public class GetGroupsQueryHandlerCached(
-    IRequestHandler<GetGroupsQuery, PaginationList<Group>> handler,
+    IRequestHandler<GetGroupsQuery, GetGroupsResponse> handler,
     ICacheService cacheService
-) : IRequestHandler<GetGroupsQuery, PaginationList<Group>>
+) : IRequestHandler<GetGroupsQuery, GetGroupsResponse>
 {
-    private readonly IRequestHandler<GetGroupsQuery, PaginationList<Group>> _handler = handler;
+    private readonly IRequestHandler<GetGroupsQuery, GetGroupsResponse> _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
 
-    public async Task<PaginationList<Group>> Handle(
+    public async Task<GetGroupsResponse> Handle(
         GetGroupsQuery request,
         CancellationToken cancellationToken
     )
@@ -32,7 +32,7 @@ public class GetGroupsQueryHandlerCached(
         {
             var key = CacheKeys.GetEntities<Group>();
 
-            var entities = await _cacheService.GetOrCreateAsync<PaginationList<Group>>(
+            var entities = await _cacheService.GetOrCreateAsync<GetGroupsResponse>(
                 key,
                 async () =>
                     await _handler.Handle(
@@ -46,7 +46,7 @@ public class GetGroupsQueryHandlerCached(
                 cancellationToken
             );
 
-            entities.Items = [.. entities.Items.Take(request.PageSize)];
+            entities.Groups = [.. entities.Groups.Take(request.PageSize)];
 
             return entities;
         }

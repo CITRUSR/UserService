@@ -4,6 +4,7 @@ using Moq;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
@@ -12,7 +13,7 @@ public class TransferGroupsToNextSemesterCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
     private readonly Mock<
-        IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>
+        IRequestHandler<TransferGroupsToNextSemesterCommand, List<GroupShortInfoDto>>
     > _mockHandler;
     private readonly IFixture _fixture;
 
@@ -20,14 +21,16 @@ public class TransferGroupsToNextSemesterCached
     {
         _mockCacheService = new Mock<ICacheService>();
         _mockHandler =
-            new Mock<IRequestHandler<TransferGroupsToNextSemesterCommand, List<Group>>>();
+            new Mock<
+                IRequestHandler<TransferGroupsToNextSemesterCommand, List<GroupShortInfoDto>>
+            >();
         _fixture = new Fixture();
     }
 
     [Fact]
     public async Task TransferGroupsToNextSemesterCached_ShouldBe_Success()
     {
-        var groups = _fixture.CreateMany<Group>(3).ToList();
+        var groups = _fixture.CreateMany<GroupShortInfoDto>(3).ToList();
         var ids = groups.Select(x => x.Id).ToList();
 
         var command = _fixture

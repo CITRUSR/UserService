@@ -8,10 +8,10 @@ import "google/protobuf/wrappers.proto";
 import "Protos/shared.proto";
 
 service SpecialityService{
-  rpc CreateSpeciality(CreateSpecialityRequest) returns (CreateSpecialityResponse);
-  rpc DeleteSpeciality(DeleteSpecialityRequest) returns (DeleteSpecialityResponse);
+  rpc CreateSpeciality(CreateSpecialityRequest) returns (SpecialityShortInfo);
+  rpc DeleteSpecialities(DeleteSpecialitiesRequest) returns (DeleteSpecialitiesResponse);
   rpc SoftDeleteSpecialities(SoftDeleteSpecialitiesRequest) returns (SoftDeleteSpecialitiesResponse);
-  rpc EditSpeciality(EditSpecialityRequest) returns (EditSpecialityResponse);
+  rpc EditSpeciality(EditSpecialityRequest) returns (SpecialityShortInfo);
   rpc GetSpecialityById(GetSpecialityByIdRequest) returns (SpecialityModel);
   rpc GetSpecialities(GetSpecialitiesRequest) returns (GetSpecialitiesResponse);
 }
@@ -27,10 +27,15 @@ message DecimalValue {
 message SpecialityModel{
   int32 Id = 1;
   string Name = 2;
-  string Abbreavation = 3;
+  string Abbreviation = 3;
   DecimalValue Cost = 4;
   uint32 DurationMonths = 5;
   bool IsDeleted = 6;
+}
+
+message SpecialityShortInfo{
+  int32 Id = 1;
+  string Name = 2;
 }
 
 message SpecialityViewModel{
@@ -46,16 +51,12 @@ message CreateSpecialityRequest{
   uint32 DurationMonths = 4;
 }
 
-message CreateSpecialityResponse{
-  SpecialityViewModel Speciality = 1;
-}
-
-message DeleteSpecialityRequest{
+message DeleteSpecialitiesRequest{
   repeated int32 Ids = 1;
 }
 
-message DeleteSpecialityResponse{
-  repeated SpecialityViewModel specialities = 1;
+message DeleteSpecialitiesResponse{
+  repeated SpecialityShortInfo pecialities = 1;
 }
 
 message SoftDeleteSpecialitiesRequest{
@@ -63,7 +64,7 @@ message SoftDeleteSpecialitiesRequest{
 }
 
 message SoftDeleteSpecialitiesResponse{
-  repeated SpecialityViewModel Specialities = 1;
+  repeated SpecialityShortInfo Specialities = 1;
 }
 
 message EditSpecialityRequest{
@@ -73,10 +74,6 @@ message EditSpecialityRequest{
   DecimalValue Cost = 4;
   uint32 DurationMonths = 5;
   bool IsDeleted = 6;
-}
-
-message EditSpecialityResponse{
-  SpecialityModel Speciality = 1;
 }
 
 message GetSpecialityByIdRequest{
@@ -103,6 +100,6 @@ message GetSpecialitiesRequest{
 }
 
 message GetSpecialitiesResponse{
-  repeated SpecialityModel Specialities = 1;
+  repeated SpecialityViewModel Specialities = 1;
   int32 LastPage = 2;
 }

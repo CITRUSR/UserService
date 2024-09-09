@@ -1,20 +1,23 @@
 using MediatR;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
+using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 
 public class TransferGroupsToNextCourseCommandHandlerCached(
     ICacheService cacheService,
-    IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>> handler
-) : IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>>
+    IRequestHandler<TransferGroupsToNextCourseCommand, List<GroupShortInfoDto>> handler
+) : IRequestHandler<TransferGroupsToNextCourseCommand, List<GroupShortInfoDto>>
 {
     private readonly ICacheService _cacheService = cacheService;
-    private readonly IRequestHandler<TransferGroupsToNextCourseCommand, List<Group>> _handler =
-        handler;
+    private readonly IRequestHandler<
+        TransferGroupsToNextCourseCommand,
+        List<GroupShortInfoDto>
+    > _handler = handler;
 
-    public async Task<List<Group>> Handle(
+    public async Task<List<GroupShortInfoDto>> Handle(
         TransferGroupsToNextCourseCommand request,
         CancellationToken cancellationToken
     )

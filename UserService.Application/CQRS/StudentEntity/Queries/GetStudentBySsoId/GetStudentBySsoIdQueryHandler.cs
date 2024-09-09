@@ -1,16 +1,17 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
-using UserService.Domain.Entities;
+using UserService.Application.CQRS.StudentEntity.Responses;
 
 namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 
 public class GetStudentBySsoIdQueryHandler(IAppDbContext dbContext)
     : HandlerBase(dbContext),
-        IRequestHandler<GetStudentBySsoIdQuery, Student>
+        IRequestHandler<GetStudentBySsoIdQuery, StudentDto>
 {
-    public async Task<Student> Handle(
+    public async Task<StudentDto> Handle(
         GetStudentBySsoIdQuery request,
         CancellationToken cancellationToken
     )
@@ -25,6 +26,6 @@ public class GetStudentBySsoIdQueryHandler(IAppDbContext dbContext)
             throw new StudentNotFoundException(request.SsoId);
         }
 
-        return student;
+        return student.Adapt<StudentDto>();
     }
 }

@@ -4,6 +4,7 @@ using Moq;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.StudentEntity.Commands;
@@ -11,24 +12,24 @@ namespace UserService.Tests.Entities.StudentEntity.Commands;
 public class CreateStudentCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
-    private readonly Mock<IRequestHandler<CreateStudentCommand, Guid>> _mockHandler;
+    private readonly Mock<IRequestHandler<CreateStudentCommand, StudentShortInfoDto>> _mockHandler;
     private readonly IFixture _fixture;
 
     public CreateStudentCached()
     {
         _mockCacheService = new Mock<ICacheService>();
-        _mockHandler = new Mock<IRequestHandler<CreateStudentCommand, Guid>>();
+        _mockHandler = new Mock<IRequestHandler<CreateStudentCommand, StudentShortInfoDto>>();
         _fixture = new Fixture();
     }
 
     [Fact]
     public async Task CreateStudentCached_ShouldBe_Success()
     {
-        var student = _fixture.Create<Student>();
+        var student = _fixture.Create<StudentShortInfoDto>();
 
         _mockHandler
             .Setup(x => x.Handle(It.IsAny<CreateStudentCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(student.Id);
+            .ReturnsAsync(student);
 
         var command = _fixture.Create<CreateStudentCommand>();
 
@@ -53,6 +54,6 @@ public class CreateStudentCached
             Times.Once()
         );
 
-        result.Should().NotBeEmpty();
+        result.Should().NotBeNull();
     }
 }

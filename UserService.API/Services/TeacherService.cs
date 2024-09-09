@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Mapster;
 using MediatR;
 using UserService.Application.CQRS.TeacherEntity.Commands.CreateTeacher;
 
@@ -8,7 +9,7 @@ public class TeacherService(IMediator mediator) : UserService.TeacherService.Tea
 {
     private readonly IMediator _mediator = mediator;
 
-    public override async Task<CreateTeacherResponse> CreateTeacher(
+    public override async Task<TeacherShortInfo> CreateTeacher(
         CreateTeacherRequest request,
         ServerCallContext context
     )
@@ -21,8 +22,8 @@ public class TeacherService(IMediator mediator) : UserService.TeacherService.Tea
             (short)request.RoomId
         );
 
-        var id = await _mediator.Send(command);
+        var teacher = await _mediator.Send(command);
 
-        return new CreateTeacherResponse { Id = id.ToString(), };
+        return teacher.Adapt<TeacherShortInfo>();
     }
 }
