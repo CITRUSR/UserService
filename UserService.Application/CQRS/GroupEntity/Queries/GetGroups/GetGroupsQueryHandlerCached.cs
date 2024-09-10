@@ -9,11 +9,13 @@ namespace UserService.Application.CQRS.GroupEntity.Queries.GetGroups;
 
 public class GetGroupsQueryHandlerCached(
     IRequestHandler<GetGroupsQuery, GetGroupsResponse> handler,
-    ICacheService cacheService
+    ICacheService cacheService,
+    ICacheOptions cacheOptions
 ) : IRequestHandler<GetGroupsQuery, GetGroupsResponse>
 {
     private readonly IRequestHandler<GetGroupsQuery, GetGroupsResponse> _handler = handler;
     private readonly ICacheService _cacheService = cacheService;
+    private readonly ICacheOptions _cacheOptions = cacheOptions;
 
     public async Task<GetGroupsResponse> Handle(
         GetGroupsQuery request,
@@ -21,7 +23,7 @@ public class GetGroupsQueryHandlerCached(
     )
     {
         if (
-            request.Page <= CacheConstants.PagesForCaching
+            request.Page <= _cacheOptions.PagesForCaching
             && request
                 is {
                     SortState: GroupSortState.GroupAsc,
@@ -38,8 +40,7 @@ public class GetGroupsQueryHandlerCached(
                     await _handler.Handle(
                         request with
                         {
-                            PageSize =
-                                CacheConstants.PagesForCaching * CacheConstants.EntitiesPerPage
+                            PageSize = _cacheOptions.PagesForCaching * _cacheOptions.EntitiesPerPage
                         },
                         cancellationToken
                     ),
