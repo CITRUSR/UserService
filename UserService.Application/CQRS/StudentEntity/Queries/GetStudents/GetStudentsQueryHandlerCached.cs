@@ -9,11 +9,13 @@ namespace UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
 
 public class GetStudentsQueryHandlerCached(
     IRequestHandler<GetStudentsQuery, GetStudentsResponse> handler,
-    ICacheService cacheService
+    ICacheService cacheService,
+    ICacheOptions cacheOptions
 ) : IRequestHandler<GetStudentsQuery, GetStudentsResponse>
 {
     private readonly ICacheService _cacheService = cacheService;
     private readonly IRequestHandler<GetStudentsQuery, GetStudentsResponse> _handler = handler;
+    private readonly ICacheOptions _cacheOptions = cacheOptions;
 
     public async Task<GetStudentsResponse> Handle(
         GetStudentsQuery request,
@@ -21,7 +23,7 @@ public class GetStudentsQueryHandlerCached(
     )
     {
         if (
-            request.Page <= CacheConstants.PagesForCaching
+            request.Page <= _cacheOptions.PagesForCaching
             && request
                 is {
                     SortState: SortState.LastNameAsc,
@@ -38,8 +40,7 @@ public class GetStudentsQueryHandlerCached(
                     await _handler.Handle(
                         request with
                         {
-                            PageSize =
-                                CacheConstants.PagesForCaching * CacheConstants.EntitiesPerPage
+                            PageSize = _cacheOptions.PagesForCaching * _cacheOptions.EntitiesPerPage
                         },
                         cancellationToken
                     ),
