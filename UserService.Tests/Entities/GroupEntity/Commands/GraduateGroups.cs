@@ -1,9 +1,12 @@
 ﻿using FluentAssertions;
+using MediatR;
 using Moq;
 using Moq.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
+using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudents;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Tests.Entities.GroupEntity.Commands;
@@ -11,11 +14,16 @@ namespace UserService.Tests.Entities.GroupEntity.Commands;
 public class GraduateGroups
 {
     private readonly Mock<IAppDbContext> _mockDbContext;
+    private readonly Mock<
+        IRequestHandler<DropOutStudentsCommand, List<StudentShortInfoDto>>
+    > _mockStudentsHandler;
     private readonly IFixture _fixture;
 
     public GraduateGroups()
     {
         _mockDbContext = new Mock<IAppDbContext>();
+        _mockStudentsHandler =
+            new Mock<IRequestHandler<DropOutStudentsCommand, List<StudentShortInfoDto>>>();
         _fixture = new Fixture();
     }
 
@@ -24,7 +32,9 @@ public class GraduateGroups
     {
         _fixture.Customize<Group>(c => c.Without(x => x.GraduatedAt));
 
-        var groups = _fixture.CreateMany<Group>(3);
+        var groups = _fixture.CreateMany<Group>(3).ToList();
+
+        groups[0].Students.Add(new Student { DroppedOutAt = null });
 
         _mockDbContext.Setup(x => x.Groups).ReturnsDbSet([.. groups]);
 
@@ -33,11 +43,19 @@ public class GraduateGroups
             .With(x => x.GroupsId, [.. groups.Select(x => x.Id)])
             .Create();
 
-        var handler = new GraduateGroupsCommandHandler(_mockDbContext.Object);
+        var handler = new GraduateGroupsCommandHandler(
+            _mockDbContext.Object,
+            _mockStudentsHandler.Object
+        );
 
         await handler.Handle(command, CancellationToken.None);
 
         _mockDbContext.Verify(x => x.BeginTransactionAsync(), Times.Once);
+
+        _mockStudentsHandler.Verify(
+            x => x.Handle(It.IsAny<DropOutStudentsCommand>(), It.IsAny<CancellationToken>()),
+            Times.Once()
+        );
 
         _mockDbContext.Verify(x => x.CommitTransactionAsync(), Times.Once());
 
@@ -54,7 +72,10 @@ public class GraduateGroups
             .With(x => x.GroupsId, [123, 5236, 547])
             .Create();
 
-        var handler = new GraduateGroupsCommandHandler(_mockDbContext.Object);
+        var handler = new GraduateGroupsCommandHandler(
+            _mockDbContext.Object,
+            _mockStudentsHandler.Object
+        );
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
@@ -75,7 +96,10 @@ public class GraduateGroups
             .With(x => x.GroupsId, [.. groups.Select(x => x.Id)])
             .Create();
 
-        var handler = new GraduateGroupsCommandHandler(_mockDbContext.Object);
+        var handler = new GraduateGroupsCommandHandler(
+            _mockDbContext.Object,
+            _mockStudentsHandler.Object
+        );
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
@@ -98,7 +122,10 @@ public class GraduateGroups
             .With(x => x.GroupsId, [.. groups.Select(x => x.Id)])
             .Create();
 
-        var handler = new GraduateGroupsCommandHandler(_mockDbContext.Object);
+        var handler = new GraduateGroupsCommandHandler(
+            _mockDbContext.Object,
+            _mockStudentsHandler.Object
+        );
 
         Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
 
