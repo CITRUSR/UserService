@@ -20,12 +20,10 @@ public class SpecialityService(IMediator mediator)
         ServerCallContext context
     )
     {
-        decimal cost = new CustomTypes.DecimalValue(request.Cost.Units, (int)request.Cost.Nanos);
-
         var command = new CreateSpecialityCommand(
             request.Name,
             request.Abbreavation,
-            cost,
+            (decimal)request.Cost,
             (byte)request.DurationMonths
         );
 
@@ -96,13 +94,11 @@ public class SpecialityService(IMediator mediator)
         ServerCallContext context
     )
     {
-        decimal cost = new CustomTypes.DecimalValue(request.Cost.Units, (int)request.Cost.Nanos);
-
         var command = new EditSpecialityCommand(
             request.Id,
             request.Name,
             request.Abbreavation,
-            cost,
+            (decimal)request.Cost,
             (byte)request.DurationMonths,
             request.IsDeleted
         );
