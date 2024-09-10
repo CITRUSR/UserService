@@ -25,6 +25,8 @@ public static class DependencyInjection
             options.Configuration = configuration.GetConnectionString("Redis");
         });
 
+        services.ConfigureOptions<CacheOptionsSetup>();
+
         services.AddSingleton<ICacheService, CacheService>();
 
         return services;
