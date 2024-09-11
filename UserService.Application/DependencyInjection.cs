@@ -18,6 +18,7 @@ using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.RecoverySpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
@@ -121,6 +122,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<SoftDeleteSpecialitiesCommand, List<SpecialityShortInfoDto>>,
             SoftDeleteSpecialitiesCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<RecoverySpecialitiesCommand, List<SpecialityShortInfoDto>>,
+            RecoverySpecialitiesCommandHandlerCached
         >();
         services.Decorate<
             IRequestHandler<EditSpecialityCommand, SpecialityShortInfoDto>,
