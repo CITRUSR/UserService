@@ -5,6 +5,7 @@ using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
+using UserService.Application.CQRS.GroupEntity.Commands.RecoveryGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
@@ -58,6 +59,18 @@ public class GroupService(IMediator mediator) : UserService.GroupService.GroupSe
         var groups = await _mediator.Send(command);
 
         return groups.Adapt<SoftDeleteGroupsResponse>();
+    }
+
+    public override async Task<RecoveryGroupsResponse> RecoveryGroups(
+        RecoveryGroupsRequest request,
+        ServerCallContext context
+    )
+    {
+        var command = new RecoveryGroupsCommand([.. request.Ids]);
+
+        var groups = await _mediator.Send(command);
+
+        return groups.Adapt<RecoveryGroupsResponse>();
     }
 
     public override async Task<GroupShortInfo> EditGroup(
