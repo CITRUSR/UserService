@@ -9,12 +9,14 @@ namespace UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 
 public class GetSpecialitiesQueryHandlerCached(
     ICacheService cacheService,
-    IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse> handler
+    IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse> handler,
+    ICacheOptions cacheOptions
 ) : IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse>
 {
     private readonly ICacheService _cacheService = cacheService;
     private readonly IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse> _handler =
         handler;
+    private readonly ICacheOptions _cacheOptions = cacheOptions;
 
     public async Task<GetSpecialitiesResponse> Handle(
         GetSpecialitiesQuery request,
@@ -22,7 +24,7 @@ public class GetSpecialitiesQueryHandlerCached(
     )
     {
         if (
-            request.Page <= CacheConstants.PagesForCaching
+            request.Page <= _cacheOptions.PagesForCaching
             && request
                 is {
                     SortState: SpecialitySortState.NameAsc,
@@ -38,8 +40,7 @@ public class GetSpecialitiesQueryHandlerCached(
                     await _handler.Handle(
                         request with
                         {
-                            PageSize =
-                                CacheConstants.PagesForCaching * CacheConstants.EntitiesPerPage
+                            PageSize = _cacheOptions.PagesForCaching * _cacheOptions.EntitiesPerPage
                         },
                         cancellationToken
                     ),

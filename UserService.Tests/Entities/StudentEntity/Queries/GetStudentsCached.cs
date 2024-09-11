@@ -12,12 +12,14 @@ public class GetStudentsCached
 {
     private readonly Mock<ICacheService> _mockCacheService;
     private readonly Mock<IRequestHandler<GetStudentsQuery, GetStudentsResponse>> _mockHandler;
+    private readonly Mock<ICacheOptions> _mockCacheOptions;
     private readonly GetStudentsQuery _query;
 
     public GetStudentsCached()
     {
         _mockCacheService = new Mock<ICacheService>();
         _mockHandler = new Mock<IRequestHandler<GetStudentsQuery, GetStudentsResponse>>();
+        _mockCacheOptions = new Mock<ICacheOptions>();
         _query = new GetStudentsQuery
         {
             Page = 1,
@@ -32,6 +34,8 @@ public class GetStudentsCached
     [Fact]
     public async Task GetStudentsCached_ShouldBe_Success_WhenQueryIsValid()
     {
+        _mockCacheOptions.Setup(x => x.PagesForCaching).Returns(3);
+
         _mockCacheService
             .Setup(x =>
                 x.GetOrCreateAsync<GetStudentsResponse>(
@@ -50,7 +54,8 @@ public class GetStudentsCached
 
         var handler = new GetStudentsQueryHandlerCached(
             _mockHandler.Object,
-            _mockCacheService.Object
+            _mockCacheService.Object,
+            _mockCacheOptions.Object
         );
 
         var query = _query with
@@ -91,7 +96,8 @@ public class GetStudentsCached
 
         var handler = new GetStudentsQueryHandlerCached(
             _mockHandler.Object,
-            _mockCacheService.Object
+            _mockCacheService.Object,
+            _mockCacheOptions.Object
         );
 
         var result = await handler.Handle(_query, CancellationToken.None);

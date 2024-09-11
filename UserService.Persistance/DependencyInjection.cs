@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using UserService.Application.Abstraction;
 using UserService.Persistance.Cache;
 
@@ -24,6 +25,12 @@ public static class DependencyInjection
         {
             options.Configuration = configuration.GetConnectionString("Redis");
         });
+
+        services.ConfigureOptions<CacheOptionsSetup>();
+
+        services.AddSingleton<ICacheOptions>(sp =>
+            sp.GetRequiredService<IOptions<CacheOptions>>().Value
+        );
 
         services.AddSingleton<ICacheService, CacheService>();
 
