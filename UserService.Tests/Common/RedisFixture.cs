@@ -1,5 +1,6 @@
 ﻿using DotNet.Testcontainers.Builders;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Microsoft.Extensions.Options;
 using Testcontainers.Redis;
 using UserService.Application.Abstraction;
 using UserService.Persistance.Cache;
@@ -18,12 +19,22 @@ public class RedisFixture : IAsyncLifetime
         .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(6379))
         .Build();
 
+    private readonly IOptions<CacheOptions> options;
+
+    public RedisFixture()
+    {
+        var cacheOptions = new CacheOptions { SlidingExpirationTime = 60 };
+
+        options = Options.Create(cacheOptions);
+    }
+
     public async Task InitializeAsync()
     {
         await _redisContainer.StartAsync();
 
         _redisCache = RedisFactory.Create(_redisContainer.GetMappedPublicPort("6379"));
-        CacheService = new CacheService(_redisCache);
+
+        CacheService = new CacheService(_redisCache, options);
     }
 
     public async Task DisposeAsync()
