@@ -4,6 +4,7 @@ using MediatR;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.RecoverySpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
@@ -87,6 +88,18 @@ public class SpecialityService(IMediator mediator)
         var specialities = await _mediator.Send(command);
 
         return specialities.Adapt<SoftDeleteSpecialitiesResponse>();
+    }
+
+    public override async Task<RecoverySpecialitiesResponse> RecoverySpecialities(
+        RecoverySpecialitiesRequest request,
+        ServerCallContext context
+    )
+    {
+        var command = new RecoverySpecialitiesCommand([.. request.Ids]);
+
+        var specialities = await _mediator.Send(command);
+
+        return specialities.Adapt<RecoverySpecialitiesResponse>();
     }
 
     public override async Task<SpecialityShortInfo> EditSpeciality(
