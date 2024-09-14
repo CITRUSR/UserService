@@ -1,5 +1,6 @@
 using Mapster;
 using UserService.Application.CQRS.GroupEntity.Responses;
+using UserService.Application.CQRS.StudentEntity.Responses;
 
 namespace UserService.API;
 
@@ -30,5 +31,9 @@ public static class MapsterConfig
         TypeAdapterConfig<List<GroupShortInfoDto>, TransferGroupsToNextCourseResponse>
             .NewConfig()
             .Map(dest => dest.Groups, src => src);
+
+        TypeAdapterConfig<List<StudentShortInfoDto>, DropOutStudentsResponse>
+            .NewConfig()
+            .Map(dest => dest.Students, src => src);
     }
 }
