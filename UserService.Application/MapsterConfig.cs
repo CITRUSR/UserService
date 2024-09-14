@@ -35,6 +35,6 @@ public static class MapsterConfig
         TypeAdapterConfig<PaginationList<Speciality>, GetSpecialitiesResponse>
             .NewConfig()
             .Map(dest => dest.LastPage, src => src.MaxPage)
-            .Map(dest => dest.Specialities, src => src.Items);
+            .Map(dest => dest.Specialities, src => src.Items.Adapt<List<SpecialityShortInfoDto>>());
     }
 }
