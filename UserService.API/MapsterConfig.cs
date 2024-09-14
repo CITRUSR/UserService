@@ -26,5 +26,9 @@ public static class MapsterConfig
         TypeAdapterConfig<List<GroupShortInfoDto>, TransferGroupsToNextSemesterResponse>
             .NewConfig()
             .Map(dest => dest.Groups, src => src);
+
+        TypeAdapterConfig<List<GroupShortInfoDto>, TransferGroupsToNextCourseResponse>
+            .NewConfig()
+            .Map(dest => dest.Groups, src => src);
     }
 }
