@@ -12,6 +12,7 @@ service GroupService{
   rpc CreateGroup (CreateGroupRequest) returns (GroupShortInfo);
   rpc DeleteGroups (DeleteGroupsRequest) returns (DeleteGroupsResponse);
   rpc SoftDeleteGroups (SoftDeleteGroupsRequest) returns (SoftDeleteGroupsResponse);
+  rpc RecoveryGroups(RecoveryGroupsRequest) returns (RecoveryGroupsResponse);
   rpc EditGroup (EditGroupRequest) returns (GroupShortInfo);
   rpc GraduateGroups (GraduateGroupsRequest) returns (GraduateGroupsResponse);
   rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
@@ -99,6 +100,14 @@ message DeleteGroupsRequest{
 }
 
 message DeleteGroupsResponse{
+  repeated GroupShortInfo Groups = 1;
+}
+
+message RecoveryGroupsRequest{
+  repeated int32 Ids = 1;
+}
+
+message RecoveryGroupsResponse{
   repeated GroupShortInfo Groups = 1;
 }
 
