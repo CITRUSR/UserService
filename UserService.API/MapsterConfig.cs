@@ -18,5 +18,9 @@ public static class MapsterConfig
         TypeAdapterConfig<List<GroupShortInfoDto>, RecoveryGroupsResponse>
             .NewConfig()
             .Map(dest => dest.Groups, src => src);
+
+        TypeAdapterConfig<List<GroupShortInfoDto>, GraduateGroupsResponse>
+            .NewConfig()
+            .Map(dest => dest.Groups, src => src);
     }
 }
