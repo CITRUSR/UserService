@@ -14,5 +14,9 @@ public static class MapsterConfig
         TypeAdapterConfig<List<GroupShortInfoDto>, SoftDeleteGroupsResponse>
             .NewConfig()
             .Map(dest => dest.Groups, src => src);
+
+        TypeAdapterConfig<List<GroupShortInfoDto>, RecoveryGroupsResponse>
+            .NewConfig()
+            .Map(dest => dest.Groups, src => src);
     }
 }
