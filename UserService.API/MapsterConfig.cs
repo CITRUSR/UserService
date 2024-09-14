@@ -39,5 +39,9 @@ public static class MapsterConfig
         TypeAdapterConfig<List<StudentShortInfoDto>, DeleteStudentsResponse>
             .NewConfig()
             .Map(dest => dest.Students, src => src);
+
+        TypeAdapterConfig<List<StudentShortInfoDto>, RecoveryStudentsResponse>
+            .NewConfig()
+            .Map(dest => dest.Students, src => src);
     }
 }
