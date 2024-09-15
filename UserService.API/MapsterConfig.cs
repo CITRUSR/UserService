@@ -1,3 +1,4 @@
+using Google.Protobuf.Collections;
 using Mapster;
 using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.CQRS.SpecialityEntity.Responses;
@@ -9,6 +10,12 @@ public static class MapsterConfig
 {
     public static void Configure()
     {
+        TypeAdapterConfig.GlobalSettings.Default.UseDestinationValue(member =>
+            member.SetterModifier == AccessModifier.None
+            && member.Type.IsGenericType
+            && member.Type.GetGenericTypeDefinition() == typeof(RepeatedField<>)
+        );
+
         TypeAdapterConfig<List<GroupShortInfoDto>, DeleteGroupsResponse>
             .NewConfig()
             .Map(dest => dest.Groups, src => src);
