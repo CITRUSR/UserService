@@ -11,6 +11,13 @@ public static class MapsterConfig
 {
     public static void Configure()
     {
+        ConfigureGroups();
+        ConfigureStudents();
+        ConfigureSpecialities();
+    }
+
+    public static void ConfigureGroups()
+    {
         TypeAdapterConfig<Group, GroupShortInfoDto>
             .NewConfig()
             .Map(dest => dest.GroupName, src => src.ToString());
@@ -25,6 +32,10 @@ public static class MapsterConfig
             .NewConfig()
             .Map(dest => dest.LastPage, src => src.MaxPage)
             .Map(dest => dest.Groups, src => src.Items.Adapt<List<GroupViewModel>>());
+    }
+
+    public static void ConfigureStudents()
+    {
         TypeAdapterConfig<Student, StudentViewModel>
             .NewConfig()
             .Map(dest => dest.GroupName, src => src.Group.ToString());
@@ -32,6 +43,10 @@ public static class MapsterConfig
             .NewConfig()
             .Map(dest => dest.LastPage, src => src.MaxPage)
             .Map(dest => dest.Students, src => src.Items.Adapt<List<StudentViewModel>>());
+    }
+
+    public static void ConfigureSpecialities()
+    {
         TypeAdapterConfig<PaginationList<Speciality>, GetSpecialitiesResponse>
             .NewConfig()
             .Map(dest => dest.LastPage, src => src.MaxPage)
