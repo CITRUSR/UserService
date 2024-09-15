@@ -16,6 +16,13 @@ public static class MapsterConfig
             && member.Type.GetGenericTypeDefinition() == typeof(RepeatedField<>)
         );
 
+        ConfigureGroups();
+        ConfigureStudents();
+        ConfigureSpecialities();
+    }
+
+    public static void ConfigureGroups()
+    {
         TypeAdapterConfig<List<GroupShortInfoDto>, DeleteGroupsResponse>
             .NewConfig()
             .Map(dest => dest.Groups, src => src);
@@ -39,7 +46,10 @@ public static class MapsterConfig
         TypeAdapterConfig<List<GroupShortInfoDto>, TransferGroupsToNextCourseResponse>
             .NewConfig()
             .Map(dest => dest.Groups, src => src);
+    }
 
+    public static void ConfigureStudents()
+    {
         TypeAdapterConfig<List<StudentShortInfoDto>, DropOutStudentsResponse>
             .NewConfig()
             .Map(dest => dest.Students, src => src);
@@ -51,7 +61,10 @@ public static class MapsterConfig
         TypeAdapterConfig<List<StudentShortInfoDto>, RecoveryStudentsResponse>
             .NewConfig()
             .Map(dest => dest.Students, src => src);
+    }
 
+    public static void ConfigureSpecialities()
+    {
         TypeAdapterConfig<List<SpecialityShortInfoDto>, DeleteSpecialitiesResponse>
             .NewConfig()
             .Map(dest => dest.Specialities, src => src);
