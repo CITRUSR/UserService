@@ -23,7 +23,7 @@ public class SpecialityService(IMediator mediator)
     {
         var command = new CreateSpecialityCommand(
             request.Name,
-            request.Abbreavation,
+            request.Abbreviation,
             (decimal)request.Cost,
             (byte)request.DurationMonths
         );
