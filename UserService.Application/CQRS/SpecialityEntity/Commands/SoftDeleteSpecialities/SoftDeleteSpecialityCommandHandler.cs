@@ -1,7 +1,6 @@
 ﻿using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.SpecialityEntity.Responses;
@@ -46,10 +45,6 @@ public class SoftDeleteSpecialitiesCommandHandler(IAppDbContext dbContext)
             await DbContext.RollbackTransactionAsync();
             throw;
         }
-
-        Log.Information(
-            $"The specialities with id:{String.Join(", ", request.SpecialitiesId)} are soft deleted"
-        );
 
         return specialities.Adapt<List<SpecialityShortInfoDto>>();
     }

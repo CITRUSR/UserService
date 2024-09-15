@@ -1,7 +1,6 @@
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Responses;
@@ -47,10 +46,6 @@ public class SoftDeleteGroupsCommandHandler(IAppDbContext dbContext)
 
             throw;
         }
-
-        Log.Information(
-            $"The groups with id:{string.Join(", ", request.GroupsId)} are soft deleted"
-        );
 
         return groups.Adapt<List<GroupShortInfoDto>>();
     }

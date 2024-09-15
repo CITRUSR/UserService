@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using MediatR;
-using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Domain.Entities;
@@ -26,8 +25,6 @@ public class CreateSpecialityCommandHandler(IAppDbContext dbContext)
 
         await DbContext.Specialities.AddAsync(speciality, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
-
-        Log.Information($"The speciality with id{speciality.Id} is created");
 
         return speciality.Adapt<SpecialityShortInfoDto>();
     }
