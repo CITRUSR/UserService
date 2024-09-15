@@ -48,5 +48,9 @@ public static class MapsterConfig
         TypeAdapterConfig<List<SpecialityShortInfoDto>, DeleteSpecialitiesResponse>
             .NewConfig()
             .Map(dest => dest.Specialities, src => src);
+
+        TypeAdapterConfig<List<SpecialityShortInfoDto>, SoftDeleteSpecialitiesResponse>
+            .NewConfig()
+            .Map(dest => dest.Specialities, src => src);
     }
 }
