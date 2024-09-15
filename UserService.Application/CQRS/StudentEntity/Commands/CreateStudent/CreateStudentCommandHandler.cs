@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using MediatR;
-using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.StudentEntity.Responses;
@@ -40,8 +39,6 @@ public class CreateStudentCommandHandler(IAppDbContext dbContext)
 
         await DbContext.Students.AddAsync(student, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
-
-        Log.Information($"The student with Id:{student.Id} is created");
 
         return student.Adapt<StudentShortInfoDto>();
     }

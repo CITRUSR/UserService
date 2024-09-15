@@ -1,10 +1,8 @@
 ﻿using Mapster;
 using MediatR;
-using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.StudentEntity.Responses;
-using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
 
@@ -37,19 +35,6 @@ public class EditStudentCommandHandler(IAppDbContext dbContext)
             throw new GroupNotFoundException(request.GroupId);
         }
 
-        var oldStudent = new Student
-        {
-            Id = student.Id,
-            SsoId = student.SsoId,
-            FirstName = student.FirstName,
-            LastName = student.LastName,
-            PatronymicName = student.PatronymicName,
-            GroupId = student.GroupId,
-            Group = student.Group,
-            DroppedOutAt = student.DroppedOutAt,
-            IsDeleted = student.IsDeleted,
-        };
-
         var oldGroup = await DbContext.Groups.FindAsync(
             new object?[] { student.GroupId, cancellationToken },
             cancellationToken: cancellationToken
@@ -67,11 +52,6 @@ public class EditStudentCommandHandler(IAppDbContext dbContext)
         newGroup.Students.Add(student);
 
         await DbContext.SaveChangesAsync(cancellationToken);
-
-        Log.Information(
-            $"The student with Id:{student.Id} is edit."
-                + "Old state: {@oldStudent}. New state: {@student}"
-        );
 
         return student.Adapt<StudentShortInfoDto>();
     }
