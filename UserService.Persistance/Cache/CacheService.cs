@@ -1,19 +1,30 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using UserService.Application.Abstraction;
-using UserService.Application.Common.Cache;
-using UserService.Application.Common.Paging;
 
 namespace UserService.Persistance.Cache;
 
-public class CacheService(IDistributedCache cache) : ICacheService
+public class CacheService : ICacheService
 {
-    private readonly IDistributedCache _cache = cache;
+    private readonly IDistributedCache _cache;
+    private readonly CacheOptions _cacheOptions;
 
     private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
     {
         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
     };
+
+    private readonly DistributedCacheEntryOptions _cacheOptionsSettings;
+
+    public CacheService(IDistributedCache cache, IOptions<CacheOptions> cacheOptions)
+    {
+        _cache = cache;
+        _cacheOptions = cacheOptions.Value;
+        _cacheOptionsSettings = new DistributedCacheEntryOptions().SetSlidingExpiration(
+            TimeSpan.FromMinutes(_cacheOptions.SlidingExpirationTime)
+        );
+    }
 
     public async Task<T> GetOrCreateAsync<T>(
         string cacheKey,
@@ -70,6 +81,7 @@ public class CacheService(IDistributedCache cache) : ICacheService
         await _cache.SetStringAsync(
             cacheKey,
             JsonConvert.SerializeObject(value, _settings),
+            _cacheOptionsSettings,
             cancellationToken
         );
     }

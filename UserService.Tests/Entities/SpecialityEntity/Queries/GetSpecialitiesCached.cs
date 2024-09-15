@@ -14,12 +14,14 @@ public class GetSpecialitiesCached
     private readonly Mock<
         IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse>
     > _mockHandler;
+    private readonly Mock<ICacheOptions> _mockCacheOptions;
     private readonly GetSpecialitiesQuery _query;
 
     public GetSpecialitiesCached()
     {
         _mockCacheService = new Mock<ICacheService>();
         _mockHandler = new Mock<IRequestHandler<GetSpecialitiesQuery, GetSpecialitiesResponse>>();
+        _mockCacheOptions = new Mock<ICacheOptions>();
         _query = new GetSpecialitiesQuery
         {
             Page = 1,
@@ -33,6 +35,8 @@ public class GetSpecialitiesCached
     [Fact]
     public async Task GetSpecialitiesCached_ShouldBe_Success_WhenQueryIsValid()
     {
+        _mockCacheOptions.Setup(x => x.PagesForCaching).Returns(3);
+
         _mockCacheService
             .Setup(x =>
                 x.GetOrCreateAsync<GetSpecialitiesResponse>(
@@ -51,7 +55,8 @@ public class GetSpecialitiesCached
 
         var handler = new GetSpecialitiesQueryHandlerCached(
             _mockCacheService.Object,
-            _mockHandler.Object
+            _mockHandler.Object,
+            _mockCacheOptions.Object
         );
 
         var query = _query with
@@ -92,7 +97,8 @@ public class GetSpecialitiesCached
 
         var handler = new GetSpecialitiesQueryHandlerCached(
             _mockCacheService.Object,
-            _mockHandler.Object
+            _mockHandler.Object,
+            _mockCacheOptions.Object
         );
 
         var result = await handler.Handle(_query, CancellationToken.None);

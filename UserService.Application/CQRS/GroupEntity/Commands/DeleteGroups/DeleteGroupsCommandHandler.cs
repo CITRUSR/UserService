@@ -1,7 +1,6 @@
 ﻿using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Responses;
@@ -43,8 +42,6 @@ public class DeleteGroupsCommandHandler(IAppDbContext dbContext)
 
             throw;
         }
-
-        Log.Information($"The groups with id:{string.Join(", ", request.Ids)} are deleted");
 
         return groups.Adapt<List<GroupShortInfoDto>>();
     }

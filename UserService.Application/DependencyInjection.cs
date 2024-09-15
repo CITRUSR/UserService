@@ -8,6 +8,7 @@ using UserService.Application.CQRS.GroupEntity.Commands.CreateGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.DeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 using UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
+using UserService.Application.CQRS.GroupEntity.Commands.RecoveryGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.SoftDeleteGroups;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextCourse;
 using UserService.Application.CQRS.GroupEntity.Commands.TransferGroupsToNextSemester;
@@ -17,6 +18,7 @@ using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.RecoverySpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
@@ -25,6 +27,8 @@ using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudents;
 using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudents;
 using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.RecoveryStudents;
+using UserService.Application.CQRS.StudentEntity.Commands.SoftDeleteStudents;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
@@ -43,6 +47,7 @@ public static class DependencyInjection
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         MapsterConfig.Configure();
@@ -76,6 +81,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<SoftDeleteGroupsCommand, List<GroupShortInfoDto>>,
             SoftDeleteGroupsCommandHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<RecoveryGroupsCommand, List<GroupShortInfoDto>>,
+            RecoveryGroupsCommandHandlerCached
         >();
         services.Decorate<
             IRequestHandler<EditGroupCommand, GroupShortInfoDto>,
@@ -118,6 +127,10 @@ public static class DependencyInjection
             SoftDeleteSpecialitiesCommandHandlerCached
         >();
         services.Decorate<
+            IRequestHandler<RecoverySpecialitiesCommand, List<SpecialityShortInfoDto>>,
+            RecoverySpecialitiesCommandHandlerCached
+        >();
+        services.Decorate<
             IRequestHandler<EditSpecialityCommand, SpecialityShortInfoDto>,
             EditSpecialityCommandHandlerCached
         >();
@@ -138,6 +151,10 @@ public static class DependencyInjection
             DeleteStudentsCommandHandlerCached
         >();
         services.Decorate<
+            IRequestHandler<SoftDeleteStudentsCommand, List<StudentShortInfoDto>>,
+            SoftDeleteStudentsCommandHandlerCached
+        >();
+        services.Decorate<
             IRequestHandler<DropOutStudentsCommand, List<StudentShortInfoDto>>,
             DropOutStudentsCommandHandlerCached
         >();
@@ -156,6 +173,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<GetStudentsQuery, GetStudentsResponse>,
             GetStudentsQueryHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<RecoveryStudentsCommand, List<StudentShortInfoDto>>,
+            RecoveryStudentsCommandHandlerCached
         >();
     }
 }

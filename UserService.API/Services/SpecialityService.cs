@@ -4,6 +4,7 @@ using MediatR;
 using UserService.Application.CQRS.SpecialityEntity.Commands.CreateSpeciality;
 using UserService.Application.CQRS.SpecialityEntity.Commands.DeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
+using UserService.Application.CQRS.SpecialityEntity.Commands.RecoverySpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Commands.SoftDeleteSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialities;
 using UserService.Application.CQRS.SpecialityEntity.Queries.GetSpecialityById;
@@ -20,12 +21,10 @@ public class SpecialityService(IMediator mediator)
         ServerCallContext context
     )
     {
-        decimal cost = new CustomTypes.DecimalValue(request.Cost.Units, (int)request.Cost.Nanos);
-
         var command = new CreateSpecialityCommand(
             request.Name,
             request.Abbreavation,
-            cost,
+            (decimal)request.Cost,
             (byte)request.DurationMonths
         );
 
@@ -91,18 +90,28 @@ public class SpecialityService(IMediator mediator)
         return specialities.Adapt<SoftDeleteSpecialitiesResponse>();
     }
 
+    public override async Task<RecoverySpecialitiesResponse> RecoverySpecialities(
+        RecoverySpecialitiesRequest request,
+        ServerCallContext context
+    )
+    {
+        var command = new RecoverySpecialitiesCommand([.. request.Ids]);
+
+        var specialities = await _mediator.Send(command);
+
+        return specialities.Adapt<RecoverySpecialitiesResponse>();
+    }
+
     public override async Task<SpecialityShortInfo> EditSpeciality(
         EditSpecialityRequest request,
         ServerCallContext context
     )
     {
-        decimal cost = new CustomTypes.DecimalValue(request.Cost.Units, (int)request.Cost.Nanos);
-
         var command = new EditSpecialityCommand(
             request.Id,
             request.Name,
             request.Abbreavation,
-            cost,
+            (decimal)request.Cost,
             (byte)request.DurationMonths,
             request.IsDeleted
         );

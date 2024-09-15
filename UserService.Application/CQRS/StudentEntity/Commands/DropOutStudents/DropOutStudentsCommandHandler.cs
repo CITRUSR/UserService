@@ -1,7 +1,6 @@
 ﻿using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.StudentEntity.Responses;
@@ -47,10 +46,6 @@ public class DropOutStudentsCommandHandler(IAppDbContext dbContext)
             await DbContext.RollbackTransactionAsync();
             throw;
         }
-
-        Log.Information(
-            $"The students with Id:{string.Join(", ", students.Select(x => x.Id))} are dropped out"
-        );
 
         return students.Adapt<List<StudentShortInfoDto>>();
     }

@@ -4,14 +4,22 @@ using Microsoft.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Responses;
+using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudents;
+using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.GraduateGroups;
 
-public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
-    : HandlerBase(dbContext),
-        IRequestHandler<GraduateGroupsCommand, List<GroupShortInfoDto>>
+public class GraduateGroupsCommandHandler(
+    IAppDbContext dbContext,
+    IRequestHandler<DropOutStudentsCommand, List<StudentShortInfoDto>> dropOutStudentsHandler
+) : HandlerBase(dbContext), IRequestHandler<GraduateGroupsCommand, List<GroupShortInfoDto>>
 {
+    private readonly IRequestHandler<
+        DropOutStudentsCommand,
+        List<StudentShortInfoDto>
+    > _dropOutStudentsHandler = dropOutStudentsHandler;
+
     public async Task<List<GroupShortInfoDto>> Handle(
         GraduateGroupsCommand request,
         CancellationToken cancellationToken
@@ -32,10 +40,7 @@ public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
         {
             await DbContext.BeginTransactionAsync();
 
-            if (!TryGraduateGroups(groups, request.GraduatedTime, out var invalidGroups))
-            {
-                throw new GroupAlreadyGraduatedException([.. invalidGroups]);
-            }
+            await GraduateGroups(groups, request.GraduatedTime);
 
             await DbContext.CommitTransactionAsync();
         }
@@ -48,20 +53,17 @@ public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
         return groups.Adapt<List<GroupShortInfoDto>>();
     }
 
-    private bool TryGraduateGroups(
-        IEnumerable<Group> groups,
-        DateTime graduatedTime,
-        out List<Group> invalidGroups
-    )
+    private async Task GraduateGroups(IEnumerable<Group> groups, DateTime graduatedTime)
     {
-        invalidGroups = new List<Group>();
+        var invalidGroups = new List<Group>();
 
         foreach (var group in groups)
         {
             if (group.GraduatedAt == null)
             {
                 group.GraduatedAt = graduatedTime;
-                DropOutStudents(group, graduatedTime);
+
+                await DropOutStudentsInGroup(group, graduatedTime);
             }
             else
             {
@@ -71,17 +73,22 @@ public class GraduateGroupsCommandHandler(IAppDbContext dbContext)
 
         if (invalidGroups.Count != 0)
         {
-            return false;
+            throw new GroupAlreadyGraduatedException([.. invalidGroups]);
         }
-
-        return true;
     }
 
-    private void DropOutStudents(Group group, DateTime graduatedTime)
+    private async Task DropOutStudentsInGroup(Group group, DateTime droppedOutTime)
     {
-        foreach (var student in group.Students)
+        var studentsIds = group
+            .Students.Where(x => x.DroppedOutAt == null)
+            .Select(x => x.Id)
+            .ToList();
+
+        if (studentsIds.Count != 0)
         {
-            student.DroppedOutAt ??= graduatedTime;
+            var dropOutStudentsCommand = new DropOutStudentsCommand(studentsIds, droppedOutTime);
+
+            await _dropOutStudentsHandler.Handle(dropOutStudentsCommand, default);
         }
     }
 }

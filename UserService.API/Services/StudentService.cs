@@ -5,6 +5,8 @@ using UserService.Application.CQRS.StudentEntity.Commands.CreateStudent;
 using UserService.Application.CQRS.StudentEntity.Commands.DeleteStudents;
 using UserService.Application.CQRS.StudentEntity.Commands.DropOutStudents;
 using UserService.Application.CQRS.StudentEntity.Commands.EditStudent;
+using UserService.Application.CQRS.StudentEntity.Commands.RecoveryStudents;
+using UserService.Application.CQRS.StudentEntity.Commands.SoftDeleteStudents;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
@@ -58,6 +60,30 @@ public class StudentService(IMediator mediator) : UserService.StudentService.Stu
         var student = await _mediator.Send(command);
 
         return student.Adapt<DeleteStudentsResponse>();
+    }
+
+    public override async Task<SoftDeleteStudentsResponse> SoftDeleteStudents(
+        SoftDeleteStudentsRequest request,
+        ServerCallContext context
+    )
+    {
+        var command = new SoftDeleteStudentsCommand([.. request.Ids.Select(x => Guid.Parse(x))]);
+
+        var students = await _mediator.Send(command);
+
+        return students.Adapt<SoftDeleteStudentsResponse>();
+    }
+
+    public override async Task<RecoveryStudentsResponse> RecoveryStudents(
+        RecoveryStudentsRequest request,
+        ServerCallContext context
+    )
+    {
+        var command = new RecoveryStudentsCommand([.. request.Ids.Select(x => Guid.Parse(x))]);
+
+        var students = await _mediator.Send(command);
+
+        return students.Adapt<RecoveryStudentsResponse>();
     }
 
     public override async Task<StudentShortInfo> EditStudent(

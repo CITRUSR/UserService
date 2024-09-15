@@ -11,24 +11,17 @@ service SpecialityService{
   rpc CreateSpeciality(CreateSpecialityRequest) returns (SpecialityShortInfo);
   rpc DeleteSpecialities(DeleteSpecialitiesRequest) returns (DeleteSpecialitiesResponse);
   rpc SoftDeleteSpecialities(SoftDeleteSpecialitiesRequest) returns (SoftDeleteSpecialitiesResponse);
+  rpc RecoverySpecialities(RecoverySpecialitiesRequest) returns (RecoverySpecialitiesResponse);
   rpc EditSpeciality(EditSpecialityRequest) returns (SpecialityShortInfo);
   rpc GetSpecialityById(GetSpecialityByIdRequest) returns (SpecialityModel);
   rpc GetSpecialities(GetSpecialitiesRequest) returns (GetSpecialitiesResponse);
-}
-
-message DecimalValue {
-  // Whole units part of the amount
-  int64 units = 1;
-  // Nano units of the amount (10^-9)
-  // Must be same sign as units
-  sfixed64 nanos = 2;
 }
 
 message SpecialityModel{
   int32 Id = 1;
   string Name = 2;
   string Abbreviation = 3;
-  DecimalValue Cost = 4;
+  double Cost = 4;
   uint32 DurationMonths = 5;
   bool IsDeleted = 6;
 }
@@ -47,7 +40,7 @@ message SpecialityViewModel{
 message CreateSpecialityRequest{
   string Name = 1;
   string Abbreavation = 2;
-  DecimalValue Cost = 3;
+  double Cost = 3;
   uint32 DurationMonths = 4;
 }
 
@@ -56,7 +49,7 @@ message DeleteSpecialitiesRequest{
 }
 
 message DeleteSpecialitiesResponse{
-  repeated SpecialityShortInfo pecialities = 1;
+  repeated SpecialityShortInfo Specialities = 1;
 }
 
 message SoftDeleteSpecialitiesRequest{
@@ -67,11 +60,19 @@ message SoftDeleteSpecialitiesResponse{
   repeated SpecialityShortInfo Specialities = 1;
 }
 
+message RecoverySpecialitiesRequest{
+  repeated int32 Ids = 1;
+}
+
+message RecoverySpecialitiesResponse{
+  repeated SpecialityShortInfo Specialities = 1;
+}
+
 message EditSpecialityRequest{
   int32 Id = 1;
   string Name = 2;
   string Abbreavation = 3;
-  DecimalValue Cost = 4;
+  double Cost = 4;
   uint32 DurationMonths = 5;
   bool IsDeleted = 6;
 }

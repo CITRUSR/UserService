@@ -15,6 +15,8 @@ builder.Services.AddGrpc(options =>
     options.Interceptors.Add<ServerExceptionsInterceptor>();
 });
 
+UserService.API.MapsterConfig.Configure();
+
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
 
