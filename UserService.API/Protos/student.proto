@@ -12,6 +12,7 @@ service StudentService{
   rpc CreateStudent(CreateStudentRequest) returns (StudentShortInfo);
   rpc DropOutStudents(DropOutStudentsRequest) returns (DropOutStudentsResponse);
   rpc DeleteStudents(DeleteStudentsRequest) returns (DeleteStudentsResponse);
+  rpc SoftDeleteStudents(SoftDeleteStudentsRequest) returns (SoftDeleteStudentsResponse);
   rpc RecoveryStudents(RecoveryStudentsRequest) returns (RecoveryStudentsResponse);
   rpc EditStudent(EditStudentRequest) returns (StudentShortInfo);
   rpc GetStudentById(GetStudentByIdRequest) returns (StudentModel);
@@ -72,6 +73,14 @@ message DeleteStudentsRequest{
 }
 
 message DeleteStudentsResponse{
+  repeated StudentShortInfo Students = 1;
+}
+
+message SoftDeleteStudentsRequest{
+  repeated string Ids = 1;
+}
+
+message SoftDeleteStudentsResponse{
   repeated StudentShortInfo Students = 1;
 }
 
