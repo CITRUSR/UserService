@@ -1,11 +1,9 @@
 ﻿using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Responses;
-using UserService.Domain.Entities;
 
 namespace UserService.Application.CQRS.GroupEntity.Commands.EditGroup;
 
@@ -48,19 +46,6 @@ public class EditGroupCommandHandler(IAppDbContext dbContext)
             throw new TeacherNotFoundException(request.CuratorId);
         }
 
-        var oldGroup = new Group
-        {
-            Id = group.Id,
-            SpecialityId = group.SpecialityId,
-            CuratorId = group.CuratorId,
-            CurrentCourse = group.CurrentCourse,
-            CurrentSemester = group.CurrentSemester,
-            SubGroup = group.SubGroup,
-            StartedAt = group.StartedAt,
-            GraduatedAt = group.GraduatedAt,
-            IsDeleted = group.IsDeleted,
-        };
-
         group.CuratorId = request.CuratorId;
         group.SpecialityId = request.SpecialityId;
         group.SubGroup = request.SubGroup;
@@ -69,11 +54,6 @@ public class EditGroupCommandHandler(IAppDbContext dbContext)
         group.IsDeleted = request.IsDeleted;
 
         await DbContext.SaveChangesAsync(cancellationToken);
-
-        Log.Information(
-            $"The group with id:{request.Id} is updated"
-                + "old state:{@oldGroup} new state:{@group}"
-        );
 
         return group.Adapt<GroupShortInfoDto>();
     }

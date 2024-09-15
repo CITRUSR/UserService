@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using MediatR;
-using Serilog;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Exceptions;
 using UserService.Application.CQRS.GroupEntity.Responses;
@@ -50,8 +49,6 @@ public class CreateGroupCommandHandler(IAppDbContext dbContext)
 
         await DbContext.Groups.AddAsync(group, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
-
-        Log.Information($"The group with id:{group.Id} is created");
 
         return group.Adapt<GroupShortInfoDto>();
     }
