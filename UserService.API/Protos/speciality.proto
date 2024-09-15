@@ -49,7 +49,7 @@ message DeleteSpecialitiesRequest{
 }
 
 message DeleteSpecialitiesResponse{
-  repeated SpecialityShortInfo pecialities = 1;
+  repeated SpecialityShortInfo Specialities = 1;
 }
 
 message SoftDeleteSpecialitiesRequest{

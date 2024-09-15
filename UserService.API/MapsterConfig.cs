@@ -1,5 +1,6 @@
 using Mapster;
 using UserService.Application.CQRS.GroupEntity.Responses;
+using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Application.CQRS.StudentEntity.Responses;
 
 namespace UserService.API;
@@ -43,5 +44,9 @@ public static class MapsterConfig
         TypeAdapterConfig<List<StudentShortInfoDto>, RecoveryStudentsResponse>
             .NewConfig()
             .Map(dest => dest.Students, src => src);
+
+        TypeAdapterConfig<List<SpecialityShortInfoDto>, DeleteSpecialitiesResponse>
+            .NewConfig()
+            .Map(dest => dest.Specialities, src => src);
     }
 }
