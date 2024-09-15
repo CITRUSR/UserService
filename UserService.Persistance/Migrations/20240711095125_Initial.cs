@@ -27,7 +27,7 @@ namespace UserService.Persistance.Migrations
                         maxLength: 256,
                         nullable: false
                     ),
-                    Abbreavation = table.Column<string>(
+                    Abbreviation = table.Column<string>(
                         type: "character varying(10)",
                         maxLength: 10,
                         nullable: false

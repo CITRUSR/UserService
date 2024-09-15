@@ -71,7 +71,7 @@ namespace UserService.Persistance.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Abbreavation")
+                    b.Property<string>("Abbreviation")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
