@@ -4,7 +4,6 @@ option csharp_namespace = "UserService";
 
 package Group;
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 import "Protos/shared.proto";
 
@@ -21,7 +20,6 @@ service GroupService{
   rpc GetGroups (GetGroupsRequest) returns (GetGroupsResponse);
 }
 
-//If IsGraduated true then GraduatedAt is not null else GraduatedAt is null
 message GroupModel{
   int32 Id = 1;
   int32 SpecialityId = 2;
@@ -29,9 +27,8 @@ message GroupModel{
   uint32 CurrentCourse = 4;
   uint32 CurrentSemester = 5;
   uint32 SubGroup = 6;
-  google.protobuf.Timestamp StartedAt = 7;
-  google.protobuf.Timestamp GraduatedAt = 8;
-  bool IsGraduated = 9;
+  string StartedAt = 7;
+  google.protobuf.StringValue GraduatedAt = 8;
   bool IsDeleted = 10;
 }
 
@@ -55,7 +52,7 @@ message CreateGroupRequest{
   uint32 CurrentCourse = 3;
   uint32 CurrentSemester = 4;
   uint32 SubGroup = 5;
-  google.protobuf.Timestamp StartedAt = 6;
+  string StartedAt = 6;
 }
 
 message CreateGroupResponse{
@@ -64,7 +61,7 @@ message CreateGroupResponse{
 
 message GraduateGroupsRequest{
   repeated int32 GroupsId = 1;
-  google.protobuf.Timestamp GraduatedTime = 2;
+  string GraduatedTime = 2;
 }
 
 message ChangeGroupResponseModel{

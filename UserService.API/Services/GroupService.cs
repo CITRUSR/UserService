@@ -29,7 +29,7 @@ public class GroupService(IMediator mediator) : UserService.GroupService.GroupSe
             (byte)request.CurrentCourse,
             (byte)request.CurrentSemester,
             (byte)request.SubGroup,
-            request.StartedAt.ToDateTime()
+            DateTime.Parse(request.StartedAt)
         );
 
         var group = await _mediator.Send(command);
@@ -100,7 +100,7 @@ public class GroupService(IMediator mediator) : UserService.GroupService.GroupSe
     {
         var command = new GraduateGroupsCommand(
             request.GroupsId.ToList(),
-            request.GraduatedTime.ToDateTime()
+            DateTime.Parse(request.GraduatedTime)
         );
 
         var groups = await _mediator.Send(command);
