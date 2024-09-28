@@ -37,6 +37,8 @@ public class TransferGroupsToNextSemesterCommandHandler(IAppDbContext dbContext)
                 throw new GroupSemesterOutOfRangeException([.. invalidGroups]);
             }
 
+            await DbContext.SaveChangesAsync(cancellationToken);
+
             await DbContext.CommitTransactionAsync();
         }
         catch (Exception e)
