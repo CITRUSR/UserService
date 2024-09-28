@@ -18,7 +18,9 @@ public class GetStudentsQueryHandler(IAppDbContext dbContext)
         CancellationToken cancellationToken
     )
     {
-        IQueryable<Student> students = DbContext.Students.Include(x => x.Group);
+        IQueryable<Student> students = DbContext
+            .Students.Include(x => x.Group)
+            .ThenInclude(x => x.Speciality);
 
         students = students.FilterByDeletedStatus<Student>(
             request.DeletedStatus,
