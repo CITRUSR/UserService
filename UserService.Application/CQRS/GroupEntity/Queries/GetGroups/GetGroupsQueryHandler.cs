@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Paging;
 using UserService.Application.CQRS.GroupEntity.Responses;
@@ -17,7 +18,10 @@ public class GetGroupsQueryHandler(IAppDbContext dbContext)
         CancellationToken cancellationToken
     )
     {
-        IQueryable<Group> groups = DbContext.Groups;
+        IQueryable<Group> groups = DbContext
+            .Groups.Include(x => x.Students)
+            .Include(x => x.Curator)
+            .Include(x => x.Speciality);
 
         if (String.IsNullOrWhiteSpace(request.SearchString) == false)
         {
