@@ -42,7 +42,7 @@ public class StudentService(IMediator mediator) : UserService.StudentService.Stu
     {
         var command = new DropOutStudentsCommand(
             [.. request.Ids.Select(x => Guid.Parse(x))],
-            request.DroppedTime.ToDateTime()
+            DateTime.Parse(request.DroppedTime)
         );
 
         var students = await _mediator.Send(command);
