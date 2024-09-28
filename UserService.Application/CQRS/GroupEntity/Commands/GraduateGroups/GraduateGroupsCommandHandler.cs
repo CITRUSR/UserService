@@ -42,6 +42,8 @@ public class GraduateGroupsCommandHandler(
 
             await GraduateGroups(groups, request.GraduatedTime);
 
+            await DbContext.SaveChangesAsync(cancellationToken);
+
             await DbContext.CommitTransactionAsync();
         }
         catch (Exception e)
