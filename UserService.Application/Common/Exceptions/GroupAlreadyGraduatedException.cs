@@ -11,17 +11,9 @@ public class GroupAlreadyGraduatedException : RpcException
         : base(
             new Status(
                 StatusCode.Aborted,
-                JsonConvert.SerializeObject(
-                    new Error
-                    {
-                        Erorrs =
-                        [
-                            "The groups:"
-                                + String.Join(", ", groups.Select(x => x.ToString()))
-                                + " cannot be graduated because it is already graduated."
-                        ]
-                    }
-                )
+                "The groups:"
+                    + String.Join(", ", groups.Select(x => x.ToString()))
+                    + " cannot be graduated because it is already graduated."
             )
         ) { }
 }
