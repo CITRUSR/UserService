@@ -157,6 +157,8 @@ public class GroupService(IMediator mediator) : UserService.GroupService.GroupSe
                 request.SortState,
             SearchString = request.SearchString,
             DeletedStatus = (Application.Enums.DeletedStatus)request.DeletedStatus,
+            GraduatedStatus = (Application.CQRS.GroupEntity.Queries.GetGroups.GroupGraduatedStatus)
+                request.GraduatedStatus
         };
 
         var groups = await _mediator.Send(query);

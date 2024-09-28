@@ -135,12 +135,19 @@ enum GroupSortState{
   GroupDesc = 1;
 }
 
+enum GroupGraduatedStatus{
+  All = 0;
+  OnlyGraduated = 1;
+  OnlyActive = 2;
+}
+
 message GetGroupsRequest{
   google.protobuf.StringValue SearchString = 1;
   int32 Page = 2;
   int32 PageSize = 3;
   GroupSortState SortState = 4;
   DeletedStatus DeletedStatus = 5;
+  GroupGraduatedStatus GraduatedStatus = 6;
 }
 
 message GetGroupsResponse{
