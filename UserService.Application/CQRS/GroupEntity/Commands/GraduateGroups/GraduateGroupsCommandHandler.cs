@@ -32,8 +32,9 @@ public class GraduateGroupsCommandHandler(
 
         if (groups.Count < request.GroupsId.Count)
         {
-            var notFoundGroups = groups.Where(x => !request.GroupsId.Contains(x.Id));
-            throw new GroupNotFoundException(notFoundGroups.Select(x => x.Id).ToArray());
+            var notFoundIds = request.GroupsId.Except(groups.Select(x => x.Id));
+
+            throw new GroupNotFoundException([.. notFoundIds]);
         }
 
         try
