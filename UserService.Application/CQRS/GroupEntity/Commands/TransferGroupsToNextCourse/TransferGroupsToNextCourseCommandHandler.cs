@@ -24,8 +24,9 @@ public class TransferGroupsToNextCourseCommandHandler(IAppDbContext dbContext)
 
         if (groups.Count < request.IdGroups.Count)
         {
-            var notFoundGroups = groups.Where(x => !request.IdGroups.Contains(x.Id));
-            throw new GroupNotFoundException(notFoundGroups.Select(x => x.Id).ToArray());
+            var notFoundIds = request.IdGroups.Except(groups.Select(x => x.Id));
+
+            throw new GroupNotFoundException([.. notFoundIds]);
         }
 
         try
