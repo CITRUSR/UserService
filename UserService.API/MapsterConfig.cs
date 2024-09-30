@@ -65,6 +65,10 @@ public static class MapsterConfig
         TypeAdapterConfig<List<StudentShortInfoDto>, RecoveryStudentsResponse>
             .NewConfig()
             .Map(dest => dest.Students, src => src);
+
+        TypeAdapterConfig<List<StudentShortInfoDto>, GetStudentsByGroupIdResponse>
+            .NewConfig()
+            .Map(dest => dest.Students, src => src);
     }
 
     public static void ConfigureSpecialities()
