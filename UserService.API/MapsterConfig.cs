@@ -66,7 +66,7 @@ public static class MapsterConfig
             .NewConfig()
             .Map(dest => dest.Students, src => src);
 
-        TypeAdapterConfig<List<StudentShortInfoDto>, GetStudentsByGroupIdResponse>
+        TypeAdapterConfig<List<UserService.Application.CQRS.StudentEntity.Responses.StudentViewModel>, GetStudentsByGroupIdResponse>
             .NewConfig()
             .Map(dest => dest.Students, src => src);
     }
