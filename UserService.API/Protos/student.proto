@@ -16,6 +16,7 @@ service StudentService{
   rpc EditStudent(EditStudentRequest) returns (StudentShortInfo);
   rpc GetStudentById(GetStudentByIdRequest) returns (StudentModel);
   rpc GetStudentBySsoId (GetStudentBySsoIdRequest) returns (StudentModel);
+  rpc GetStudentsByGroupId(GetStudentsByGroupIdRequest) returns (GetStudentsByGroupIdResponse);
   rpc GetStudents(GetStudentsRequest) returns (GetStudentsResponse);
 }
 
@@ -102,6 +103,8 @@ message GetStudentByIdRequest{
   string Id = 1;
 }
 
+
+
 enum SortState{
   FistNameAsc = 0;
   FirstNameDesc = 1;
@@ -133,4 +136,12 @@ message GetStudentsResponse{
 
 message GetStudentBySsoIdRequest{
   string SsoId = 1;
+}
+
+message GetStudentsByGroupIdRequest{
+  int32 GroupId = 1;
+}
+
+message GetStudentsByGroupIdResponse{
+  repeated StudentViewModel Students = 1;
 }
