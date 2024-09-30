@@ -27,7 +27,9 @@ public class GetStudentsByGroupIdQueryHandler(IAppDbContext dbContext)
         }
 
         var students = await DbContext
-            .Students.Where(x => x.GroupId == request.GroupId)
+            .Students.Include(x => x.Group)
+            .ThenInclude(x => x.Speciality)
+            .Where(x => x.GroupId == request.GroupId)
             .ToListAsync(cancellationToken);
 
         return students.Adapt<List<StudentViewModel>>();
