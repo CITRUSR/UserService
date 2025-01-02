@@ -2,6 +2,7 @@
 using Mapster;
 using MediatR;
 using UserService.Application.CQRS.TeacherEntity.Commands.CreateTeacher;
+using UserService.Application.CQRS.TeacherEntity.Queries.GetTeacherById;
 
 namespace UserService.API.Services;
 
@@ -25,5 +26,17 @@ public class TeacherService(IMediator mediator) : UserService.TeacherService.Tea
         var teacher = await _mediator.Send(command);
 
         return teacher.Adapt<TeacherShortInfo>();
+    }
+
+    public override async Task<TeacherModel> GetTeacherById(
+        GetTeacherByIdRequest request,
+        ServerCallContext context
+    )
+    {
+        var query = request.Adapt<GetTeacherByIdQuery>();
+
+        var result = await _mediator.Send(query);
+
+        return result.Adapt<TeacherModel>();
     }
 }
