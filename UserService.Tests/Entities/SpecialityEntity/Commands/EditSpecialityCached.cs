@@ -1,6 +1,7 @@
 using FluentAssertions;
 using MediatR;
 using Moq;
+using Moq.EntityFrameworkCore;
 using UserService.Application.Abstraction;
 using UserService.Application.Common.Cache;
 using UserService.Application.CQRS.SpecialityEntity.Commands.EditSpeciality;
@@ -11,6 +12,7 @@ namespace UserService.Tests.Entities.SpecialityEntity.Commands;
 
 public class EditSpecialityCached
 {
+    private readonly Mock<IAppDbContext> _mockAppDbContext;
     private readonly Mock<ICacheService> _mockCacheService;
     private readonly Mock<
         IRequestHandler<EditSpecialityCommand, SpecialityShortInfoDto>
@@ -20,6 +22,7 @@ public class EditSpecialityCached
 
     public EditSpecialityCached()
     {
+        _mockAppDbContext = new Mock<IAppDbContext>();
         _mockCacheService = new Mock<ICacheService>();
         _mockHandler = new Mock<IRequestHandler<EditSpecialityCommand, SpecialityShortInfoDto>>();
         _fixture = new Fixture();
@@ -34,13 +37,22 @@ public class EditSpecialityCached
             .With(x => x.Id, _command.Id)
             .Create();
 
+        var groups = _fixture
+            .Build<Group>()
+            .With(x => x.SpecialityId, speciality.Id)
+            .CreateMany(5)
+            .ToList();
+
+        _mockAppDbContext.Setup(x => x.Groups).ReturnsDbSet(groups);
+
         _mockHandler
             .Setup(x => x.Handle(It.IsAny<EditSpecialityCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(speciality);
 
         var handler = new EditSpecialityCommandHandlerCached(
             _mockHandler.Object,
-            _mockCacheService.Object
+            _mockCacheService.Object,
+            _mockAppDbContext.Object
         );
 
         var result = await handler.Handle(_command, default);
@@ -53,6 +65,18 @@ public class EditSpecialityCached
                 ),
             Times.Once()
         );
+
+        foreach (var group in groups)
+        {
+            _mockCacheService.Verify(
+                x =>
+                    x.RemoveAsync(
+                        CacheKeys.ById<Group, int>(group.Id),
+                        It.IsAny<CancellationToken>()
+                    ),
+                Times.Once()
+            );
+        }
 
         _mockCacheService.Verify(
             x =>

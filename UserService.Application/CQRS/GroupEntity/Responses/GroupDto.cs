@@ -11,4 +11,5 @@ public record GroupDto
     public DateTime StartedAt { get; set; }
     public DateTime? GraduatedAt { get; set; }
     public bool IsDeleted { get; set; }
+    public string FullName { get; set; }
 }
