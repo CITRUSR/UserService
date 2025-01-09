@@ -16,6 +16,6 @@ public class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
 
         builder.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
         builder.HasIndex(x => x.SsoId);
-        builder.Property(x => x.FiredAt).HasColumnType("timestamp");
+        builder.Property(x => x.FiredAt).HasColumnType("date");
     }
 }
