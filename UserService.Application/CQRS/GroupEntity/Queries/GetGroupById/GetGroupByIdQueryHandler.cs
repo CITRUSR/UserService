@@ -16,10 +16,9 @@ public class GetGroupByIdQueryHandler(IAppDbContext dbContext)
         CancellationToken cancellationToken
     )
     {
-        var group = await DbContext.Groups.FirstOrDefaultAsync(
-            x => x.Id == request.Id,
-            cancellationToken
-        );
+        var group = await DbContext
+            .Groups.Include(x => x.Speciality)
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (group == null)
         {

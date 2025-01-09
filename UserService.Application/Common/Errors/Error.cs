@@ -3,5 +3,5 @@
 public class Error
 {
     public string Service { get; private set; } = "Users";
-    public IEnumerable<string> Erorrs { get; set; }
+    public IEnumerable<string> Errors { get; set; }
 }

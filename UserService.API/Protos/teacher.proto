@@ -6,20 +6,34 @@ package Teacher;
 
 import "google/protobuf/wrappers.proto";
 
-service TeacherService{
+service TeacherService {
   rpc CreateTeacher(CreateTeacherRequest) returns (TeacherShortInfo);
+  rpc GetTeacherById(GetTeacherByIdRequest) returns (TeacherModel);
 }
 
-message TeacherShortInfo{
+message TeacherModel {
+  string Id = 1;
+  string SsoId = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  google.protobuf.StringValue PatronymicName = 5;
+  int32 RoomId = 6;
+  google.protobuf.StringValue FiredAt = 7;
+  bool IsDeleted = 8;
+}
+
+message TeacherShortInfo {
   string Id = 1;
   string FirstName = 2;
   string LastName = 3;
 }
 
-message CreateTeacherRequest{
+message CreateTeacherRequest {
   string SsoId = 1;
   string FirstName = 2;
   string LastName = 3;
   google.protobuf.StringValue PatronymicName = 4;
   int32 RoomId = 5;
 }
+
+message GetTeacherByIdRequest { string TeacherId = 1; }

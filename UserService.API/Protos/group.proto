@@ -4,43 +4,44 @@ option csharp_namespace = "UserService";
 
 package Group;
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 import "Protos/shared.proto";
 
-service GroupService{
-  rpc CreateGroup (CreateGroupRequest) returns (GroupShortInfo);
-  rpc DeleteGroups (DeleteGroupsRequest) returns (DeleteGroupsResponse);
-  rpc SoftDeleteGroups (SoftDeleteGroupsRequest) returns (SoftDeleteGroupsResponse);
+service GroupService {
+  rpc CreateGroup(CreateGroupRequest) returns (GroupShortInfo);
+  rpc DeleteGroups(DeleteGroupsRequest) returns (DeleteGroupsResponse);
+  rpc SoftDeleteGroups(SoftDeleteGroupsRequest)
+      returns (SoftDeleteGroupsResponse);
   rpc RecoveryGroups(RecoveryGroupsRequest) returns (RecoveryGroupsResponse);
-  rpc EditGroup (EditGroupRequest) returns (GroupShortInfo);
-  rpc GraduateGroups (GraduateGroupsRequest) returns (GraduateGroupsResponse);
-  rpc TransferGroupsToNextSemester (TransferGroupsToNextSemesterRequest) returns (TransferGroupsToNextSemesterResponse);
-  rpc TransferGroupsToNextCourse (TransferGroupsToNextCourseRequest) returns (TransferGroupsToNextCourseResponse);
-  rpc GetGroupById (GetGroupByIdRequest) returns (GroupModel);
-  rpc GetGroups (GetGroupsRequest) returns (GetGroupsResponse);
+  rpc EditGroup(EditGroupRequest) returns (GroupShortInfo);
+  rpc GraduateGroups(GraduateGroupsRequest) returns (GraduateGroupsResponse);
+  rpc TransferGroupsToNextSemester(TransferGroupsToNextSemesterRequest)
+      returns (TransferGroupsToNextSemesterResponse);
+  rpc TransferGroupsToNextCourse(TransferGroupsToNextCourseRequest)
+      returns (TransferGroupsToNextCourseResponse);
+  rpc GetGroupById(GetGroupByIdRequest) returns (GroupModel);
+  rpc GetGroups(GetGroupsRequest) returns (GetGroupsResponse);
 }
 
-//If IsGraduated true then GraduatedAt is not null else GraduatedAt is null
-message GroupModel{
+message GroupModel {
   int32 Id = 1;
   int32 SpecialityId = 2;
   string CuratorId = 3;
   uint32 CurrentCourse = 4;
   uint32 CurrentSemester = 5;
   uint32 SubGroup = 6;
-  google.protobuf.Timestamp StartedAt = 7;
-  google.protobuf.Timestamp GraduatedAt = 8;
-  bool IsGraduated = 9;
+  string StartedAt = 7;
+  google.protobuf.StringValue GraduatedAt = 8;
   bool IsDeleted = 10;
+  string FullName = 11;
 }
 
-message GroupShortInfo{
+message GroupShortInfo {
   int32 Id = 1;
   string GroupName = 2;
 }
 
-message GroupViewModel{
+message GroupViewModel {
   int32 Id = 1;
   int32 StudentCount = 2;
   string CuratorFirstName = 3;
@@ -49,77 +50,57 @@ message GroupViewModel{
   string GroupName = 6;
 }
 
-message CreateGroupRequest{
+message CreateGroupRequest {
   int32 SpecialityId = 1;
   string CuratorId = 2;
   uint32 CurrentCourse = 3;
   uint32 CurrentSemester = 4;
   uint32 SubGroup = 5;
-  google.protobuf.Timestamp StartedAt = 6;
+  string StartedAt = 6;
 }
 
-message CreateGroupResponse{
-  ChangeGroupResponseModel Group = 1;
-}
+message CreateGroupResponse { ChangeGroupResponseModel Group = 1; }
 
-message GraduateGroupsRequest{
+message GraduateGroupsRequest {
   repeated int32 GroupsId = 1;
-  google.protobuf.Timestamp GraduatedTime = 2;
+  string GraduatedTime = 2;
 }
 
-message ChangeGroupResponseModel{
+message ChangeGroupResponseModel {
   int32 Id = 1;
   string Abbr = 2;
   int32 CurrentCourse = 3;
   int32 SubGroup = 4;
 }
 
-message GraduateGroupsResponse{
+message GraduateGroupsResponse { repeated GroupShortInfo Groups = 1; }
+
+// If be empty then will be taking every group
+message TransferGroupsToNextSemesterRequest { repeated int32 IdGroups = 1; }
+
+message TransferGroupsToNextSemesterResponse {
   repeated GroupShortInfo Groups = 1;
 }
 
-//If be empty then will be taking every group
-message TransferGroupsToNextSemesterRequest{
-  repeated int32 IdGroups = 1;
-}
+message TransferGroupsToNextCourseRequest { repeated int32 IdGroups = 1; }
 
-message TransferGroupsToNextSemesterResponse{
+message TransferGroupsToNextCourseResponse {
   repeated GroupShortInfo Groups = 1;
 }
 
-message TransferGroupsToNextCourseRequest{
-  repeated int32 IdGroups = 1;
-}
+message DeleteGroupsRequest { repeated int32 Ids = 1; }
 
-message TransferGroupsToNextCourseResponse{
-  repeated GroupShortInfo Groups = 1;
-}
+message DeleteGroupsResponse { repeated GroupShortInfo Groups = 1; }
 
-message DeleteGroupsRequest{
-  repeated int32 Ids = 1;
-}
+message RecoveryGroupsRequest { repeated int32 Ids = 1; }
 
-message DeleteGroupsResponse{
-  repeated GroupShortInfo Groups = 1;
-}
+message RecoveryGroupsResponse { repeated GroupShortInfo Groups = 1; }
 
-message RecoveryGroupsRequest{
-  repeated int32 Ids = 1;
-}
+message SoftDeleteGroupsRequest { repeated int32 Ids = 1; }
 
-message RecoveryGroupsResponse{
-  repeated GroupShortInfo Groups = 1;
-}
+message SoftDeleteGroupsResponse { repeated GroupShortInfo Groups = 1; }
 
-message SoftDeleteGroupsRequest{
-  repeated int32 Ids = 1;
-}
-
-message SoftDeleteGroupsResponse{
-  repeated GroupShortInfo Groups = 1;
-}
-
-message EditGroupRequest{
+message EditGroupRequest {
   int32 Id = 1;
   int32 SpecialityId = 2;
   string CuratorId = 3;
@@ -129,24 +110,29 @@ message EditGroupRequest{
   bool IsDeleted = 7;
 }
 
-message GetGroupByIdRequest{
-  int32 Id = 1;
-}
+message GetGroupByIdRequest { int32 Id = 1; }
 
-enum GroupSortState{
+enum GroupSortState {
   GroupAsc = 0;
   GroupDesc = 1;
 }
 
-message GetGroupsRequest{
+enum GroupGraduatedStatus {
+  All = 0;
+  OnlyGraduated = 1;
+  OnlyActive = 2;
+}
+
+message GetGroupsRequest {
   google.protobuf.StringValue SearchString = 1;
   int32 Page = 2;
   int32 PageSize = 3;
   GroupSortState SortState = 4;
   DeletedStatus DeletedStatus = 5;
+  GroupGraduatedStatus GraduatedStatus = 6;
 }
 
-message GetGroupsResponse{
+message GetGroupsResponse {
   repeated GroupViewModel Groups = 1;
   int32 LastPage = 2;
 }

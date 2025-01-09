@@ -20,7 +20,7 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
             .HasForeignKey(e => e.SpecialityId)
             .IsRequired();
 
-        builder.Property(x => x.GraduatedAt).HasColumnType("timestamp");
-        builder.Property(x => x.StartedAt).HasColumnType("timestamp");
+        builder.Property(x => x.GraduatedAt).HasColumnType("date");
+        builder.Property(x => x.StartedAt).HasColumnType("date");
     }
 }

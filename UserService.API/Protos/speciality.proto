@@ -39,7 +39,7 @@ message SpecialityViewModel{
 
 message CreateSpecialityRequest{
   string Name = 1;
-  string Abbreavation = 2;
+  string Abbreviation = 2;
   double Cost = 3;
   uint32 DurationMonths = 4;
 }

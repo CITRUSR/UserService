@@ -10,6 +10,7 @@ using UserService.Application.CQRS.StudentEntity.Commands.SoftDeleteStudents;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
+using UserService.Application.CQRS.StudentEntity.Queries.GetStudentsByGroupId;
 
 namespace UserService.API.Services;
 
@@ -42,7 +43,7 @@ public class StudentService(IMediator mediator) : UserService.StudentService.Stu
     {
         var command = new DropOutStudentsCommand(
             [.. request.Ids.Select(x => Guid.Parse(x))],
-            request.DroppedTime.ToDateTime()
+            DateTime.Parse(request.DroppedTime)
         );
 
         var students = await _mediator.Send(command);
@@ -127,6 +128,18 @@ public class StudentService(IMediator mediator) : UserService.StudentService.Stu
         var student = await _mediator.Send(query);
 
         return student.Adapt<StudentModel>();
+    }
+
+    public override async Task<GetStudentsByGroupIdResponse> GetStudentsByGroupId(
+        GetStudentsByGroupIdRequest request,
+        ServerCallContext context
+    )
+    {
+        var query = new GetStudentsByGroupIdQuery(request.GroupId);
+
+        var students = await _mediator.Send(query);
+
+        return students.Adapt<GetStudentsByGroupIdResponse>();
     }
 
     public override async Task<GetStudentsResponse> GetStudents(

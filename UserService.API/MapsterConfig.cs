@@ -3,6 +3,7 @@ using Mapster;
 using UserService.Application.CQRS.GroupEntity.Responses;
 using UserService.Application.CQRS.SpecialityEntity.Responses;
 using UserService.Application.CQRS.StudentEntity.Responses;
+using UserService.Domain.Entities;
 
 namespace UserService.API;
 
@@ -46,6 +47,9 @@ public static class MapsterConfig
         TypeAdapterConfig<List<GroupShortInfoDto>, TransferGroupsToNextCourseResponse>
             .NewConfig()
             .Map(dest => dest.Groups, src => src);
+        TypeAdapterConfig<Group, GroupDto>
+            .NewConfig()
+            .Map(dest => dest.FullName, src => src.ToString());
     }
 
     public static void ConfigureStudents()
@@ -63,6 +67,13 @@ public static class MapsterConfig
             .Map(dest => dest.Students, src => src);
 
         TypeAdapterConfig<List<StudentShortInfoDto>, RecoveryStudentsResponse>
+            .NewConfig()
+            .Map(dest => dest.Students, src => src);
+
+        TypeAdapterConfig<
+            List<Application.CQRS.StudentEntity.Responses.StudentViewModel>,
+            GetStudentsByGroupIdResponse
+        >
             .NewConfig()
             .Map(dest => dest.Students, src => src);
     }

@@ -11,17 +11,9 @@ public class StudentAlreadyDroppedOutException : RpcException
         : base(
             new Status(
                 StatusCode.Aborted,
-                JsonConvert.SerializeObject(
-                    new Error
-                    {
-                        Erorrs =
-                        [
-                            "The student:"
-                                + $"{student.ToString()}"
-                                + " cannot be dropped out because he is already dropped out."
-                        ]
-                    }
-                )
+                "The student:"
+                    + $"{student.ToString()}"
+                    + " cannot be dropped out because he is already dropped out."
             )
         ) { }
 
@@ -29,17 +21,9 @@ public class StudentAlreadyDroppedOutException : RpcException
         : base(
             new Status(
                 StatusCode.Aborted,
-                JsonConvert.SerializeObject(
-                    new Error
-                    {
-                        Erorrs =
-                        [
-                            "The students:"
-                                + $"{string.Join(", ", students.Select(x => x.ToString()))}"
-                                + " cannot be dropped out because they are already dropped out."
-                        ]
-                    }
-                )
+                "The students:"
+                    + $"{string.Join(", ", students.Select(x => x.ToString()))}"
+                    + " cannot be dropped out because they are already dropped out."
             )
         ) { }
 }

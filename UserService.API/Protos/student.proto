@@ -5,7 +5,6 @@ option csharp_namespace = "UserService";
 package Student;
 
 import "google/protobuf/wrappers.proto";
-import "google/protobuf/timestamp.proto";
 import "Protos/shared.proto";
 
 service StudentService{
@@ -17,10 +16,10 @@ service StudentService{
   rpc EditStudent(EditStudentRequest) returns (StudentShortInfo);
   rpc GetStudentById(GetStudentByIdRequest) returns (StudentModel);
   rpc GetStudentBySsoId (GetStudentBySsoIdRequest) returns (StudentModel);
+  rpc GetStudentsByGroupId(GetStudentsByGroupIdRequest) returns (GetStudentsByGroupIdResponse);
   rpc GetStudents(GetStudentsRequest) returns (GetStudentsResponse);
 }
 
-//If isDropped true then student has DroppedTime else doesn't have DroppedTime(equals null)
 message StudentModel{
   string Id = 1;
   string SsoId = 2;
@@ -28,9 +27,8 @@ message StudentModel{
   string LastName = 4;
   google.protobuf.StringValue PatronymicName = 5;
   int32  GroupId = 6;
-  google.protobuf.Timestamp DroppedOutAt = 7;
+  google.protobuf.StringValue DroppedOutAt = 7;
   bool IsDeleted = 9;
-  bool IsDropped = 8;
 }
 
 message StudentViewModel{
@@ -61,7 +59,7 @@ message CreateStudentResponse{
 
 message DropOutStudentsRequest{
   repeated string Ids = 1;
-  google.protobuf.Timestamp DroppedTime = 3;
+  string DroppedTime = 3;
 }
 
 message DropOutStudentsResponse{
@@ -105,6 +103,8 @@ message GetStudentByIdRequest{
   string Id = 1;
 }
 
+
+
 enum SortState{
   FistNameAsc = 0;
   FirstNameDesc = 1;
@@ -136,4 +136,12 @@ message GetStudentsResponse{
 
 message GetStudentBySsoIdRequest{
   string SsoId = 1;
+}
+
+message GetStudentsByGroupIdRequest{
+  int32 GroupId = 1;
+}
+
+message GetStudentsByGroupIdResponse{
+  repeated StudentViewModel Students = 1;
 }

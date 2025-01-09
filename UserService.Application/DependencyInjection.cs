@@ -32,6 +32,7 @@ using UserService.Application.CQRS.StudentEntity.Commands.SoftDeleteStudents;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentById;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudentBySsoId;
 using UserService.Application.CQRS.StudentEntity.Queries.GetStudents;
+using UserService.Application.CQRS.StudentEntity.Queries.GetStudentsByGroupId;
 using UserService.Application.CQRS.StudentEntity.Responses;
 using UserService.Domain.Entities;
 
@@ -169,6 +170,10 @@ public static class DependencyInjection
         services.Decorate<
             IRequestHandler<GetStudentBySsoIdQuery, StudentDto>,
             GetStudentBySsoIdQueryHandlerCached
+        >();
+        services.Decorate<
+            IRequestHandler<GetStudentsByGroupIdQuery, List<StudentViewModel>>,
+            GetStudentsByGroupIdQueryHandlerCached
         >();
         services.Decorate<
             IRequestHandler<GetStudentsQuery, GetStudentsResponse>,

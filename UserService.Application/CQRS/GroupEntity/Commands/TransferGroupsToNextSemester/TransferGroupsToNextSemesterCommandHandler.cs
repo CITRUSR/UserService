@@ -24,8 +24,9 @@ public class TransferGroupsToNextSemesterCommandHandler(IAppDbContext dbContext)
 
         if (groups.Count < request.IdGroups.Count)
         {
-            var notFoundGroups = groups.Where(x => !request.IdGroups.Contains(x.Id));
-            throw new GroupNotFoundException(notFoundGroups.Select(x => x.Id).ToArray());
+            var notFoundIds = request.IdGroups.Except(groups.Select(x => x.Id));
+
+            throw new GroupNotFoundException([.. notFoundIds]);
         }
 
         try
@@ -36,6 +37,8 @@ public class TransferGroupsToNextSemesterCommandHandler(IAppDbContext dbContext)
             {
                 throw new GroupSemesterOutOfRangeException([.. invalidGroups]);
             }
+
+            await DbContext.SaveChangesAsync(cancellationToken);
 
             await DbContext.CommitTransactionAsync();
         }

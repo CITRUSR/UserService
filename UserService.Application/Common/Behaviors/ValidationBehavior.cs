@@ -37,7 +37,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                 new Status(
                     StatusCode.InvalidArgument,
                     JsonConvert.SerializeObject(
-                        new Error { Erorrs = failures.Select(x => x.ErrorMessage) }
+                        new Error { Errors = failures.Select(x => x.ErrorMessage) }
                     )
                 )
             );
